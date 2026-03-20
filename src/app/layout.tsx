@@ -2,10 +2,23 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI Stack - Build Your AI Stack",
-  description: "Build your perfect AI stack. Pay per feature. Live in 60 seconds. AI-powered website builder.",
+  title: "AI Stack Agency - Build Your AI Stack | ai-solutions.company",
+  description: "Build your perfect AI stack with our AI-powered sales agent. Modular AI capabilities. Pay per feature. Live in 60 seconds. Powered by OpenClaw.",
+  keywords: ["AI stack", "AI agent", "build your stack", "OpenClaw", "AI chatbot", "automation"],
+  openGraph: {
+    title: "AI Stack Agency - Build Your AI Stack",
+    description: "Build your perfect AI stack. AI-powered sales agent helps you choose. Pay per feature. Live in 60 seconds.",
+    type: "website",
+    url: "https://ai-solutions.company",
+    siteName: "AI Stack Agency"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Stack Agency - Build Your AI Stack",
+    description: "Build your perfect AI stack. AI-powered sales agent helps you choose. Pay per feature."
+  },
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦾</text></svg>",
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>",
   },
 };
 

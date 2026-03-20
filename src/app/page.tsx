@@ -1,21 +1,23 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useCartStore, Feature } from '@/store/cart';
 import { features, categories, industryStacks } from '@/lib/features';
-import { ShoppingCart, X, Plus, Minus, Bot, ChevronDown, ChevronUp, Sparkles, Zap, ArrowRight, Check, MessageCircle, TrendingUp, Clock, Shield } from 'lucide-react';
+import { ShoppingCart, X, Plus, Minus, Bot, ChevronDown, ChevronUp, Sparkles, Zap, ArrowRight, Check, MessageCircle, TrendingUp, Clock, Shield, Loader2 } from 'lucide-react';
 
 export default function Home() {
   const { items, addItem, removeItem, getTotal, hasItem } = useCartStore();
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedDemo, setSelectedDemo] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<{role: 'user' | 'ai', content: string}[]>([
-    { role: 'ai', content: "Hi! I'm your AI consultant. Tell me about your business and I'll help you build the perfect AI stack." }
+    { role: 'ai', content: "Hi! I'm your AI consultant, powered by OpenClaw. Tell me about your business and I'll help you build the perfect AI stack. 💬" }
   ]);
   const [chatInput, setChatInput] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [chatLoading, setChatLoading] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string>(`session_${Date.now()}`);
 
   const filteredFeatures = activeCategory === 'all' 
     ? features 
@@ -27,36 +29,47 @@ export default function Home() {
     }
   }, [chatMessages]);
 
-  const handleChatSubmit = () => {
-    if (!chatInput.trim()) return;
+  const handleChatSubmit = useCallback(async () => {
+    if (!chatInput.trim() || chatLoading) return;
     
     const userMessage = chatInput;
     setChatMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setChatInput('');
+    setChatLoading(true);
 
-    // Simple AI response logic
-    setTimeout(() => {
-      const lowerMsg = userMessage.toLowerCase();
-      let response = "That's interesting! Based on your needs, let me recommend some features. ";
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userMessage,
+          sessionId: sessionIdRef.current,
+          context: {
+            selectedFeatures: items.map(i => i.feature.id),
+          }
+        })
+      });
+
+      const data = await response.json();
       
-      if (lowerMsg.includes('support') || lowerMsg.includes('customer')) {
-        response += "I recommend our AI Chatbot ($49) + Auto Responder ($19) combo for $59/mo - perfect for handling customer inquiries 24/7!";
-      } else if (lowerMsg.includes('lead') || lowerMsg.includes('sales')) {
-        response += "For lead generation, check out Lead Qualifier ($29) + Email Automation ($29). Together they'll save you hours daily!";
-      } else if (lowerMsg.includes('schedule') || lowerMsg.includes('book')) {
-        response += "Our Booking Agent ($39) handles scheduling automatically. It integrates with your calendar and sends reminders!";
-      } else if (lowerMsg.includes('analytics') || lowerMsg.includes('data')) {
-        response += "Our AI Analytics ($49) gives you real-time insights and predictions. Would you like a demo?";
-      } else if (lowerMsg.includes('price') || lowerMsg.includes('cost')) {
-        response += "All our features are pay-per-month with no setup fees. Individual features range from $19-99/mo. What fits your budget?";
-      } else if (lowerMsg.includes('ecommerce') || lowerMsg.includes('shop')) {
-        response += "For e-commerce, I recommend: AI Chatbot + Email Automation + SMS Notifications = $97/mo (save $21!). Want me to add these?";
-      } else {
-        response += "I suggest starting with AI Chatbot ($49) - it's our most popular feature. Want me to add it to your stack?";
+      // Handle recommended features
+      if (data.recommendedFeatures && data.recommendedFeatures.length > 0) {
+        // Features were recommended - user might want to add them
       }
       
-      setChatMessages(prev => [...prev, { role: 'ai', content: response }]);
-    }, 500);
+      setChatMessages(prev => [...prev, { role: 'ai', content: data.response || data.text || "I'm here to help! What else can I assist you with?" }]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      setChatMessages(prev => [...prev, { role: 'ai', content: "Sorry, I'm having trouble connecting to my AI brain. Please try again!" }]);
+    } finally {
+      setChatLoading(false);
+    }
+  }, [chatInput, chatLoading, items]);
+
+  // Quick suggestion handlers
+  const handleQuickSuggestion = (suggestion: string) => {
+    setChatInput(suggestion);
+    setTimeout(() => handleChatSubmit(), 100);
   };
 
   return (
@@ -502,15 +515,39 @@ function CheckoutModal({ items, total, onClose, onRemove }: {
 }) {
   const [email, setEmail] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const handleCheckout = async () => {
     if (!email) return;
     setProcessing(true);
-    // Simulate checkout
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    alert('Demo mode: In production, this would redirect to Stripe checkout!');
-    setProcessing(false);
-    onClose();
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(i => ({ featureId: i.feature.id })),
+          email,
+          successUrl: `${window.location.origin}/success`,
+          cancelUrl: window.location.href
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else if (data.error) {
+        setError(data.error);
+        setProcessing(false);
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      setError('Failed to create checkout session. Please try again.');
+      setProcessing(false);
+    }
   };
   
   return (
@@ -576,11 +613,15 @@ function CheckoutModal({ items, total, onClose, onRemove }: {
               className="w-full py-4 rounded-xl bg-green-500 text-black font-bold hover:bg-green-400 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {processing ? (
-                <>Processing...</>
+                <><Loader2 className="w-5 h-5 animate-spin" /> Redirecting to Stripe...</>
               ) : (
                 <>Checkout with Stripe <ArrowRight className="w-4 h-4" /></>
               )}
             </button>
+            
+            {error && (
+              <p className="text-center text-red-400 text-sm mt-2">{error}</p>
+            )}
             
             <p className="text-center text-xs text-gray-500 mt-4">
               Secure checkout powered by Stripe. Cancel anytime.
