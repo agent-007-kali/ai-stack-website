@@ -35,6 +35,9 @@ export async function POST(request: NextRequest) {
         lineItems.push({
           price_data: {
             currency: 'usd',
+            recurring: {
+              interval: 'month'
+            },
             product_data: {
               name: feature.name,
               description: feature.description,
@@ -79,9 +82,10 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Checkout error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Checkout error:', errorMessage);
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: 'Failed to create checkout session', details: errorMessage },
       { status: 500 }
     );
   }
