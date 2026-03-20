@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { features } from '@/lib/features';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2026-02-25.clover'
 });
 
@@ -14,9 +14,17 @@ interface CheckoutRequest {
 }
 
 export async function POST(request: NextRequest) {
+  console.log('Checkout called');
+  console.log('Stripe key present:', !!process.env.STRIPE_SECRET_KEY);
+  
   try {
     const body: CheckoutRequest = await request.json();
     const { items, email, successUrl, cancelUrl } = body;
+    
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('Missing STRIPE_SECRET_KEY');
+      return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
+    }
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'No items in cart' }, { status: 400 });
