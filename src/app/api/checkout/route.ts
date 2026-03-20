@@ -14,7 +14,13 @@ export async function POST(request: NextRequest) {
     const stripeKey = process.env.STRIPE_SECRET_KEY;
     
     if (!stripeKey) {
-      return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
+      return NextResponse.json({ 
+        error: 'Stripe not configured',
+        debug: {
+          hasEnv: !!process.env.STRIPE_SECRET_KEY,
+          envKeys: Object.keys(process.env).filter(k => k.includes('STRIPE') || k.includes('stripe'))
+        }
+      }, { status: 500 });
     }
 
     const stripe = new Stripe(stripeKey, {
@@ -89,7 +95,6 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Checkout error:', errorMessage);
     return NextResponse.json(
       { error: 'Failed to create checkout session', details: errorMessage },
       { status: 500 }
