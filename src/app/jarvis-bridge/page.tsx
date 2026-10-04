@@ -2,12 +2,8 @@
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 
-// ---- EDIT THESE TWO ----
-const ACCESS_PASSWORD = "santiago"; // the password Jorge types
-const INBOX = "9qa50y@mail.instinct.com"; // where messages are delivered (via formsubmit.co)
-const REPLIES_URL =
-  "https://api.github.com/repos/agent-007-kali/ai-stack-website/issues/1/comments?per_page=100"; // Jarvis replies = comments on this issue
-// ------------------------
+const INBOX = "9qa50y@mail.instinct.com"; // email notification path (formsubmit.co), kept as is
+const API = "/api/jarvis-chat"; // private thread, served by src/app/api/jarvis-chat/route.ts
 
 const css = `
 .jb{min-height:100vh;background:#0b0f17;color:#e6edf3;line-height:1.5;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
@@ -57,74 +53,71 @@ export default function JarvisBridgePage() {
   const [unlocked, setUnlocked] = useState(false);
   const [badPw, setBadPw] = useState(false);
   type Bubble = { id: string; from: 'me' | 'jarvis'; text: string; ts: number };
+  type Msg = { id: string | number; from: 'me' | 'jarvis'; text: string; ts: number };
   const [message, setMessage] = useState('');
-  const [bubbles, setBubbles] = useState<Bubble[]>([]);
+  const [server, setServer] = useState<Msg[]>([]);
+  const [pending, setPending] = useState<Msg[]>([]);
+  const [checking, setChecking] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState(false);
   const endRef = useRef<HTMLDivElement | null>(null);
+  const pwRef = useRef('');
 
-  const unlock = (e: FormEvent) => {
+  const headers = () => ({ 'Content-Type': 'application/json', 'x-chat-password': pwRef.current });
+
+  // the server checks the password; unlocking succeeds only if it accepts it
+  const unlock = async (e: FormEvent) => {
     e.preventDefault();
-    if (pw === ACCESS_PASSWORD) {
-      setUnlocked(true);
-      setBadPw(false);
-      try {
-        const saved = localStorage.getItem('jb-mine');
-        if (saved) setBubbles(JSON.parse(saved));
-      } catch {}
-    } else {
+    pwRef.current = pw;
+    setChecking(true);
+    setBadPw(false);
+    try {
+      const res = await fetch(API, { headers: headers(), cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        setServer(data.messages || []);
+        setUnlocked(true);
+      } else {
+        setBadPw(true);
+      }
+    } catch {
       setBadPw(true);
     }
+    setChecking(false);
   };
 
-  // keep only my own bubbles in storage; Jarvis replies always come from the issue
   useEffect(() => {
-    if (!unlocked) return;
-    try {
-      localStorage.setItem('jb-mine', JSON.stringify(bubbles.filter((b) => b.from === 'me')));
-    } catch {}
     endRef.current?.scrollIntoView({ block: 'end' });
-  }, [bubbles, unlocked]);
+  }, [server, pending, unlocked]);
 
-  // poll Jarvis replies (GitHub issue comments), backing off if rate limited
+  // poll every 4s while the tab is visible; back off if the server errors
   useEffect(() => {
     if (!unlocked) return;
     let stop = false;
-    let delay = 30000;
+    let delay = 4000;
     let timer: ReturnType<typeof setTimeout>;
     const tick = async () => {
       if (stop) return;
       if (document.visibilityState === 'visible') {
         try {
-          const res = await fetch(REPLIES_URL, { headers: { Accept: 'application/vnd.github+json' } });
+          const res = await fetch(API, { headers: headers(), cache: 'no-store' });
           if (res.ok) {
-            const list = await res.json();
-            const replies: Bubble[] = (Array.isArray(list) ? list : []).map(
-              (c: { id: number; body: string; created_at: string }) => ({
-                id: 'c' + c.id,
-                from: 'jarvis' as const,
-                text: c.body,
-                ts: Date.parse(c.created_at),
-              })
+            const data = await res.json();
+            const list: Msg[] = data.messages || [];
+            setServer((prev) =>
+              prev.length === list.length && prev.every((m, i) => m.id === list[i].id) ? prev : list
             );
-            setBubbles((prev) => {
-              const mine = prev.filter((b) => b.from === 'me');
-              const next = [...mine, ...replies].sort((x, y) => x.ts - y.ts);
-              const same =
-                next.length === prev.length && next.every((b, i) => b.id === prev[i].id);
-              return same ? prev : next;
-            });
-            delay = 30000;
+            delay = 4000;
           } else {
-            delay = Math.min(delay * 2, 300000);
+            delay = Math.min(delay * 2, 60000);
           }
         } catch {
-          delay = Math.min(delay * 2, 300000);
+          delay = Math.min(delay * 2, 60000);
         }
       }
       timer = setTimeout(tick, delay);
     };
-    tick();
+    timer = setTimeout(tick, delay);
     return () => {
       stop = true;
       clearTimeout(timer);
@@ -139,11 +132,16 @@ export default function JarvisBridgePage() {
     if (hp) return;
     setSending(true);
     setSendError(false);
-    const mine: Bubble = { id: 'm' + Date.now(), from: 'me', text, ts: Date.now() };
-    setBubbles((prev) => [...prev, mine]); // show immediately
+    const tmp: Msg = { id: 'p' + Date.now(), from: 'me', text, ts: Date.now() };
+    setPending((p) => [...p, tmp]); // show immediately
     setMessage('');
     try {
-      const res = await fetch('https://formsubmit.co/ajax/' + INBOX, {
+      const res = await fetch(API, { method: 'POST', headers: headers(), body: JSON.stringify({ text }) });
+      if (!res.ok) throw new Error('send failed');
+      const data = await res.json();
+      setServer((prev) => (prev.some((m) => m.id === data.message.id) ? prev : [...prev, data.message]));
+      // email notification so Jarvis is woken right away (best effort)
+      fetch('https://formsubmit.co/ajax/' + INBOX, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
@@ -152,16 +150,16 @@ export default function JarvisBridgePage() {
           _subject: 'Mensaje de Jorge desde jarvis-bridge',
           _template: 'table',
         }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || String(data.success) === 'false') throw new Error('send failed');
+      }).catch(() => {});
     } catch {
       setSendError(true);
-      setBubbles((prev) => prev.filter((b) => b.id !== mine.id));
       setMessage(text);
     }
+    setPending((p) => p.filter((m) => m.id !== tmp.id));
     setSending(false);
   };
+
+  const bubbles = [...server, ...pending].sort((x, y) => x.ts - y.ts);
 
   return (
     <main className="jb">
@@ -235,7 +233,7 @@ export default function JarvisBridgePage() {
                   autoComplete="off"
                   autoCapitalize="none"
                 />
-                <button type="submit">Enter</button>
+                <button type="submit" disabled={checking}>{checking ? '...' : 'Enter'}</button>
               </div>
             </form>
             {badPw && <p className="err">Clave incorrecta. Wrong password, try again.</p>}
