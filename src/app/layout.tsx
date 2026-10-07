@@ -2,23 +2,30 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI Stack Agency - Build Your AI Stack | ai-solutions.company",
-  description: "Build your perfect AI stack with our AI-powered sales agent. Modular AI capabilities. Pay per feature. Live in 60 seconds. Powered by OpenClaw.",
-  keywords: ["AI stack", "AI agent", "build your stack", "OpenClaw", "AI chatbot", "automation"],
+  metadataBase: new URL("https://ai-solutions.company"),
+  title: "AI Solutions | Local-first accounting agents & AI sessions",
+  description:
+    "AI Solutions brings local-first accounting assistance, technical and protective agents, and phone access to small UK firms. Explore the system and book an AI session.",
+  keywords: [
+    "AI Solutions",
+    "local AI",
+    "accounting assistant",
+    "AI agents",
+    "AI sessions London",
+  ],
   openGraph: {
-    title: "AI Stack Agency - Build Your AI Stack",
-    description: "Build your perfect AI stack. AI-powered sales agent helps you choose. Pay per feature. Live in 60 seconds.",
+    title: "AI Solutions | Local-first accounting agents & AI sessions",
+    description:
+      "AI Solutions brings local-first accounting assistance, technical and protective agents, and phone access to small UK firms. Explore the system and book an AI session.",
     type: "website",
-    url: "https://ai-solutions.company",
-    siteName: "AI Stack Agency"
+    url: "https://ai-solutions.company/",
+    siteName: "AI Solutions",
   },
   twitter: {
-    card: "summary_large_image",
-    title: "AI Stack Agency - Build Your AI Stack",
-    description: "Build your perfect AI stack. AI-powered sales agent helps you choose. Pay per feature."
-  },
-  icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>",
+    card: "summary",
+    title: "AI Solutions | Local-first accounting agents & AI sessions",
+    description:
+      "AI Solutions brings local-first accounting assistance, technical and protective agents, and phone access to small UK firms. Explore the system and book an AI session.",
   },
 };
 
