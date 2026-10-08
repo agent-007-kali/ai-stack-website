@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Activity,
   ArrowRight,
@@ -7,8 +9,10 @@ import {
   Info,
   Shield,
 } from "lucide-react";
+import { useState } from "react";
 import BrandLogo from "@/components/landing/BrandLogo";
 import SiteHeader from "@/components/landing/SiteHeader";
+import WelcomeGate from "@/components/landing/WelcomeGate";
 import {
   HeroVisual,
   PhoneConversation,
@@ -112,237 +116,124 @@ const QUESTIONS = [
 ];
 
 export default function Home() {
+  const [welcomeComplete, setWelcomeComplete] = useState(false);
+
   return (
     <div className="ai-solutions">
+      {!welcomeComplete && (
+        <WelcomeGate onComplete={() => setWelcomeComplete(true)} />
+      )}
       <SiteHeader />
 
       <main id="main-content" tabIndex={-1}>
         {/* Hero ---------------------------------------------------- */}
-        <section className="as-hero">
-          <div className="as-container as-hero-grid">
-            <div>
-              <p className="as-eyebrow">AI Solutions for small UK firms</p>
-              <h1 className="as-h1">
-                Your accounts. Your computer.{" "}
-                <span className="as-em">Your AI team.</span>
+        <section className="as-hero" aria-labelledby="hero-title">
+          <div className="as-container as-hero__grid">
+            <div className="as-hero__content">
+              <h1 className="as-hero__title" id="hero-title">
+                Accounting work with local AI agents.
               </h1>
-              <p className="as-lead">
-                An accounting assistant that works on your own computer, a
-                technical agent that keeps the system running, and access from
-                your phone. Less chasing and checking. More time to understand
-                the numbers and advise your clients.
+              <p className="as-hero__lead">
+                Prepare, check and explain figures using AI running on your own
+                computer. Keep your documents where they belong. Review every
+                answer before you accept it.
               </p>
-              <p className="as-availability">
-                We have it at AI Solutions. Talk to us about putting it to work
-                in your firm.
-              </p>
-
-              <div className="as-actions as-gap-top-sm">
-                <a className="as-btn as-btn-primary" href="#system">
-                  Explore the system
+              <div className="as-hero__actions">
+                <a className="as-btn as-btn--primary" href="#system">
+                  See how it works
                   <ArrowRight aria-hidden="true" size={18} />
                 </a>
-                <a className="as-btn as-btn-secondary" href="#classes">
-                  Build your first AI agent
+                <a className="as-btn as-btn--ghost" href={CONTACT_EMAIL}>
+                  Talk to AI Solutions
                 </a>
               </div>
-
-              <ul className="as-hero-points">
+              <ul className="as-hero__points">
                 <li>
                   <Check aria-hidden="true" size={16} />
-                  Local-first document processing
+                  Local-first processing - no blanket upload of your books
                 </li>
                 <li>
                   <Check aria-hidden="true" size={16} />
-                  People approve important actions
+                  Evidence-led answers with sources you can trace
                 </li>
                 <li>
                   <Check aria-hidden="true" size={16} />
-                  Phone access to your own machine
+                  Always-on guardrails; you stay in control
                 </li>
               </ul>
             </div>
-
-            <div>
+            <div className="as-hero__visual" aria-hidden="true">
               <HeroVisual />
             </div>
           </div>
         </section>
 
-        {/* The system ---------------------------------------------- */}
+        {/* The system ----------------------------------------------- */}
         <section className="as-section" id="system" tabIndex={-1}>
           <div className="as-container">
             <p className="as-eyebrow">The AI Solutions system</p>
-            <h2 className="as-h2">
-              An AI team on your machine. You stay in control.
-            </h2>
+            <h2 className="as-h2">Agents that do the prep. You keep the judgement.</h2>
             <p className="as-lead">
-              Give the repetitive work to an agent, not another dashboard. Our
-              local-first system brings accounts assistance, technical support
-              and protective checks together on your own computer. Your original
-              documents stay on client hardware in the local setup.
+              Each agent has a clear role. None is built to replace your
+              accountant. They reduce manual work, surface gaps and help you
+              explain your numbers with confidence.
             </p>
 
-            <div className="as-cards as-gap-top">
-              {SYSTEM_CARDS.map((card) => {
-                const Icon = card.icon;
-                return (
-                  <article className="as-card" key={card.title}>
-                    <span className="as-card-icon">
-                      <Icon aria-hidden="true" size={22} />
-                    </span>
-                    <h3 className="as-h3">{card.title}</h3>
-                    <p className="as-body">{card.body}</p>
-                  </article>
-                );
-              })}
+            <div className="as-grid as-grid--cards as-gap-top">
+              {SYSTEM_CARDS.map((card) => (
+                <article className="as-card" key={card.title}>
+                  <div className="as-card__icon">
+                    <card.icon aria-hidden="true" size={20} />
+                  </div>
+                  <h3 className="as-h3">{card.title}</h3>
+                  <p className="as-body">{card.body}</p>
+                </article>
+              ))}
             </div>
+          </div>
+        </section>
 
-            <div className="as-phone-panel">
-              <h3 className="as-h3">
-                Your phone is the control room. Your computer does the work.
-              </h3>
-              <p className="as-body">
-                Ask for a progress update, check an issue and review a draft
-                from your phone through an authenticated connection to your
-                computer. Your machine needs to be online for remote access.
-                Sharing a result with your phone is a deliberate action, not a
-                claim that no information ever leaves the computer.
-              </p>
+        {/* System diagram -------------------------------------------- */}
+        <section className="as-section" aria-labelledby="diagram-title">
+          <div className="as-container">
+            <h2 className="as-h2" id="diagram-title">
+              How information flows.
+            </h2>
+            <p className="as-lead">
+              A clear, auditable flow. Local documents stay local. Remote access
+              is optional and authenticated.
+            </p>
 
+            <div className="as-gap-top">
               <SystemDiagram />
-
-              <p className="as-caption as-gap-top-sm">
-                Illustrative architecture. Hardware, access controls and
-                workflow scope are agreed for each setup.
-              </p>
-
-              <div className="as-actions as-gap-top-sm">
-                <a className="as-btn as-btn-primary" href={CONTACT_EMAIL}>
-                  Discuss your firm&apos;s setup
-                  <ArrowRight aria-hidden="true" size={18} />
-                </a>
-              </div>
             </div>
           </div>
         </section>
 
-        {/* Accountant of the future -------------------------------- */}
-        <section className="as-section" id="future-accountant" tabIndex={-1}>
+        {/* Comparison ------------------------------------------------ */}
+        <section className="as-section" aria-labelledby="compare-title">
           <div className="as-container">
-            <p className="as-eyebrow">The accountant of the future</p>
-            <h2 className="as-h2">
-              Less time gathering numbers. More time explaining what they mean.
+            <h2 className="as-h2" id="compare-title">
+              Compare approaches.
             </h2>
             <p className="as-lead">
-              The accountant of the future is still the accountable expert. The
-              agent prepares the evidence, spots things that need a closer look
-              and drafts the next step. You make the judgement, approve the work
-              and help the client make better decisions.
+              The choice is about control and data location, not just features.
             </p>
 
-            <div className="as-panel-grid as-gap-top">
-              <div className="as-card">
-                <h3 className="as-h3">The agent prepares</h3>
-                <ul className="as-check-list">
-                  <li>
-                    <Check aria-hidden="true" size={18} />
-                    Finds relevant documents and supporting figures
-                  </li>
-                  <li>
-                    <Check aria-hidden="true" size={18} />
-                    Flags gaps and differences for review
-                  </li>
-                  <li>
-                    <Check aria-hidden="true" size={18} />
-                    Brings records together into a working summary
-                  </li>
-                  <li>
-                    <Check aria-hidden="true" size={18} />
-                    Prepares drafts and reports what still needs attention
-                  </li>
-                </ul>
+            <div className="as-compare as-gap-top-sm">
+              <div className="as-compare__header">
+                <span>Approach</span>
+                <span>Cloud accounting assistant</span>
+                <span>AI Solutions local setup</span>
               </div>
-
-              <div className="as-card">
-                <h3 className="as-h3">The accountant decides</h3>
-                <ul className="as-check-list">
-                  <li>
-                    <Check aria-hidden="true" size={18} />
-                    Checks the evidence and resolves exceptions
-                  </li>
-                  <li>
-                    <Check aria-hidden="true" size={18} />
-                    Approves important actions and communications
-                  </li>
-                  <li>
-                    <Check aria-hidden="true" size={18} />
-                    Applies professional judgement
-                  </li>
-                  <li>
-                    <Check aria-hidden="true" size={18} />
-                    Advises the client and owns the final work
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <p className="as-body as-strong as-gap-top-sm">
-              We have the system. The next step is fitting it to the way your
-              firm works.
-            </p>
-
-            <div className="as-actions as-gap-top-sm">
-              <a className="as-btn as-btn-primary" href={CONTACT_EMAIL}>
-                Talk to AI Solutions
-                <ArrowRight aria-hidden="true" size={18} />
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* Honest comparison ---------------------------------------- */}
-        <section className="as-section" aria-labelledby="comparison-title">
-          <div className="as-container">
-            <h2 className="as-h2" id="comparison-title">
-              Cloud accounting tools are useful. Our starting point is
-              different.
-            </h2>
-            <p className="as-lead">
-              FreeAgent and QuickBooks Online provide cloud accounting,
-              including automation features. AI Solutions focuses on a
-              local-first assistant working with your own documents and approved
-              tasks on your computer. The difference is the working model, not a
-              claim that cloud tools have no AI.
-            </p>
-
-            <div className="as-table-wrap as-gap-top">
-              <table className="as-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Approach</th>
-                    <th scope="col">FreeAgent / QuickBooks Online</th>
-                    <th scope="col">AI Solutions local setup</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {COMPARISON_ROWS.map((row) => (
-                    <tr key={row.approach}>
-                      <th scope="row">{row.approach}</th>
-                      <td>{row.cloud}</td>
-                      <td>{row.local}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="as-stack-compare as-gap-top">
               {COMPARISON_ROWS.map((row) => (
-                <div className="as-compare-card" key={row.approach}>
-                  <h3>{row.approach}</h3>
+                <div className="as-compare__row" key={row.approach}>
                   <div className="as-compare-field">
-                    <span>FreeAgent / QuickBooks Online</span>
+                    <span>Approach</span>
+                    <p>{row.approach}</p>
+                  </div>
+                  <div className="as-compare-field">
+                    <span>Cloud accounting assistant</span>
                     <p>{row.cloud}</p>
                   </div>
                   <div className="as-compare-field">
@@ -475,6 +366,9 @@ export default function Home() {
               </li>
               <li>
                 <a href={CONTACT_EMAIL}>Contact AI Solutions</a>
+              </li>
+              <li>
+                <a href="/privacy">Privacy</a>
               </li>
             </ul>
           </div>
