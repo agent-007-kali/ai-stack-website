@@ -7,7 +7,6 @@ import {
   formatSessionTime,
   isSessionOpen,
   landingSessions,
-  previousMeetup,
 } from "@/lib/landing-sessions";
 
 const CHECK_INTERVAL_MS = 30_000;
@@ -91,28 +90,6 @@ export default function LumaSessions() {
           })}
         </ul>
       )}
-
-      <div className="as-past-card">
-        <div className="as-card-title-row">
-          <h3 className="as-h3 as-h3--flush">Intro to Linux with AI Agents</h3>
-          <span className="as-pill">Previous meetup</span>
-        </div>
-        <p className="as-body">
-          An informal meetup with live demonstrations and questions. The 5 October
-          event has ended; a new date is not listed yet.
-        </p>
-        <div className="as-actions as-past-actions">
-          <a className="as-inline-link" href={previousMeetup.url}>
-            View the previous meetup on Luma
-          </a>
-          <a
-            className="as-btn as-btn-secondary"
-            href="mailto:tradersbooking@gmail.com"
-          >
-            Ask about the next meetup
-          </a>
-        </div>
-      </div>
     </>
   );
 }

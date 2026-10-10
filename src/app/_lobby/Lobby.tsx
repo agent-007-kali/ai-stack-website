@@ -5,9 +5,8 @@ import { Stage } from './Stage';
 import { Chat } from './Chat';
 import type { Need } from './types';
 
-const TRY = 'https://files.instinct.com/4i4wfqwv2zn3-ai-solutions-try-it';
 const BOOK = 'mailto:tradersbooking@gmail.com?subject=Book%20a%201%3A1%20with%20AI%20Solutions';
-const JARVIS = 'mailto:9qa50y@mail.instinct.com';
+const JARVIS = 'mailto:tradersbooking@gmail.com?subject=Write%20to%20Jarvis';
 
 function Lobby() {
     const [lit, setLit] = useState<Need | null>(null);
@@ -28,14 +27,14 @@ function Lobby() {
         <div className="pointer">Sol points the way</div>
 
         <nav className="doors" aria-label="Choose a door">
-            <a className={'door d1' + (lit === 'agent' ? ' lit' : '')} href={TRY} target="_blank" rel="noopener noreferrer">
+            <Link className={'door d1' + (lit === 'agent' ? ' lit' : '')} href="/try">
                 <div className="glow" />
                 <div className="icon"><img src="/lobby/sol.png" alt="" /></div>
                 <div className="num">Door 1</div>
                 <h2>See an agent in action</h2>
                 <p>Come and try Sol. She is happy to show off.</p>
                 <div className="go">Try Sol <b>→</b></div>
-            </a>
+            </Link>
             <Link className={'door d2' + (lit === 'learn' ? ' lit' : '')} href="/learn">
                 <div className="glow" />
                 <div className="icon ana"><img src="/lobby/ana.jpg" alt="" /></div>
@@ -65,7 +64,7 @@ function Lobby() {
             <div><strong>Jarvis&apos;s corner</strong><p>Runs the house: the diary, the inbox and the doors.</p></div>
             <a href={JARVIS}>Write to Jarvis</a>
         </section>
-        <footer className="foot">AI Solutions · Sol, Ana, Tally and Jarvis</footer>
+        <footer className="foot">AI Solutions · Sol, Ana, Tally and Jarvis · <Link href="/privacy">Privacy</Link></footer>
     </>;
 }
 

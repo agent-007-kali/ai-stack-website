@@ -353,12 +353,6 @@ export default function Home() {
               <p className="as-course-meta as-gap-top-sm">
                 90 minutes · The Lighterman, King&apos;s Cross, London
               </p>
-              <p className="as-body">
-                Luma currently lists a £50 launch price for the first five
-                bookings, paid on the day by cash or bank transfer. RSVP is
-                free; the session is not. Check the current offer on Luma before
-                registering.
-              </p>
               <p className="as-note as-gap-top-sm">
                 All times are London time. Registration and current
                 availability are handled by Luma.
