@@ -1,0 +1,13 @@
+.hw{width:min(960px,92vw);margin:56px auto;text-align:center;color:#d6def2;font-family:inherit}
+.hw-eyebrow{color:#ffc62d;font-size:13px;letter-spacing:.18em;text-transform:uppercase}
+.hw h2{font-size:clamp(28px,5vw,44px);margin:10px 0;color:#f2f5ff}
+.hw-sub{max-width:620px;margin:0 auto 28px;color:#8a98c0;line-height:1.55}
+.hw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.hw-card{background:linear-gradient(180deg,#0e1a3d,#0a1226);border:1px solid #22305a;border-radius:14px;padding:22px 18px;text-align:left}
+.hw-badge{width:36px;height:36px;border-radius:50%;background:#ffc62d;margin-bottom:14px;box-shadow:0 0 20px rgba(255,198,45,.35)}
+.hw-card h3{margin:0 0 6px;font-size:17px;color:#f2f5ff}
+.hw-price{color:#ffc62d;font-size:26px;font-weight:700;margin-bottom:8px}
+.hw-card p{margin:0;color:#8a98c0;font-size:14px;line-height:1.5}
+.hw-care{margin:22px 0 14px;color:#8a98c0;font-size:14px}
+.hw-cta{display:inline-block;background:#ffc62d;color:#0a1226;font-weight:700;padding:12px 24px;border-radius:999px;text-decoration:none}
+@media(max-width:700px){.hw-grid{grid-template-columns:1fr}}
