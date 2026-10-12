@@ -1,5 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import Link from 'next/link';
 import './box-detail.css';
 
@@ -16,6 +14,9 @@ export type BoxModel = {
     vram: string;
     blurb: string;
     alt: string;
+    img: 'box' | 'pro' | 'max';
+    imgW: number;
+    imgH: number;
     headline: SpecRow[];
     full: SpecRow[];
 };
@@ -30,6 +31,9 @@ export const BOXES: Record<BoxSlug, BoxModel> = {
         vram: '24GB',
         blurb: 'Our entry machine. AI that runs on your own desktop.',
         alt: 'Illustrative tower render of the AI Solutions Box Vega',
+        img: 'box',
+        imgW: 445,
+        imgH: 1024,
         headline: [
             { label: 'Power supply', value: 'Corsair RM850e 850W' },
             { label: 'Memory', value: '32GB DDR5-6000 (2×16GB)' },
@@ -55,6 +59,9 @@ export const BOXES: Record<BoxSlug, BoxModel> = {
         vram: '32GB',
         blurb: 'Step up from the Box for more demanding work.',
         alt: 'Illustrative tower render of the AI Solutions Box Pro Altair',
+        img: 'pro',
+        imgW: 461,
+        imgH: 1024,
         headline: [
             { label: 'Power supply', value: 'Corsair RM850e 850W' },
             { label: 'Memory', value: '32GB DDR5-6000' },
@@ -80,6 +87,9 @@ export const BOXES: Record<BoxSlug, BoxModel> = {
         vram: '32GB',
         blurb: 'Our top machine in the range.',
         alt: 'Illustrative tower render of the AI Solutions Box Max Rigel',
+        img: 'max',
+        imgW: 569,
+        imgH: 1024,
         headline: [
             { label: 'Power supply', value: 'Corsair RM1000e 1000W' },
             { label: 'Memory', value: '32GB DDR5-6000' },
@@ -101,18 +111,9 @@ export const BOXES: Record<BoxSlug, BoxModel> = {
 const mailto = (name: string) =>
     `mailto:tradersbooking@gmail.com?subject=${encodeURIComponent(`AI Solutions Box ${name} - order enquiry`)}`;
 
-function imageExists(slug: BoxSlug) {
-    try {
-        return fs.existsSync(path.join(process.cwd(), 'public', 'boxes', `${slug}.png`));
-    } catch {
-        return false;
-    }
-}
-
 export function BoxDetail({ slug }: { slug: BoxSlug }) {
     const box = BOXES[slug];
-    const imgSrc = `/boxes/${slug}.png`;
-    const hasImage = imageExists(slug);
+    const imgSrc = `/boxes/${box.img}.png`;
 
     return (
         <div className="bxpage">
@@ -136,13 +137,7 @@ export function BoxDetail({ slug }: { slug: BoxSlug }) {
 
                 <div className="bx-grid">
                     <figure className="bx-shot">
-                        {hasImage ? (
-                            <img src={imgSrc} alt={box.alt} width={640} height={640} />
-                        ) : (
-                            <div className="bx-shot-pending" role="img" aria-label="Product image pending">
-                                Product image pending
-                            </div>
-                        )}
+                        <img src={imgSrc} alt={box.alt} width={box.imgW} height={box.imgH} />
                         <figcaption>Illustrative product image. Final enclosure may differ.</figcaption>
                     </figure>
 
