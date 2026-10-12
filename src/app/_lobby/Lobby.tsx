@@ -3,6 +3,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Stage } from './Stage';
 import { Chat } from './Chat';
+import { SalesTerminal } from './SalesTerminal';
+import { HardwareSection } from './HardwareSection';
 import type { Need } from './types';
 
 const BOOK = 'mailto:tradersbooking@gmail.com?subject=Book%20a%201%3A1%20with%20AI%20Solutions';
@@ -52,6 +54,10 @@ function Lobby() {
                 <div className="go">Book by email <b>→</b></div>
             </a>
         </nav>
+
+        <SalesTerminal />
+
+        <HardwareSection />
 
         <a className="acct" href="/accounting">
             <span className="tav"><img src="/lobby/tally.jpg" alt="Tally, the green accountant of the family" /></span>
