@@ -36,7 +36,12 @@ export function SalesTerminal() {
     useEffect(() => {
         let i = 0;
         const t = setInterval(() => {
-            setLines((l) => [...l, BOOT[i]]);
+            const line = BOOT[i];
+            if (!line) {
+                clearInterval(t);
+                return;
+            }
+            setLines((l) => [...l, line]);
             i += 1;
             if (i >= BOOT.length) clearInterval(t);
         }, 550);
