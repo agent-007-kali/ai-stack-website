@@ -1,51 +1,68 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import './sales-terminal.css';
+import {
+    bootLines,
+    scriptReply,
+    SALES_CHAT_LIMITS,
+    PERSONA_LABEL,
+    DISCLOSURE,
+} from '@/lib/sales-chat/script';
+import type { Persona, TerminalLine } from '@/lib/sales-chat/script';
+import { requestSalesReply } from '@/lib/sales-chat/adapter';
 
-type Line = { who: 'sys' | 'rep' | 'visitor'; text: string };
+const MAX_LINES = SALES_CHAT_LIMITS.maxLines;
 
-const MAIL = 'mailto:tradersbooking@gmail.com?subject=Free%20consultation%20-%20AI%20Solutions';
+function pushBounded(current: TerminalLine[], next: TerminalLine[]): TerminalLine[] {
+    const merged = [...current, ...next];
+    return merged.length > MAX_LINES ? merged.slice(merged.length - MAX_LINES) : merged;
+}
 
-const BOOT: Line[] = [
-    { who: 'sys', text: '$ connecting to ai-solutions.company ... ok' },
-    { who: 'sys', text: 'session opened - demo sales desk - scripted replies' },
-    { who: 'rep', text: 'Hi, I am Jarvis, AI Sales Consultant. Ask me anything about AI Solutions.' },
-];
-
-function reply(q: string): string {
-    const s = q.toLowerCase();
-    if (/(price|cost|how much|fee|£|box|hardware|computer|machine)/.test(s))
-        return 'The AI Solutions Box runs your AI on the machine: Box £2,995, Box Pro £3,995, Box Max £7,995, custom-built to order with 3-week delivery. AI Solutions OS Care is £99/month. For anything else, type "book" to open an email to the team about a free consultation.';
-    if (/^\s*1\b|enquir|email|lead/.test(s))
-        return 'An agent can read each enquiry, draft a reply and offer open slots, and you approve what matters. Type "book" to open an email to the team about a free consultation.';
-    if (/^\s*2\b|book|slot|call|schedule/.test(s))
-        return 'Booking and rescheduling without the phone tag. Type "book" to open an email to the team about a free consultation.';
-    if (/^\s*3\b|invoice|chase|payment/.test(s))
-        return 'An agent can send payment reminders on a schedule and flag the late ones to you. Type "book" to open an email to the team about a free consultation.';
-    if (/what|do you|who|about|help/.test(s))
-        return 'We make your business agent-ready. Agents answer your enquiries, book the work and chase invoices, and you approve what matters. Which would help you most: [1] enquiries [2] bookings [3] invoices?';
-    return 'I cannot answer that in this demo yet. Type "book" to open an email to the team about a free consultation.';
+function newSessionId(): string {
+    try {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+            return crypto.randomUUID();
+        }
+    } catch {
+        /* fall through */
+    }
+    return 'session-' + Math.random().toString(36).slice(2, 12);
 }
 
 export function SalesTerminal() {
-    const [lines, setLines] = useState<Line[]>([]);
+    const [lines, setLines] = useState<TerminalLine[]>([]);
     const [val, setVal] = useState('');
+    const [persona, setPersona] = useState<Persona>('sol');
     const [busy, setBusy] = useState(false);
     const body = useRef<HTMLDivElement>(null);
+    const sessionRef = useRef('');
+    const busyRef = useRef(false);
+    const bootDone = useRef(false);
+    const bootIndex = useRef(0);
 
+    // Ephemeral per-page session id. Never persisted, never put in localStorage.
     useEffect(() => {
-        let i = 0;
-        const t = setInterval(() => {
-            const line = BOOT[i];
+        if (!sessionRef.current) sessionRef.current = newSessionId();
+    }, []);
+
+    // Demo boot copy, appended one line at a time. Timer cleaned up on unmount.
+    useEffect(() => {
+        const boot = bootLines();
+        const t = window.setInterval(() => {
+            const line = boot[bootIndex.current];
             if (!line) {
-                clearInterval(t);
+                window.clearInterval(t);
+                bootDone.current = true;
                 return;
             }
-            setLines((l) => [...l, line]);
-            i += 1;
-            if (i >= BOOT.length) clearInterval(t);
+            setLines((l) => pushBounded(l, [line]));
+            bootIndex.current += 1;
+            if (bootIndex.current >= boot.length) {
+                window.clearInterval(t);
+                bootDone.current = true;
+            }
         }, 550);
-        return () => clearInterval(t);
+        return () => window.clearInterval(t);
     }, []);
 
     useEffect(() => {
@@ -53,22 +70,59 @@ export function SalesTerminal() {
         if (el) el.scrollTop = el.scrollHeight;
     }, [lines]);
 
-    function send(e: React.FormEvent) {
+    async function send(e: React.FormEvent) {
         e.preventDefault();
-        const q = val.trim();
-        if (!q || busy) return;
-        setVal('');
-        setLines((l) => [...l, { who: 'visitor', text: q }]);
-        if (/^\s*book\b/i.test(q)) {
-            setLines((l) => [...l, { who: 'rep', text: 'Opening an email to the team. Send it from your email app to ask for a free consultation.' }]);
-            window.location.href = MAIL;
-            return;
+        const text = val.trim();
+        if (!text || busyRef.current) return;
+
+        // Finalise the boot animation so the intro cannot land after a reply.
+        if (!bootDone.current) {
+            bootDone.current = true;
+            const remaining = bootLines().slice(bootIndex.current);
+            bootIndex.current = bootLines().length;
+            setLines((l) => pushBounded(l, remaining));
         }
+
+        // Bounded history: prior turns only, user/assistant roles, max 8.
+        const history = lines
+            .filter((l) => l.who !== 'sys')
+            .map((l) => ({
+                role: (l.who === 'visitor' ? 'user' : 'assistant') as 'user' | 'assistant',
+                content: l.text,
+            }))
+            .slice(-SALES_CHAT_LIMITS.maxTurns);
+
+        busyRef.current = true;
         setBusy(true);
-        setTimeout(() => {
-            setLines((l) => [...l, { who: 'rep', text: reply(q) }]);
-            setBusy(false);
-        }, 900);
+        setVal('');
+        setLines((l) => pushBounded(l, [{ who: 'visitor', text }]));
+
+        const result = await requestSalesReply({
+            message: text,
+            sessionId: sessionRef.current || undefined,
+            history,
+        });
+
+        if (!result.ok) {
+            // Backend failure: keep the visitor's text and say so plainly.
+            setVal((current) => (current ? current : text));
+            setLines((l) =>
+                pushBounded(l, [
+                    { who: 'sys', text: `backend unavailable (${result.reason}) - scripted reply shown` },
+                ]),
+            );
+        }
+
+        const scripted = scriptReply(text, persona);
+        if (scripted.action?.kind === 'mailto') {
+            // Existing, user-initiated booking transport. Nothing is sent by us.
+            window.location.href = scripted.action.href;
+        }
+        setPersona(scripted.persona);
+        setLines((l) => pushBounded(l, scripted.lines));
+
+        busyRef.current = false;
+        setBusy(false);
     }
 
     return (
@@ -84,18 +138,27 @@ export function SalesTerminal() {
                             <div key={i} className="st-m st-sys">{l.text}</div>
                         ) : (
                             <div key={i} className="st-m">
-                                <span className={l.who === 'rep' ? 'st-a' : 'st-g'}>{l.who === 'rep' ? 'jarvis@ai-solutions' : 'visitor@web'}</span>
+                                <span className={l.who === 'sol' ? 'st-sol' : l.who === 'jarvis' ? 'st-jarvis' : 'st-g'}>
+                                    {l.who === 'visitor' ? 'visitor@web' : PERSONA_LABEL[l.who]}
+                                </span>
                                 <span className="st-d"> ~ $</span> {l.text}
                             </div>
                         ),
                     )}
-                    {busy && <div className="st-m st-sys">jarvis is typing ...</div>}
+                    {busy && <div className="st-m st-sys">{persona === 'sol' ? 'sol' : 'jarvis'} is typing ...</div>}
                 </div>
                 <form className="st-in" onSubmit={send}>
                     <label htmlFor="st-input" className="st-g">visitor@web<span className="st-d"> ~ $</span></label>
-                    <input id="st-input" value={val} onChange={(e) => setVal(e.target.value)} placeholder="ask about enquiries, bookings, pricing..." autoComplete="off" />
+                    <input
+                        id="st-input"
+                        value={val}
+                        onChange={(e) => setVal(e.target.value)}
+                        maxLength={SALES_CHAT_LIMITS.maxMessageChars}
+                        placeholder="ask about the Box, pricing, or type consultant..."
+                        autoComplete="off"
+                    />
                 </form>
-                <div className="st-foot">Demo desk - scripted replies, not live - Jarvis, AI Sales Consultant</div>
+                <div className="st-foot">{DISCLOSURE}</div>
             </div>
         </section>
     );

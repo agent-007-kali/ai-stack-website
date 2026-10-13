@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:sales-chat": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/sales-chat/sales-chat.test.ts"
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.11.0",
