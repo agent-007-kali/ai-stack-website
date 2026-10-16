@@ -1,0 +1,29 @@
+AI Solutions
+/
+sales
+Lobby
+
+AI SALES CONSULTANT
+
+Ask, or place an order, in one chat.
+
+Jarvis answers from our fixed product sheet - honest prices, no pressure - and can log an order for the team. Payment is never taken in this chat.
+
+ai-solutions.company / sales
+SCRIPTED DEMO, NOT LIVE
+$ connecting to ai-solutions.company / sales ... ok
+session opened - scripted demo, not live
+jarvis@ai-solutions ~ $ Hi Priya, I'm Jarvis, the AI Sales Consultant. This chat is a scripted demo, not live, so I answer from our fixed product sheet and never guess.
+jarvis@ai-solutions ~ $ Ask about Bow Bot, the AI Solutions Box, 1:1 sessions or classes - or type 'order' to place an order.
+Priya@web ~ $ How much does the AI Solutions Box cost?
+jarvis@ai-solutions ~ $ The AI Solutions Box runs your AI on your own desktop, so your work stays local. It is custom-built to order with 3-week delivery.
+jarvis@ai-solutions ~ $ • Vega - £2,995 (entry, 24GB GPU)
+jarvis@ai-solutions ~ $ • Altair (Pro) - £3,995
+jarvis@ai-solutions ~ $ • Rigel (Max) - £7,995
+jarvis@ai-solutions ~ $ AI Solutions OS Care is £99/month for updates, monitoring and support. I can take a Box order here and the team will arrange payment by reply email.
+Priya@web
+~ $
+Order
+Send
+scripted demo, not live. I never take card or payment details in chat.
+scripted demo, not live - payment is never collected in chat. Questions? tradersbooking@gmail.com
