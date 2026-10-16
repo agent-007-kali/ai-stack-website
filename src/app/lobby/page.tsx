@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { LobbyStage } from './_lobby/Lobby';
-import './_lobby/lobby.css';
+import { LobbyStage } from '../_lobby/Lobby';
+import '../_lobby/lobby.css';
 
 export const metadata: Metadata = {
     title: 'AI Solutions - we make your business agent-ready',
@@ -22,6 +22,6 @@ export const metadata: Metadata = {
     },
 };
 
-export default function Home() {
+export default function LobbyPage() {
     return <LobbyStage />;
 }
