@@ -1,0 +1,4 @@
+-- GROQ key/env names in .next/static --
+(none)
+-- api.groq.com anywhere in static --
+(none)

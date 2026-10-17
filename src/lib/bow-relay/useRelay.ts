@@ -11,8 +11,11 @@ import type { RelayChannel } from './relay';
 const POLL_MS = 4500;
 
 export type RelayStatus = 'scripted' | 'live' | 'unavailable';
+/** Which tier answered: Groq (instant), holding line (escalation) or relay (polled). */
+export type RelayMode = 'groq' | 'holding' | 'relay';
 
 type RelayMessage = { from: 'visitor' | 'advisor'; text: string; ts: number };
+type RelayResponse = { ok?: boolean; messages?: RelayMessage[]; mode?: RelayMode };
 
 export function useRelay(
   channel: RelayChannel,
@@ -21,6 +24,7 @@ export function useRelay(
   onAdvisor: (text: string) => void,
 ) {
   const [status, setStatus] = useState<RelayStatus>('scripted');
+  const [mode, setMode] = useState<RelayMode | null>(null);
   const seenAdvisor = useRef(0);
   const onAdvisorRef = useRef(onAdvisor);
 
@@ -28,8 +32,14 @@ export function useRelay(
     onAdvisorRef.current = onAdvisor;
   }, [onAdvisor]);
 
-  const absorb = useCallback((messages: RelayMessage[]) => {
+  const absorb = useCallback((messages: RelayMessage[], sync = false) => {
     const advisor = messages.filter((m) => m.from === 'advisor');
+    if (sync) {
+      // Groq / holding tier: every response is a fresh reply for this message,
+      // so it is always new (the relay counter below must not swallow it).
+      for (const m of advisor) onAdvisorRef.current(m.text);
+      return;
+    }
     if (advisor.length > seenAdvisor.current) {
       for (const m of advisor.slice(seenAdvisor.current)) onAdvisorRef.current(m.text);
       seenAdvisor.current = advisor.length;
@@ -44,14 +54,17 @@ export function useRelay(
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ channel, sessionId, text }),
         });
-        const data = (await res.json().catch(() => null)) as
-          | { ok?: boolean; messages?: RelayMessage[] }
-          | null;
+        const data = (await res.json().catch(() => null)) as RelayResponse | null;
         if (!res.ok || !data?.ok) {
           setStatus('unavailable');
           return false;
         }
-        absorb(data.messages ?? []);
+        // Only the GitHub-issue relay returns an async reply to poll for. A
+        // Groq answer (or holding line) already arrives in this response.
+        const nextMode: RelayMode =
+          data.mode === 'groq' || data.mode === 'holding' ? data.mode : 'relay';
+        setMode(nextMode);
+        absorb(data.messages ?? [], nextMode !== 'relay');
         setStatus('live');
         return true;
       } catch {
@@ -63,7 +76,7 @@ export function useRelay(
   );
 
   useEffect(() => {
-    if (!active || status !== 'live') return;
+    if (!active || status !== 'live' || mode !== 'relay') return;
     let stopped = false;
     const tick = async () => {
       if (stopped || document.visibilityState !== 'visible') return;
@@ -72,9 +85,7 @@ export function useRelay(
           `/api/bow-relay?channel=${channel}&sessionId=${encodeURIComponent(sessionId)}`,
           { cache: 'no-store' },
         );
-        const data = (await res.json().catch(() => null)) as
-          | { ok?: boolean; messages?: RelayMessage[] }
-          | null;
+        const data = (await res.json().catch(() => null)) as RelayResponse | null;
         if (!res.ok || !data?.ok) {
           setStatus('unavailable');
           return;
@@ -94,7 +105,7 @@ export function useRelay(
       window.clearInterval(id);
       document.removeEventListener('visibilitychange', onVis);
     };
-  }, [active, status, channel, sessionId, absorb]);
+  }, [active, status, mode, channel, sessionId, absorb]);
 
-  return { status, send };
+  return { status, mode, send };
 }

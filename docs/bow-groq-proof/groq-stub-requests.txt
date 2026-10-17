@@ -1,0 +1,4 @@
+{"model":"llama-3.3-70b-versatile","persona":"Bow Bot","priorUserTurns":0,"systemHead":"You are Bow Bot, the chat assistant on t","hasKeyHeader":true,"at":"2026-10-17T12:49:22.069Z"}
+{"model":"llama-3.3-70b-versatile","persona":"Bow Bot","priorUserTurns":1,"systemHead":"You are Bow Bot, the chat assistant on t","hasKeyHeader":true,"at":"2026-10-17T12:49:27.075Z"}
+{"model":"llama-3.3-70b-versatile","persona":"Bow Bot","priorUserTurns":0,"systemHead":"You are Bow Bot, the chat assistant on t","hasKeyHeader":true,"at":"2026-10-17T12:49:32.318Z"}
+{"model":"llama-3.3-70b-versatile","persona":"Bow Sales Customer Advisor","priorUserTurns":0,"systemHead":"You are Bow Sales Customer Advisor, the ","hasKeyHeader":true,"at":"2026-10-17T12:49:39.010Z"}

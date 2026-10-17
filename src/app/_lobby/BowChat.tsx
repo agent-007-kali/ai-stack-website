@@ -51,7 +51,7 @@ export function BowChat() {
     setMsgs((x) => [...x, { from: 'bowbot', text: `[live] ${text}` }]);
   }, []);
 
-  const { status, send: relaySend } = useRelay('try', sessionId, started, onAdvisor);
+  const { status, mode, send: relaySend } = useRelay('try', sessionId, started, onAdvisor);
 
   useEffect(() => {
     const el = end.current;
@@ -88,7 +88,9 @@ export function BowChat() {
 
   const statusText =
     status === 'live'
-      ? 'live - relaying to the owner'
+      ? mode === 'relay'
+        ? 'live - relaying to the owner'
+        : 'live - instant AI reply'
       : status === 'unavailable'
         ? 'live unavailable - scripted demo'
         : FALLBACK_LABEL;

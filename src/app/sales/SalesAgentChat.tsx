@@ -78,7 +78,7 @@ export function SalesAgentChat() {
     setBusy(false);
   }, []);
 
-  const { status, send: relaySend } = useRelay('sales', sessionId, stage === 'chat', onAdvisor);
+  const { status, mode, send: relaySend } = useRelay('sales', sessionId, stage === 'chat', onAdvisor);
 
   useEffect(() => {
     const el = body.current;
@@ -316,8 +316,12 @@ export function SalesAgentChat() {
 
         <div className="sa-foot">
           <span>
-            {status === 'live' ? 'live - relaying to the team' : DISCLOSURE}. I never take card or
-            payment details in chat.
+            {status === 'live'
+              ? mode === 'relay'
+                ? 'live - relaying to the team'
+                : 'live - instant AI reply'
+              : DISCLOSURE}
+            . I never take card or payment details in chat.
           </span>
           {adapterNote && <span className="sa-foot__note"> {adapterNote}</span>}
         </div>

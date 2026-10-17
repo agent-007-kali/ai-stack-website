@@ -1,12 +1,21 @@
 // src/app/api/bow-relay/route.ts
 // Live relay for Bow Chat (/try) and the Bow Sales chat (/sales). The browser
-// only talks to this route; the route talks to a private GitHub issue thread
-// per session (see src/lib/bow-relay/relay.ts). No AI/provider key is involved.
+// only talks to this route.
 //
-// The route never returns an issue number, repo detail or token/upstream error
-// to the client - only generic states.
+// Answer chain (owner update on #81):
+//   1. Groq-first tier (src/lib/bow-relay/groq.ts): instant OpenAI-compatible
+//      reply, plus the holding line + team forward for price/payment/custom
+//      promise questions. GROQ_API_KEY comes from the server env only and is
+//      never logged, returned or sent to the client.
+//   2. GitHub-issue relay per session (see src/lib/bow-relay/relay.ts) when the
+//      Groq tier skips - missing key, rate limit, budget or upstream error.
+//   3. The client keeps its labelled scripted demo behind that.
+//
+// The route never returns an issue number, repo detail, tier reason or
+// token/upstream error to the client - only generic states.
 
 import { NextRequest, NextResponse } from 'next/server';
+import { answerWithGroq } from '@/lib/bow-relay/groq';
 import {
   RELAY_LIMITS,
   RelayConfigError,
@@ -32,6 +41,12 @@ function badRequest(error: string) {
 
 function sessionKey(channel: string, sessionId: string) {
   return `${channel}:${sessionId}`;
+}
+
+function clientIp(req: NextRequest): string {
+  const forwarded = req.headers.get('x-forwarded-for');
+  const first = forwarded?.split(',')[0]?.trim();
+  return first || req.headers.get('x-real-ip')?.trim() || 'unknown';
 }
 
 export async function POST(req: NextRequest) {
@@ -62,9 +77,26 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Tier 1: Groq-first. Answers synchronously (and covers the holding line
+    // for price/payment/custom-promise questions). Any skip - no key, per-IP
+    // limit, daily budget or upstream error - falls through silently.
+    const groq = await answerWithGroq(channel, sessionId, message, clientIp(req));
+    if (groq.tier === 'answer') {
+      return NextResponse.json(
+        {
+          ok: true,
+          messages: [{ from: 'advisor', text: groq.reply, ts: Date.now() }],
+          mode: groq.source,
+        },
+        { headers: NO_STORE },
+      );
+    }
+
+    // Tier 2: private GitHub-issue relay (as specced in #81). The visitor's
+    // message is posted to the session thread and advisor replies are polled.
     await postVisitorMessage(channel, sessionId, message);
     const messages = await readThread(channel, sessionId);
-    return NextResponse.json({ ok: true, messages }, { headers: NO_STORE });
+    return NextResponse.json({ ok: true, messages, mode: 'relay' }, { headers: NO_STORE });
   } catch (err) {
     if (err instanceof RelayConfigError) return unavailable();
     if (err instanceof RelayUpstreamError) return unavailable();
