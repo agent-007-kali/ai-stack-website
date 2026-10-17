@@ -122,6 +122,89 @@
   background: var(--bow-amber);
 }
 
+/* Trial gate: mode toggle, remaining-message bar and the blocked notice.
+   All scoped under .bow-chat so the shared lobby stylesheet is untouched. */
+.bow-chat .msg {
+  white-space: pre-wrap;
+}
+
+.bow-chat .mode-toggle {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px 0;
+  background: var(--bow-navy);
+}
+
+.bow-chat .mode-toggle button {
+  flex: 1;
+  padding: 7px 0;
+  border-radius: 99px;
+  border: 1px solid var(--bow-line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--bow-muted);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.bow-chat .mode-toggle button.on {
+  background: rgba(255, 198, 45, 0.14);
+  border-color: var(--bow-amber);
+  color: var(--bow-amber);
+  font-weight: 700;
+}
+
+.bow-chat .trial-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--bow-line);
+  background: var(--bow-navy);
+  color: var(--bow-muted);
+  font-size: 11px;
+}
+
+.bow-chat .trial-bar .trial-count {
+  color: var(--bow-green);
+}
+
+.bow-chat .trial-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 16px 18px;
+  border-top: 1px solid var(--bow-line);
+  background: var(--bow-navy-2);
+  text-align: center;
+}
+
+.bow-chat .trial-notice b {
+  color: var(--bow-amber);
+  font-size: 15px;
+}
+
+.bow-chat .trial-notice p {
+  margin: 0;
+  color: var(--bow-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.bow-chat .trial-notice small {
+  color: var(--bow-muted);
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+.bow-chat .trial-terms {
+  margin: 10px 0 0 !important;
+  font-size: 11px !important;
+  opacity: 0.75;
+}
+
 .solav {
   flex: none;
   width: 28px;
