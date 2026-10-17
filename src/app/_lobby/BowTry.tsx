@@ -3,13 +3,15 @@ import React from 'react';
 import Link from 'next/link';
 import { Stage } from './Stage';
 import { BowChat } from './BowChat';
+import { BowInstall } from './BowInstall';
 
 export function BowTry() {
   return (
-    <>
+    <div className="bow-pwa">
       <Link className="back" href="/">
         ← Back to home
       </Link>
+      <BowInstall />
       <header className="hero left">
         <div className="eyebrow">
           <span className="pulse" />
@@ -24,7 +26,7 @@ export function BowTry() {
       </header>
       <BowChat />
       <p className="foot">scripted demo, not live</p>
-    </>
+    </div>
   );
 }
 
