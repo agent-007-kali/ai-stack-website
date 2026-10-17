@@ -131,7 +131,7 @@ test('a bare email address is never treated as an order', () => {
 test('price answer lists the exact locked figures', () => {
   const a = answerFromKnowledge('what is the price');
   const text = a.lines.join(' ');
-  for (const label of ['£2,995', '£3,995', '£7,995', '£99', '£49', '£29', '£20', '£10']) {
+  for (const label of ['£2,995', '£3,995', '£7,995', '£99', '£49', '£20', '£10']) {
     assert.ok(text.includes(label), `missing ${label}`);
   }
 });

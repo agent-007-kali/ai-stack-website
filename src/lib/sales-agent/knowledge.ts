@@ -71,7 +71,7 @@ export const ORDER_PRODUCTS: OrderProduct[] = [
   {
     id: 'bowbot',
     name: 'Bow Bot',
-    prices: ['£49 today (£29 setup + first £20 month)', '£20/month'],
+    prices: ['£49 setup', '£20/month'],
     variants: [],
     allowsQuantity: false,
   },
