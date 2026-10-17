@@ -1,0 +1,116 @@
+/* Bow Chat PWA — install affordance + mobile-first app shell.
+   Everything here is scoped to /try via the .bow-pwa wrapper so no other
+   route, and no other element of the shared lobby styles, is affected. */
+
+.bow-pwa {
+  display: block;
+}
+
+/* Install / Add to Home Screen banner ----------------------------- */
+
+.bow-install {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 380px;
+  margin: 12px auto;
+  padding: 12px 34px 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 198, 45, 0.45);
+  background: rgba(255, 198, 45, 0.1);
+  color: #f4f6ff;
+  text-align: left;
+}
+
+.bow-install-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+.bow-install-copy b {
+  color: #ffc62d;
+  font-size: 15px;
+}
+
+.bow-install-copy span {
+  color: #a9b3d6;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.bow-install-btn {
+  flex: none;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #ffc62d, #ff9b5b);
+  color: #2a1d00;
+  font: 800 14px system-ui, sans-serif;
+  box-shadow: 0 8px 22px rgba(255, 170, 0, 0.35);
+}
+
+.bow-install-x {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #a9b3d6;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.bow-install-x:hover {
+  color: #fff;
+}
+
+.bow-install-help {
+  flex-basis: 100%;
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #a9b3d6;
+}
+
+/* Mobile-first app shell ----------------------------------------- */
+
+.stage:has(.bow-pwa) {
+  min-height: 100svh;
+}
+
+.stage:has(.bow-pwa) .content {
+  padding-bottom: calc(56px + env(safe-area-inset-bottom));
+}
+
+/* Standalone (installed) gets a full-bleed shell with safe-area room. */
+@media (display-mode: standalone) {
+  .stage:has(.bow-pwa) .content {
+    padding-top: calc(20px + env(safe-area-inset-top));
+  }
+}
+
+@media (min-width: 768px) {
+  .stage:has(.bow-pwa) .content {
+    max-width: 680px;
+    padding-top: 48px;
+    padding-bottom: 72px;
+  }
+}
+
+/* On very short landscape phone viewports keep the chat usable. */
+.stage:has(.bow-pwa) .chat-body {
+  max-height: min(420px, 55svh);
+}
