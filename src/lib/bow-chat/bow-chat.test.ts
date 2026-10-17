@@ -6,6 +6,19 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { validateBowChatInput, bowScriptReply, BOW_CHAT_LIMITS } from './script.ts';
+import {
+  BOW_TRIAL_LIMITS,
+  consumeTrial,
+  evaluateTrial,
+  localDayKey,
+  parseTrialState,
+} from './trial.ts';
+import {
+  bowShoppingReply,
+  bowShoppingApprovalReply,
+  isApprovalRequest,
+  parseBudget,
+} from './shopping.ts';
 
 // ---------------------------------------------------------------------------
 // Input contract
@@ -124,4 +137,137 @@ test('scripted replies do not claim to be live', () => {
 
 test('scripted trial reply mentions the free trial', () => {
   assert.match(bowScriptReply('how does the trial work'), /trial/i);
+});
+
+// ---------------------------------------------------------------------------
+// 3-day free-trial gate
+// ---------------------------------------------------------------------------
+
+const DAY = 86_400_000;
+const NOW = Date.UTC(2026, 0, 10, 12, 0, 0);
+
+function freshState(now = NOW) {
+  return { startedAt: now, day: localDayKey(new Date(now)), used: 0 };
+}
+
+test('fresh trial allows a message with the full daily allowance', () => {
+  const v = evaluateTrial(freshState(), NOW);
+  assert.equal(v.blocked, false);
+  assert.equal(v.remaining, BOW_TRIAL_LIMITS.dailyMessageLimit);
+  assert.equal(v.dayIndex, 1);
+});
+
+test('consuming decrements the remaining count across messages', () => {
+  let state = freshState();
+  const remainingAfter: number[] = [];
+  for (let i = 0; i < 5; i += 1) {
+    const r = consumeTrial(state, NOW);
+    state = r.state;
+    remainingAfter.push(r.remaining);
+  }
+  assert.deepEqual(remainingAfter, [19, 18, 17, 16, 15]);
+  assert.equal(evaluateTrial(state, NOW).remaining, 15);
+});
+
+test('consume reports remaining after the send, 0 on the last one', () => {
+  const state = { startedAt: NOW, day: localDayKey(new Date(NOW)), used: 19 };
+  const r = consumeTrial(state, NOW);
+  assert.equal(r.state.used, 20);
+  assert.equal(r.remaining, 0);
+});
+
+test('daily cap blocks the next message', () => {
+  const state = { startedAt: NOW, day: localDayKey(new Date(NOW)), used: 20 };
+  const v = evaluateTrial(state, NOW);
+  assert.equal(v.blocked, true);
+  assert.equal(v.reason, 'daily-limit');
+  assert.equal(v.remaining, 0);
+});
+
+test('a new local day resets the daily counter', () => {
+  const yesterday = new Date(NOW);
+  const state = { startedAt: NOW, day: localDayKey(yesterday), used: 20 };
+  const v = evaluateTrial(state, NOW + DAY);
+  assert.equal(v.blocked, false);
+  assert.equal(v.remaining, BOW_TRIAL_LIMITS.dailyMessageLimit);
+});
+
+test('trial expires after three days', () => {
+  const state = freshState();
+  const justBefore = evaluateTrial(state, NOW + 3 * DAY - 1);
+  assert.equal(justBefore.blocked, false);
+  const expired = evaluateTrial(state, NOW + 3 * DAY);
+  assert.equal(expired.blocked, true);
+  assert.equal(expired.reason, 'trial-expired');
+});
+
+test('parseTrialState accepts a good state and rejects rubbish', () => {
+  assert.equal(parseTrialState(freshState(), NOW).ok, true);
+  for (const bad of [
+    null,
+    'x',
+    { startedAt: 'nope', day: '2026-01-10', used: 0 },
+    { startedAt: NOW, day: '10/01/2026', used: 0 },
+    { startedAt: NOW, day: '2026-01-10', used: 21 },
+    { startedAt: NOW, day: '2026-01-10', used: 2.5 },
+  ]) {
+    assert.equal(parseTrialState(bad, NOW).ok, false);
+  }
+});
+
+test('input validation accepts mode and trial, rejects bad values', () => {
+  const good = validateBowChatInput({
+    message: 'hi',
+    mode: 'shopping',
+    trial: freshState(),
+  });
+  assert.equal(good.ok, true);
+  assert.deepEqual(validateBowChatInput({ message: 'hi', mode: 'admin' }), {
+    ok: false,
+    error: 'mode-invalid',
+  });
+  assert.deepEqual(validateBowChatInput({ message: 'hi', trial: 'soon' }), {
+    ok: false,
+    error: 'trial-not-object',
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Shopping mode (simulated)
+// ---------------------------------------------------------------------------
+
+test('shopping replies compare options and always require approval', () => {
+  const reply = bowShoppingReply('noise cancelling headphones, budget £300');
+  assert.match(reply, /simulated/i);
+  assert.match(reply, /Nothing is bought without your explicit approval/i);
+  assert.ok(reply.split('\n').filter((l) => /^\d\)/.test(l)).length >= 2);
+  assert.match(reply, /£/);
+});
+
+test('shopping replies without a budget state no live price', () => {
+  const reply = bowShoppingReply('a new laptop for study');
+  assert.match(reply, /no price \(simulated\)/i);
+  assert.doesNotMatch(reply, /£\d/);
+});
+
+test('shopping reply stays inside the history character limit', () => {
+  const reply = bowShoppingReply('x'.repeat(BOW_CHAT_LIMITS.maxMessageChars) + ' budget £999');
+  assert.ok(reply.length <= BOW_CHAT_LIMITS.maxMessageChars);
+  assert.match(reply, /Nothing is bought without your explicit approval/i);
+});
+
+test('parseBudget understands the common shapes', () => {
+  assert.deepEqual(parseBudget('headphones £150'), { amount: 150, symbol: '£' });
+  assert.deepEqual(parseBudget('$250 on a monitor'), { amount: 250, symbol: '$' });
+  assert.deepEqual(parseBudget('my budget is 400'), { amount: 400, symbol: '£' });
+  assert.deepEqual(parseBudget('under 99 pounds'), { amount: 99, symbol: '£' });
+  assert.equal(parseBudget('no numbers here'), null);
+});
+
+test('approval-looking messages never claim a purchase happened', () => {
+  assert.equal(isApprovalRequest('yes, approve option 2'), true);
+  const reply = bowShoppingApprovalReply();
+  assert.match(reply, /no purchase was made/i);
+  assert.match(reply, /Nothing is bought without your explicit approval/i);
+  assert.doesNotMatch(reply, /order confirmed|payment received/i);
 });
