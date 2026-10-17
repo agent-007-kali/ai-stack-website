@@ -1,8 +1,11 @@
 issue-111 verification record
 =============================
 Branch: feature/bow-live-relay (repo agent-007-kali/ai-stack-website)
-New SHA: 0c4d0b969a4dfd037acbf575baf4992a87c15ff3
-Merge commit: 0c4d0b9 "Merge main into feature/bow-live-relay; fix £49 pricing, drop WhatsApp delivery wording"
+Merge commit: 0c4d0b969a4dfd037acbf575baf4992a87c15ff3
+  "Merge main into feature/bow-live-relay; fix £49 pricing, drop WhatsApp delivery wording"
+Tip: this record commit sits on top of the merge; the live tip SHA is the one
+  git ls-remote origin feature/bow-live-relay prints and PR #10 headRefOid
+  (updated again only by this record's own push).
 Push: origin feature/bow-live-relay updated cb51753..0c4d0b9 (verified via git ls-remote)
 PR #10: OPEN, headRefOid 0c4d0b969a4dfd037acbf575baf4992a87c15ff3, mergeable MERGEABLE, mergeStateStatus CLEAN
 Not merged, nothing pushed to main (main stays at 74d1569).
