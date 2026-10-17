@@ -21,6 +21,7 @@ import {
 } from './engine.ts';
 import type { ChatState } from './engine.ts';
 import { DISCLOSURE, ORDER_PRODUCTS } from './knowledge.ts';
+import { SCRIPTED_DEMO_LABEL } from '../chat-label.ts';
 import { providerStatus, requestProviderReply } from './provider.ts';
 import { requestAgentReply } from './adapter.ts';
 import type { AgentFetch } from './adapter.ts';
@@ -133,6 +134,66 @@ test('price answer lists the exact locked figures', () => {
   const text = a.lines.join(' ');
   for (const label of ['£2,995', '£3,995', '£7,995', '£99', '£49', '£20', '£10']) {
     assert.ok(text.includes(label), `missing ${label}`);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Issue #113: price / payment / trial fixed-sheet answers
+// ---------------------------------------------------------------------------
+
+test('disclosure uses the single shared scripted-demo label', () => {
+  assert.equal(DISCLOSURE, SCRIPTED_DEMO_LABEL);
+  assert.equal(DISCLOSURE, 'scripted demo, not live');
+});
+
+test('"how much is it?" answers from the fixed sheet (Bow Bot £49 setup, £20/month)', () => {
+  for (const q of ['how much is it?', 'how much does it cost?', 'what does Bow Bot cost?']) {
+    const text = answerFromKnowledge(q).lines.join(' ');
+    assert.match(text, /£49 setup/, q);
+    assert.match(text, /£20\/month/, q);
+    assert.match(text, /cancel anytime/i, q);
+  }
+});
+
+test('"how do I pay?" points to Stripe card checkout, never chat', () => {
+  for (const q of ['how do I pay?', 'payment options?', 'can I pay by card?', 'do you take Stripe?']) {
+    const text = answerFromKnowledge(q).lines.join(' ');
+    assert.match(text, /Stripe/i, q);
+    assert.match(text, /card/i, q);
+    assert.match(text, /never in chat/i, q);
+    assert.match(text, /crypto checkout is coming soon, not live/i, q);
+  }
+});
+
+test('trial question states 3-day trial, no card, 20 messages/day', () => {
+  const text = answerFromKnowledge('does it have a free trial?').lines.join(' ');
+  assert.match(text, /3-day free trial/i);
+  assert.match(text, /no card/i);
+  assert.match(text, /20 messages a day/i);
+});
+
+test('"can I pay by bank transfer" is refused and points to Stripe', () => {
+  for (const q of ['can I pay by bank transfer?', 'do you accept bank transfers?', 'what is your IBAN?']) {
+    const text = answerFromKnowledge(q).lines.join(' ');
+    assert.match(text, /(?:no|not take|don.t take)/i, q);
+    assert.match(text, /bank transfer/i, q);
+    assert.match(text, /Stripe/i, q);
+    assert.doesNotMatch(text, /iban [a-z0-9]/i, q);
+  }
+});
+
+test('subscription / cancel questions give sheet facts, never invented offers', () => {
+  for (const q of ['how do I cancel my subscription?', 'is it a subscription?', 'cancel anytime?']) {
+    const text = answerFromKnowledge(q).lines.join(' ');
+    assert.match(text, /£49 setup|£20\/month|cancel anytime/i, q);
+    assert.doesNotMatch(text, /discount|offer code|free month/i, q);
+  }
+});
+
+test('payment answers never ask for card, bank or account details', () => {
+  for (const q of ['how do I pay?', 'can I pay by bank transfer?', 'how do I cancel?']) {
+    const text = answerFromKnowledge(q).lines.join(' ');
+    assert.doesNotMatch(text, /send me your (card|bank)|type (your )?(card|iban|account)/i, q);
   }
 });
 

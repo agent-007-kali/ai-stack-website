@@ -3,12 +3,14 @@
 // Groq-first answer tier for the Bow live relay (owner update on issue #81).
 //
 // Chain for one visitor message, enforced by src/app/api/bow-relay/route.ts:
+//   0. no GROQ_API_KEY -> { tier:'skip' } immediately, so the scripted demo
+//      (fixed sheet + honest label) answers everything (issue #113).
 //   1. price / payment / custom-promise question -> exact holding line, no
 //      model call, and the enquiry is forwarded to the team inbox.
 //   2. Groq chat completion (OpenAI-compatible) -> instant reply.
-//   3. anything at all goes wrong (missing key, rate limit, daily budget,
-//      upstream error) -> return { tier:'skip' } so the route falls through to
-//      the GitHub-issue relay, and behind that the labelled scripted demo.
+//   3. anything at all goes wrong (rate limit, daily budget, upstream error)
+//      -> return { tier:'skip' } so the route falls through to the
+//      GitHub-issue relay, and behind that the labelled scripted demo.
 //
 // GROQ_API_KEY is read from the server environment only: never committed,
 // never sent client-side, never logged, never requested or accepted through
@@ -245,15 +247,21 @@ export async function answerWithGroq(
 ): Promise<GroqOutcome> {
   const key = historyKey(channel, sessionId);
 
-  // Escalations are answered deterministically, key or no key.
+  // Fail closed BEFORE the escalation tier: the holding line and the team
+  // forward are part of the live Groq tier, not the scripted demo. With no
+  // key configured this tier must skip entirely so price/payment questions
+  // fall through to the labelled fixed-sheet scripted answers (issue #113)
+  // instead of a holding line mislabelled as a live AI reply.
+  const apiKey = process.env[GROQ_KEY_ENV];
+  if (!apiKey) return { tier: 'skip', reason: 'no_key' };
+
+  // Escalations are answered deterministically once the tier is live.
   if (isEscalation(text)) {
     await forwardEscalation(channel, sessionId, text);
     remember(key, text, HOLDING_LINE);
     return { tier: 'answer', source: 'holding', reply: HOLDING_LINE };
   }
 
-  const apiKey = process.env[GROQ_KEY_ENV];
-  if (!apiKey) return { tier: 'skip', reason: 'no_key' };
   if (!checkIpLimit(ip)) return { tier: 'skip', reason: 'ip_rate_limited' };
   if (!budgetAllows()) return { tier: 'skip', reason: 'budget_exhausted' };
 

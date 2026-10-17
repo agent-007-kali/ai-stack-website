@@ -18,6 +18,8 @@ import {
   SHOPPING_MODE_INTRO,
   type BowChatMode,
 } from '@/lib/bow-chat/shopping';
+import { bowScriptReply } from '@/lib/bow-chat/script';
+import { SCRIPTED_DEMO_LABEL } from '@/lib/chat-label';
 import './bow-chat.css';
 
 export type BowMsg = {
@@ -28,31 +30,13 @@ export type BowMsg = {
 const BOWBOT_BOOT: BowMsg[] = [
   { from: 'boot', text: '$ boot sequence initiated ...' },
   { from: 'boot', text: '$ loading bow bot personality matrix ... ok' },
-  { from: 'boot', text: '$ session opened - scripted demo, not live' },
+  { from: 'boot', text: `$ session opened - ${SCRIPTED_DEMO_LABEL}` },
   { from: 'bowbot', text: 'Hello! I am Bow Bot. Welcome to your 3-day free trial experience.' },
   { from: 'bowbot', text: 'How can I help you get started today?' },
 ];
 
-const FALLBACK_LABEL = 'scripted demo, not live';
 const UPGRADE_HREF = '/';
 const TRIAL_STORAGE_KEY = 'bow-chat-trial-v1';
-
-function bowScriptReply(message: string): string {
-  const q = message.toLowerCase();
-  if (/trial|free trial|3 day|start|get started/.test(q)) {
-    return 'Great! Your 3-day free trial gives you full access to explore Bow Bot. What would you like to try first?';
-  }
-  if (/help|how|feature/.test(q)) {
-    return 'I can help you understand the features available in your trial. What specific thing are you curious about?';
-  }
-  if (/price|cost|billing|pay/.test(q)) {
-    return 'During your free trial, everything is included. After the trial you can choose the plan that works best for you. Would you like to know more about the trial timeline?';
-  }
-  if (/thank/.test(q)) {
-    return 'You are very welcome! Is there anything else I can help you with?';
-  }
-  return 'Good question. I am here to help with your 3-day free trial. Could you tell me a bit more about what you are looking to accomplish?';
-}
 
 function loadTrial(): BowTrialState | null {
   try {
@@ -194,7 +178,7 @@ export function BowChat() {
       const reply =
         typeof data?.reply === 'string' && data.reply ? data.reply : bowScriptReply(t);
       const label =
-        typeof data?.label === 'string' && data.label ? data.label : FALLBACK_LABEL;
+        typeof data?.label === 'string' && data.label ? data.label : SCRIPTED_DEMO_LABEL;
       window.setTimeout(() => {
         setTyping(false);
         setMsgs((x) => [...x, { from: 'bowbot', text: `[${label}] ${reply}` }]);
@@ -207,7 +191,7 @@ export function BowChat() {
       window.setTimeout(() => {
         setTyping(false);
         const reply = bowScriptReply(t);
-        setMsgs((x) => [...x, { from: 'bowbot', text: `[${FALLBACK_LABEL}] ${reply}` }]);
+        setMsgs((x) => [...x, { from: 'bowbot', text: `[${SCRIPTED_DEMO_LABEL}] ${reply}` }]);
         setHistory([...nextHistory, { role: 'assistant', content: reply }]);
       }, 500);
     }
@@ -224,9 +208,7 @@ export function BowChat() {
         ? relayTier === 'relay'
           ? 'live - relaying to the owner'
           : 'live - instant AI reply'
-        : status === 'unavailable'
-          ? 'live unavailable - scripted demo'
-          : FALLBACK_LABEL;
+        : SCRIPTED_DEMO_LABEL;
 
   return (
     <div className="chat bow-chat" role="log" aria-live="polite">

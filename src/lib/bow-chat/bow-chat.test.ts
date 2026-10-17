@@ -19,6 +19,11 @@ import {
   isApprovalRequest,
   parseBudget,
 } from './shopping.ts';
+import { FALLBACK_LABEL } from './adapter.ts';
+import { SCRIPTED_DEMO_LABEL } from '../chat-label.ts';
+import { DISCLOSURE } from '../sales-agent/knowledge.ts';
+import { answerFromKnowledge } from '../sales-agent/engine.ts';
+import { answerWithGroq, isEscalation } from '../bow-relay/groq.ts';
 
 // ---------------------------------------------------------------------------
 // Input contract
@@ -137,6 +142,71 @@ test('scripted replies do not claim to be live', () => {
 
 test('scripted trial reply mentions the free trial', () => {
   assert.match(bowScriptReply('how does the trial work'), /trial/i);
+});
+
+// ---------------------------------------------------------------------------
+// Issue #113: /try fixed-sheet price/payment answers + shared label
+// ---------------------------------------------------------------------------
+
+test('the /try and /sales fallback labels are one shared constant', () => {
+  assert.equal(FALLBACK_LABEL, SCRIPTED_DEMO_LABEL);
+  assert.equal(FALLBACK_LABEL, DISCLOSURE);
+  assert.equal(FALLBACK_LABEL, 'scripted demo, not live');
+});
+
+test('/try "how much is it?" gets the same fixed-sheet answer as /sales', () => {
+  for (const q of ['how much is it?', 'what does it cost?', 'pricing?']) {
+    const reply = bowScriptReply(q);
+    assert.equal(reply, answerFromKnowledge(q).lines.join('\n'), q);
+    assert.match(reply, /£49 setup/, q);
+    assert.match(reply, /£20\/month/, q);
+  }
+});
+
+test('/try "how do I pay?" gets the Stripe-never-in-chat sheet answer', () => {
+  for (const q of ['how do I pay?', 'can I pay by card?', 'payment?']) {
+    const reply = bowScriptReply(q);
+    assert.equal(reply, answerFromKnowledge(q).lines.join('\n'), q);
+    assert.match(reply, /Stripe/i, q);
+    assert.match(reply, /never in chat/i, q);
+    assert.match(reply, /crypto checkout is coming soon, not live/i, q);
+  }
+});
+
+test('/try "can I pay by bank transfer" is refused and points to Stripe', () => {
+  const reply = bowScriptReply('can I pay by bank transfer?');
+  assert.match(reply, /bank transfer/i);
+  assert.match(reply, /Stripe/i);
+  assert.doesNotMatch(reply, /sure.*transfer|yes.*transfer/i);
+});
+
+test('/try trial question states 3-day trial, no card, 20 messages/day', () => {
+  const reply = bowScriptReply('does it have a free trial?');
+  assert.match(reply, /3-day free trial/i);
+  assert.match(reply, /no card/i);
+  assert.match(reply, /20 messages a day/i);
+});
+
+test('/try sheet answers stay inside the 500-char history contract', () => {
+  for (const q of ['how much is it?', 'how do I pay?', 'can I pay by bank transfer?', 'cancel my subscription']) {
+    assert.ok(bowScriptReply(q).length <= BOW_CHAT_LIMITS.maxMessageChars, q);
+  }
+});
+
+test('/try sheet answers never promise income or mention WhatsApp/Jarvis', () => {
+  for (const q of ['how much is it?', 'how do I pay?', 'does it have a free trial?']) {
+    const reply = bowScriptReply(q);
+    assert.doesNotMatch(reply, /whatsapp|jarvis|guaranteed income|passive income/i, q);
+  }
+});
+
+test('with no GROQ key the relay tier skips price/payment questions entirely', async () => {
+  delete process.env.GROQ_API_KEY;
+  for (const q of ['how much is it?', 'how do I pay?', 'can I pay by bank transfer?']) {
+    assert.equal(isEscalation(q), true, q);
+    const r = await answerWithGroq('try', 'bow-test-nokey', q, '127.0.0.1');
+    assert.equal(r.tier, 'skip', q);
+  }
 });
 
 // ---------------------------------------------------------------------------
