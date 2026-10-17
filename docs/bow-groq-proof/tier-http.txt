@@ -1,0 +1,11 @@
+== POST /api/bow-relay (server 3300, GROQ_API_KEY unset -> tier skip -> relay unavailable -> client scripted fallback) ==
+HTTP 503
+{"ok":false,"error":"relay_unavailable"}
+
+== POST escalation, same server, no key (holding line + forward) ==
+{"ok":true,"messages":[{"from":"advisor","text":"That's one for the team - they'll confirm by email","ts":1792241404412}],"mode":"holding"}
+
+== POST (server 3301, stub upstream) session A msg1 ==
+{"ok":true,"messages":[{"from":"advisor","text":"Bow Bot here. (ctx=0) The site states a 3-day free trial with no card needed.","ts":1792241404430}],"mode":"groq"}
+== POST session A msg2 after 4s ==
+{"ok":true,"messages":[{"from":"advisor","text":"Bow Bot here. (ctx=1) The site states a 3-day free trial with no card needed.","ts":1792241408449}],"mode":"groq"}

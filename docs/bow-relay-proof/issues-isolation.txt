@@ -1,0 +1,17 @@
+#88 bow-sales-33ef83ed-b924-4e89-af3e-a34d48ea7ca3
+  - **Visitor:** Session S: can I ask about the AI Solutions Box?
+  - Jarvis test reply (issue #81 relay proof): I received your message on bow-sales-33ef83ed-b924-4e89-af3e-a34d48ea7ca3.
+#87 bow-try-bow-azof44dbj1
+  - **Visitor:** Session B: hello, I would like a free trial
+  - Jarvis test reply (issue #81 relay proof): I received your message on bow-try-bow-azof44dbj1.
+#86 bow-try-bow-mc56ilzqh5
+  - **Visitor:** Session A: hello, what does Bow Bot include?
+  - Jarvis test reply (issue #81 relay proof): I received your message on bow-try-bow-mc56ilzqh5.
+#85 bow-try-test-try-sessB2
+  - **Visitor:** Hello from visitor B on /try
+#84 bow-sales-test-sales-sessA1
+  - **Visitor:** rate test 1
+#83 bow-try-test-try-sessA1
+  - **Visitor:** Hello from visitor A on /try
+  - **Visitor:** second quickly
+  - Test reply from Jarvis: got your message, visitor A.

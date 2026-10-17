@@ -1,0 +1,18 @@
+← Back to home
+TRY BOW BOT
+Bow Bot 3-day free trial
+
+Chat with Bow Bot. This is a scripted demo, not a live model.
+
+Bow Bot
+live unavailable - scripted demo
+$ boot sequence initiated ...
+$ loading bow bot personality matrix ... ok
+$ session opened - scripted demo, not live
+Hello! I am Bow Bot. Welcome to your 3-day free trial experience.
+How can I help you get started today?
+What can Bow Bot do?
+[scripted demo, not live] Good question. I am here to help with your 3-day free trial. Could you tell me a bit more about what you are looking to accomplish?
+↑
+
+scripted demo, not live

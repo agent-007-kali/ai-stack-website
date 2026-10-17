@@ -1,7 +1,8 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { BowAvatar } from './BowAvatar';
+import { useRelay } from '@/lib/bow-relay/useRelay';
 import {
   BOW_TRIAL_LIMITS,
   consumeTrial,
@@ -82,10 +83,23 @@ export function BowChat() {
   const [email, setEmail] = useState('');
   const [draft, setDraft] = useState('');
   const [history, setHistory] = useState<ChatTurn[]>([]);
-  const [mode, setMode] = useState<BowChatMode>(CHAT_MODE);
+  const [chatMode, setChatMode] = useState<BowChatMode>(CHAT_MODE);
   const [trial, setTrial] = useState<BowTrialState | null>(null);
-  const [sessionId] = useState(() => `bow-${Math.random().toString(36).slice(2, 10)}`);
+  const [sessionId] = useState(() => `bow-${Math.random().toString(36).slice(2, 12)}`);
   const end = React.useRef<HTMLDivElement>(null);
+
+  const onAdvisor = useCallback((text: string) => {
+    setTyping(false);
+    setMsgs((x) => [...x, { from: 'bowbot', text }]);
+    setHistory((h) => [...h, { role: 'assistant', content: text }]);
+  }, []);
+
+  const { status, mode: relayTier, send: relaySend } = useRelay(
+    'try',
+    sessionId,
+    started,
+    onAdvisor,
+  );
 
   useEffect(() => {
     const el = end.current;
@@ -111,15 +125,15 @@ export function BowChat() {
   };
 
   const enterShopping = () => {
-    if (mode === SHOPPING_MODE) return;
-    setMode(SHOPPING_MODE);
+    if (chatMode === SHOPPING_MODE) return;
+    setChatMode(SHOPPING_MODE);
     setMsgs((x) => [...x, { from: 'bowbot', text: SHOPPING_MODE_INTRO }]);
     setHistory((h) => [...h, { role: 'assistant', content: SHOPPING_MODE_INTRO }]);
   };
 
   const enterChat = () => {
-    if (mode === CHAT_MODE) return;
-    setMode(CHAT_MODE);
+    if (chatMode === CHAT_MODE) return;
+    setChatMode(CHAT_MODE);
     setMsgs((x) => [...x, { from: 'bowbot', text: 'Back in chat mode. What else can I help you with?' }]);
     setHistory((h) => [
       ...h,
@@ -134,6 +148,25 @@ export function BowChat() {
     setMsgs((x) => [...x, { from: 'me', text: t }]);
     setTyping(true);
     const nextHistory: ChatTurn[] = [...history, { role: 'user', content: t }];
+
+    // Tier 1: live relay (instant Groq/holding line, or the polled advisor
+    // thread). Shopping mode never goes live - it is always simulated, so it
+    // skips straight to the route below. A live answer consumes one trial
+    // message here; /api/bow-chat is not called on success.
+    if (chatMode !== SHOPPING_MODE) {
+      const live = await relaySend(t);
+      if (live) {
+        const after = consumeTrial(trial).state;
+        saveTrial(after);
+        setTrial(after);
+        setHistory(nextHistory);
+        // Stay busy: the typing dots clear when the advisor reply arrives.
+        return;
+      }
+    }
+
+    // Tier 2: the bow-chat route (shopping simulation, provider or labelled
+    // scripted fallback). The route returns the updated trial state.
     try {
       const res = await fetch('/api/bow-chat', {
         method: 'POST',
@@ -142,7 +175,7 @@ export function BowChat() {
           message: t,
           sessionId,
           history: history.slice(-8),
-          mode,
+          mode: chatMode,
           trial,
         }),
       });
@@ -176,12 +209,24 @@ export function BowChat() {
         const reply = bowScriptReply(t);
         setMsgs((x) => [...x, { from: 'bowbot', text: `[${FALLBACK_LABEL}] ${reply}` }]);
         setHistory([...nextHistory, { role: 'assistant', content: reply }]);
-      }, 800);
+      }, 500);
     }
+    // When live, the typing dots stay until an advisor reply arrives (polled).
   };
 
   const emailOk = /^\S+@\S+\.\S+$/.test(email);
   const remaining = verdict && !verdict.blocked ? verdict.remaining : 0;
+
+  const statusText =
+    chatMode === SHOPPING_MODE
+      ? 'shopping mode - simulated, approval needed'
+      : status === 'live'
+        ? relayTier === 'relay'
+          ? 'live - relaying to the owner'
+          : 'live - instant AI reply'
+        : status === 'unavailable'
+          ? 'live unavailable - scripted demo'
+          : FALLBACK_LABEL;
 
   return (
     <div className="chat bow-chat" role="log" aria-live="polite">
@@ -190,7 +235,7 @@ export function BowChat() {
         <div>
           <b>Bow Bot</b>
           <small>
-            <span className="pulse" /> {mode === SHOPPING_MODE ? 'shopping mode' : FALLBACK_LABEL}
+            <span className="pulse" /> {statusText}
           </small>
         </div>
       </div>
@@ -199,16 +244,16 @@ export function BowChat() {
           <div className="mode-toggle" role="group" aria-label="Chat mode">
             <button
               type="button"
-              className={mode === CHAT_MODE ? 'on' : ''}
-              aria-pressed={mode === CHAT_MODE}
+              className={chatMode === CHAT_MODE ? 'on' : ''}
+              aria-pressed={chatMode === CHAT_MODE}
               onClick={enterChat}
             >
               Chat
             </button>
             <button
               type="button"
-              className={mode === SHOPPING_MODE ? 'on' : ''}
-              aria-pressed={mode === SHOPPING_MODE}
+              className={chatMode === SHOPPING_MODE ? 'on' : ''}
+              aria-pressed={chatMode === SHOPPING_MODE}
               onClick={enterShopping}
             >
               Shopping
@@ -304,7 +349,7 @@ export function BowChat() {
                   if (e.key === 'Enter') send();
                 }}
                 placeholder={
-                  mode === SHOPPING_MODE
+                  chatMode === SHOPPING_MODE
                     ? 'Brief + budget (e.g. headphones under £150)'
                     : 'Message Bow Bot'
                 }

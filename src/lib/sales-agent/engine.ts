@@ -263,7 +263,7 @@ function introAnswer(): KnowledgeAnswer {
   return {
     key: 'intro',
     lines: [
-      'We make your business agent-ready. The AI Solutions Box runs your AI on your own desktop, Bow Bot is your own assistant in WhatsApp, and we run 1:1 sessions and classes to get you started.',
+      'We make your business agent-ready. The AI Solutions Box runs your AI on your own desktop, Bow Bot is your own assistant in the Bow Chat web app, and we run 1:1 sessions and classes to get you started.',
       "Ask about Bow Bot, the AI Solutions Box, sessions or classes - or type 'order' to place an order.",
     ],
   };
@@ -274,7 +274,7 @@ function priceAnswer(): KnowledgeAnswer {
     key: 'price',
     lines: [
       'Here are our fixed prices, exactly as on the site:',
-      '• Bow Bot - £29 setup + £20/month, with a 3-day free trial (no card).',
+      '• Bow Bot - £49 setup, then £20/month, cancel anytime. 3-day free trial, no card.',
       '• AI Solutions Box - Vega £2,995 / Altair (Pro) £3,995 / Rigel (Max) £7,995, custom-built to order with 3-week delivery. AI Solutions OS Care is £99/month.',
       '• 1:1 sessions - £49, or £99 for three.',
       '• Online group class £20; meetups £10.',
@@ -287,11 +287,11 @@ function bowbotAnswer(): KnowledgeAnswer {
   return {
     key: 'bowbot',
     lines: [
-      "Bow Bot is your own AI assistant in WhatsApp. Launch price is £29 setup + £20/month, cancel anytime, and it starts with a 3-day free trial that needs no card - the trial starts at " +
+      "Bow Bot is your own AI assistant, right here in the Bow Chat web app (Telegram is the fallback if you prefer it). Launch price is £49 setup, then £20/month, cancel anytime. It starts with a 3-day free trial that needs no card - the trial starts at " +
         BOWBOT_TRIAL_URL +
         '.',
       "It's an AI: it works best at one task at a time, it acts in your accounts only after you connect them, it never handles your money without your approval, and when it's unsure it says so.",
-      'For Bow Bot, payment is by card on the existing Stripe checkout - I never take payment details in chat.',
+      'For Bow Bot, payment is by card on the existing Stripe checkout (crypto checkout opens soon) - I never take payment details in chat.',
     ],
   };
 }
