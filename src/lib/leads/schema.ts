@@ -1,67 +1,128 @@
-export type ContactType = 'email' | 'phone';
+// Order schema for POST /api/leads.
+//
+// This supersedes the stalled #46 preview lead shape. The /sales chat logs real
+// product orders/enquiries here. Raw card or payment details are never part of
+// this schema and are rejected as unknown fields.
 
-export interface LeadRequest {
-  contactType: ContactType;
-  contactValue: string;
+import {
+  ORDER_PRODUCTS,
+  findProduct,
+  type OrderProductId,
+} from '../sales-agent/knowledge.ts';
+
+export const MAX_FIELD_CHARS = 1000;
+export const MAX_NAME_CHARS = 120;
+export const MAX_EMAIL_CHARS = 200;
+
+export interface OrderRequest {
+  kind: 'order';
+  product: OrderProductId;
+  variant?: string;
+  quantity?: number;
+  name: string;
+  email: string;
+  businessType?: string;
+  notes?: string;
 }
 
-export interface LeadRecord {
-  id: string;
-  contactType: ContactType;
-  contactValue: string;
+export interface OrderRecord extends OrderRequest {
+  reference: string;
   createdAt: string; // UTC ISO
-  source: 'welcome-screen';
-  purpose: 'requested-follow-up';
-  noticeVersion: string;
 }
 
-export interface LeadStoredRecord extends LeadRecord {
-  storage: 'mock';
+export type OrderValidation =
+  | { ok: true; value: OrderRequest }
+  | { ok: false; error: string };
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ALLOWED_FIELDS = new Set([
+  'kind',
+  'product',
+  'variant',
+  'quantity',
+  'name',
+  'email',
+  'businessType',
+  'notes',
+]);
+
+function validCardField(name: string): boolean {
+  return /card|cardnumber|cvc|cvv|expiry|pan|iban|account/i.test(name);
 }
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function normalizePhone(value: string): string {
-  // Basic normalization - keep digits and +, spaces, dashes, parens
-  return value.trim();
-}
-
-function isValidPhone(value: string): boolean {
-  const v = value.trim();
-  // Require at least 7 chars, allow +, spaces, dashes, parens, digits
-  if (v.length < 7) return false;
-  const digits = v.replace(/[^\d+]/g, '');
-  if (digits.length < 7 || digits.length > 20) return false;
-  if (!/^\+?\d+$/.test(digits) && !/^\+\d/.test(v)) {
-    // Allow numbers with spaces etc as long as they contain digits
-    if (!/\d/.test(v)) return false;
+export function validateOrderRequest(payload: unknown): OrderValidation {
+  if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) {
+    return { ok: false, error: 'invalid-body' };
   }
-  return true;
-}
-
-export function validateLead(payload: unknown): LeadRequest | null {
-  if (!payload || typeof payload !== 'object') return null;
   const p = payload as Record<string, unknown>;
-  const contactType = p.contactType;
-  const contactValue = p.contactValue;
 
-  if (contactType !== 'email' && contactType !== 'phone') return null;
-  if (typeof contactValue !== 'string') return null;
-
-  const trimmed = contactValue.trim();
-  if (trimmed.length === 0) return null;
-
-  if (contactType === 'email') {
-    if (!EMAIL_REGEX.test(trimmed)) return null;
-    if (trimmed.length > 200) return null;
-    return { contactType, contactValue: trimmed };
+  for (const key of Object.keys(p)) {
+    if (validCardField(key)) return { ok: false, error: 'payment-details-not-accepted' };
+    if (!ALLOWED_FIELDS.has(key)) return { ok: false, error: 'unknown-field' };
   }
 
-  if (contactType === 'phone') {
-    if (!isValidPhone(trimmed)) return null;
-    if (trimmed.length > 50) return null;
-    return { contactType, contactValue: normalizePhone(trimmed) };
+  if (p.kind !== 'order') return { ok: false, error: 'not-an-order' };
+
+  if (typeof p.product !== 'string') return { ok: false, error: 'product-required' };
+  const product = findProduct(p.product);
+  if (!product) return { ok: false, error: 'unknown-product' };
+
+  let variant: string | undefined;
+  if (product.variants.length > 0) {
+    if (typeof p.variant !== 'string' || !product.variants.some((v) => v.id === p.variant)) {
+      return { ok: false, error: 'variant-required' };
+    }
+    variant = p.variant;
+  } else if (p.variant !== undefined) {
+    return { ok: false, error: 'unexpected-variant' };
   }
 
-  return null;
+  let quantity: number | undefined;
+  if (p.quantity !== undefined) {
+    if (
+      typeof p.quantity !== 'number' ||
+      !Number.isInteger(p.quantity) ||
+      p.quantity < 1 ||
+      p.quantity > 99
+    ) {
+      return { ok: false, error: 'invalid-quantity' };
+    }
+    quantity = p.quantity;
+  }
+
+  if (typeof p.name !== 'string') return { ok: false, error: 'name-required' };
+  const name = p.name.trim();
+  if (!name || name.length > MAX_NAME_CHARS) return { ok: false, error: 'invalid-name' };
+
+  if (typeof p.email !== 'string') return { ok: false, error: 'email-required' };
+  const email = p.email.trim();
+  if (!EMAIL_RE.test(email) || email.length > MAX_EMAIL_CHARS) {
+    return { ok: false, error: 'invalid-email' };
+  }
+
+  let businessType: string | undefined;
+  if (p.businessType !== undefined) {
+    if (typeof p.businessType !== 'string') return { ok: false, error: 'invalid-business-type' };
+    const bt = p.businessType.trim().slice(0, MAX_FIELD_CHARS);
+    if (bt) businessType = bt;
+  }
+
+  let notes: string | undefined;
+  if (p.notes !== undefined) {
+    if (typeof p.notes !== 'string') return { ok: false, error: 'invalid-notes' };
+    const n = p.notes.trim().slice(0, MAX_FIELD_CHARS);
+    if (n) notes = n;
+  }
+
+  const value: OrderRequest = { kind: 'order', product: product.id, name, email };
+  if (variant !== undefined) value.variant = variant;
+  if (quantity !== undefined) value.quantity = quantity;
+  if (businessType !== undefined) value.businessType = businessType;
+  if (notes !== undefined) value.notes = notes;
+  return { ok: true, value };
+}
+
+/** Export the catalogue ids for tests / callers. */
+export function knownProductIds(): OrderProductId[] {
+  return ORDER_PRODUCTS.map((p) => p.id);
 }

@@ -157,11 +157,11 @@ export const BOOK_MAILTO =
 
 export const PERSONA_LABEL: Record<Persona, string> = {
   sol: 'sol@ai-solutions',
-  jarvis: 'jarvis@ai-solutions',
+  jarvis: 'bow-sales@ai-solutions',
 };
 
 export const DISCLOSURE =
-  'Demo desk - scripted replies, not live - Sol, AI receptionist / Jarvis, AI Sales Consultant';
+  'Demo desk - scripted replies, not live - Sol, AI receptionist / Bow Sales Customer Advisor';
 
 /** Demo boot copy. Truthful: scripted, not live. */
 export function bootLines(): TerminalLine[] {
@@ -189,7 +189,7 @@ const CALL_RE = /(\bcall me\b|\bphone me\b|\bring me\b|\btext me\b|\bwhatsapp me
 const BOOK_RE = /^\s*book\b/i;
 
 const P_SOL_INTRO =
-  'We make your business agent-ready. AI Solutions builds local-first AI agents and the AI Solutions Box - a desktop that runs your AI on your own machine. I am Sol, the AI receptionist in this scripted demo. Ask about the Box range, or type "consultant" to talk to our AI Sales Consultant.';
+  'We make your business agent-ready. AI Solutions builds local-first AI agents and the AI Solutions Box - a desktop that runs your AI on your own machine. I am Sol, the AI receptionist in this scripted demo. Ask about the Box range, or type "consultant" to talk to our Bow Sales Customer Advisor.';
 const P_HARDWARE =
   'The AI Solutions Box runs your AI on the machine - your work stays local. Vega (£2,995) is the entry machine with a 24GB GPU. Altair (£3,995) steps up for more demanding work. Rigel (£7,995) is our top machine. All are custom-built to order with 3-week delivery.';
 const P_PRICING =
@@ -201,11 +201,11 @@ const P_CALL =
 const P_FORBIDDEN =
   'I cannot do that. This demo has no tools, account access, secrets or agent execution, and I treat everything typed here as untrusted chat input.';
 const P_FALLBACK =
-  'I cannot answer that in this scripted demo. Ask about the AI Solutions Box range or pricing, or type "consultant" for our AI Sales Consultant.';
-const JARVIS_INTRO =
-  'Hi, I am Jarvis, the AI Sales Consultant. This is a scripted demo, not a live agent. Ask about the AI Solutions Box range or pricing.';
+  'I cannot answer that in this scripted demo. Ask about the AI Solutions Box range or pricing, or type "consultant" for our Bow Sales Customer Advisor.';
+const ADVISOR_INTRO =
+  "Hi, I'm the Bow Sales Customer Advisor. This is a scripted demo, not a live agent. Ask about the AI Solutions Box range or pricing.";
 const CONSULTANT_SYS =
-  '-- scripted handover: Sol, AI receptionist -> Jarvis, AI Sales Consultant. Scripted demo, not live. --';
+  '-- scripted handover: Sol, AI receptionist -> Bow Sales Customer Advisor. Scripted demo, not live. --';
 const BOOKING_SYS = 'opening an email from your own mail app - this demo sends nothing';
 const BOOKING_REPLY =
   'Opening an email to the team from your own mail app. Send it yourself to ask about a free consultation; this demo does not send a message or book a slot.';
@@ -239,7 +239,7 @@ export function scriptReply(text: string, persona: Persona): ScriptResult {
     return {
       lines: [
         { who: 'sys', text: CONSULTANT_SYS },
-        { who: 'jarvis', text: JARVIS_INTRO },
+        { who: 'jarvis', text: ADVISOR_INTRO },
       ],
       persona: 'jarvis',
       action: null,
