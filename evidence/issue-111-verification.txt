@@ -1,0 +1,88 @@
+issue-111 verification record
+=============================
+Branch: feature/bow-live-relay (repo agent-007-kali/ai-stack-website)
+New SHA: 0c4d0b969a4dfd037acbf575baf4992a87c15ff3
+Merge commit: 0c4d0b9 "Merge main into feature/bow-live-relay; fix £49 pricing, drop WhatsApp delivery wording"
+Push: origin feature/bow-live-relay updated cb51753..0c4d0b9 (verified via git ls-remote)
+PR #10: OPEN, headRefOid 0c4d0b969a4dfd037acbf575baf4992a87c15ff3, mergeable MERGEABLE, mergeStateStatus CLEAN
+Not merged, nothing pushed to main (main stays at 74d1569).
+
+What changed on top of the main merge
+-------------------------------------
+- src/app/_lobby/BowChat.tsx: conflict resolved - keeps main's 3-day trial
+  gate/trial bar/shopping mode and routes send() live-relay first (Groq /
+  holding line / polled advisor thread), then /api/bow-chat, then the labelled
+  scripted fallback. Shopping mode stays fully simulated.
+- src/lib/sales-agent/engine.ts: Bow Bot price is now £49 today = £29 setup +
+  first £20 month, then £20/month (priceAnswer, bowbotAnswer); "in WhatsApp"
+  removed from introAnswer and bowbotAnswer (Bow Chat web app at /try,
+  Telegram fallback); payment line = Stripe card or crypto, never chat-collected.
+- src/lib/sales-agent/knowledge.ts: catalogue price
+  '£49 today (£29 setup + first £20 month)', '£20/month'; PAYMENT_NOTE Stripe-or-crypto.
+
+Build / tests (all pass)
+------------------------
+npm run build: OK (23 pages, /try /sales /api/bow-relay /api/bow-chat all built)
+npm run test:sales-chat: 28 pass / 0 fail
+npm run test:sales-agent: 20 pass / 0 fail
+npm run test:bow-chat:    27 pass / 0 fail
+npm run test:leads:        8 pass / 0 fail
+npm run lint: 3 errors, all pre-existing on origin/main in files this PR does
+not touch (public/bowbot minified bundle, api/chat, api/checkout).
+
+Runtime smoke (next start, port 3199, then killed by explicit PID)
+-------------------------------------------------------------------
+GET /try -> 200   GET /sales -> 200   GET / -> 200
+POST /api/bow-relay (chat, no GROQ_API_KEY, no JARVIS_GITHUB_TOKEN)
+  -> 503 {"ok":false,"error":"relay_unavailable"}  (fail-closed, no leak)
+POST /api/bow-relay (price question)
+  -> 200 {"messages":[{"from":"advisor","text":"That's one for the team -
+     they'll confirm by email"}],"mode":"holding"}  (no token/issue leak)
+POST /api/bow-chat (no trial) -> 400 trial-required
+POST /api/bow-chat (valid trial) -> 200, label "scripted demo, not live",
+  reason no_provider_key, trial used 1 / remaining 19.
+
+grep -rniE 'whatsapp|jarvis|£29' src  -- every remaining hit, classified
+----------------------------------------------------------------------------
+Internal-only (server/env/config/tests, never shown to visitors):
+  src/lib/bow-relay/relay.ts:3,5,52   comments + JARVIS_GITHUB_TOKEN env name
+  src/lib/bow-relay/relay.ts:13        RELAY_REPO agent-007-kali/jarvis-bridge
+  src/lib/bow-relay/groq.ts:50,53      server-side system prompt forbidding
+                                       Jarvis / WhatsApp promises
+  src/lib/bow-relay/groq.ts:69         escalation regex -> holding line
+  src/lib/sales-chat/script.ts:141,142,160,242,244  internal persona id
+                                       'jarvis' (visitor sees PERSONA_LABEL
+                                       'bow-sales@ai-solutions' / "Bow Sales
+                                       Customer Advisor")
+  src/lib/sales-chat/script.ts:188     CALL_RE matcher (reply says the demo
+                                       cannot contact anyone)
+  src/lib/sales-chat/sales-chat.test.ts:141,164,166,171,208,227  tests of the
+                                       internal persona id
+  src/app/_lobby/SalesTerminal.tsx:141 + sales-terminal.css:8  CSS class
+                                       keyed off the internal persona id
+  src/app/robots.ts:8                  disallow '/jarvis-bridge'
+  src/app/api/jarvis-chat/route.ts:1-38  server route of the SEPARATE owner
+                                       tool "Jarvis Bridge" (password-gated,
+                                       unchanged from main, not Bow Bot)
+
+Correct price strings (allowed by the issue):
+  src/lib/sales-agent/engine.ts:277    "£49 today (that is the £29 setup plus
+                                       your first £20 month), then £20/month"
+  src/lib/sales-agent/engine.ts:290    same £49 breakdown in bowbotAnswer
+  src/lib/sales-agent/knowledge.ts:74  catalogue '£49 today (£29 setup +
+                                       first £20 month)', '£20/month'
+  src/lib/sales-agent/agent.test.ts:134  test asserts '£29' present inside the
+                                       £49 breakdown
+  src/app/_lobby/Landing.tsx:16        "Student Pro £29" - a different product
+                                       (Academy plan), not Bow Bot
+
+Pre-existing separate app (untouched, identically present on origin/main):
+  src/app/jarvis-bridge/page.tsx      the owner's personal WhatsApp->GitHub
+                                       bridge "Jarvis Bridge" by Jorge -
+                                       robots-disallowed, not Bow Bot, not
+                                       sales copy; renamed = different product
+                                       broken. No Bow Bot delivery wording.
+
+No "in WhatsApp" / WhatsApp-delivery wording about Bow Bot remains anywhere
+in src; no "Jarvis" appears in any Bow Bot / Bow Chat / sales visitor-facing
+text. Payments copy is Stripe card or crypto only; no income promises.
