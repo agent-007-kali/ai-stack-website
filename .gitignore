@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# server-side order log (local dev / self-host)
+/var/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

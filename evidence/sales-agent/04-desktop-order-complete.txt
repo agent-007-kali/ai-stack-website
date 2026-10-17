@@ -1,0 +1,67 @@
+AI Solutions
+/
+sales
+Lobby
+
+AI SALES CONSULTANT
+
+Ask, or place an order, in one chat.
+
+Jarvis answers from our fixed product sheet - honest prices, no pressure - and can log an order for the team. Payment is never taken in this chat.
+
+ai-solutions.company / sales
+SCRIPTED DEMO, NOT LIVE
+$ connecting to ai-solutions.company / sales ... ok
+session opened - scripted demo, not live
+jarvis@ai-solutions ~ $ Hi Priya, I'm Jarvis, the AI Sales Consultant. This chat is a scripted demo, not live, so I answer from our fixed product sheet and never guess.
+jarvis@ai-solutions ~ $ Ask about Bow Bot, the AI Solutions Box, 1:1 sessions or classes - or type 'order' to place an order.
+Priya@web ~ $ How much does the AI Solutions Box cost?
+jarvis@ai-solutions ~ $ The AI Solutions Box runs your AI on your own desktop, so your work stays local. It is custom-built to order with 3-week delivery.
+jarvis@ai-solutions ~ $ • Vega - £2,995 (entry, 24GB GPU)
+jarvis@ai-solutions ~ $ • Altair (Pro) - £3,995
+jarvis@ai-solutions ~ $ • Rigel (Max) - £7,995
+jarvis@ai-solutions ~ $ AI Solutions OS Care is £99/month for updates, monitoring and support. I can take a Box order here and the team will arrange payment by reply email.
+Priya@web ~ $ Do you offer a free laptop?
+jarvis@ai-solutions ~ $ I don't have that on our fixed product sheet, so I won't guess. I can log it as an enquiry for the team - type 'log enquiry' and I'll take a few details.
+Priya@web ~ $ order
+jarvis@ai-solutions ~ $ Sure - let’s log an order. What would you like to order?
+jarvis@ai-solutions ~ $ 1. Bow Bot - £29 setup / £20/month
+jarvis@ai-solutions ~ $ 2. AI Solutions Box - £2,995 / £3,995 / £7,995
+jarvis@ai-solutions ~ $ 3. AI Solutions OS Care - £99/month
+jarvis@ai-solutions ~ $ 4. 1:1 session (online) - £49 / £99
+jarvis@ai-solutions ~ $ 5. Online group class - £20
+jarvis@ai-solutions ~ $ 6. Meetup - £10
+jarvis@ai-solutions ~ $ 7. General enquiry
+Priya@web ~ $ 1
+jarvis@ai-solutions ~ $ Step 2 of 6
+jarvis@ai-solutions ~ $ Thanks. What name should I put on the order?
+Priya@web ~ $ Priya Nair
+jarvis@ai-solutions ~ $ Step 3 of 6
+jarvis@ai-solutions ~ $ Thanks Priya Nair. What email should the team reply to?
+Priya@web ~ $ priya.nair@example.com
+jarvis@ai-solutions ~ $ Step 4 of 6
+jarvis@ai-solutions ~ $ What kind of business is this for? (or type "skip")
+Priya@web ~ $ Bakery
+jarvis@ai-solutions ~ $ Step 5 of 6
+jarvis@ai-solutions ~ $ Any notes or details for the order? (or type "skip")
+Priya@web ~ $ skip
+jarvis@ai-solutions ~ $ Step 6 of 6
+jarvis@ai-solutions ~ $ Please check your order:
+jarvis@ai-solutions ~ $ • Product: Bow Bot
+jarvis@ai-solutions ~ $ • Name: Priya Nair
+jarvis@ai-solutions ~ $ • Email: priya.nair@example.com
+jarvis@ai-solutions ~ $ • Business type: Bakery
+jarvis@ai-solutions ~ $ Type 'confirm' to log the order, or 'cancel'.
+Priya@web ~ $ confirm
+jarvis@ai-solutions ~ $ Logging your order ...
+jarvis@ai-solutions ~ $ Order logged. Your reference is AIS-261016-0293.
+jarvis@ai-solutions ~ $ I’ve taken your name, email and order details. Payment is arranged separately - I never take card details in chat.
+jarvis@ai-solutions ~ $ Bow Bot: pay by card on the existing Stripe checkout: https://buy.stripe.com/14A7sL90o1Qn6YVf3b4Rq00 (open in a new tab). Your trial/order details are in your logged reference.
+jarvis@ai-solutions ~ $ You can also email us yourself with this reference: tradersbooking@gmail.com. I’ve added a one-click email link below.
+Email the team about AIS-261016-0293
+Priya@web
+~ $
+Order
+Send
+scripted demo, not live. I never take card or payment details in chat.
+scripted demo, not live - payment is never collected in chat. Questions? tradersbooking@gmail.com

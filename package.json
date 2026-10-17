@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:sales-chat": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/sales-chat/sales-chat.test.ts"
+    "test:sales-chat": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/sales-chat/sales-chat.test.ts",
+    "test:sales-agent": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/sales-agent/agent.test.ts",
+    "test:leads": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/leads/leads.test.ts",
+    "evidence:sales": "node scripts/capture-sales.mjs && node scripts/analyze-png.mjs"
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.11.0",
