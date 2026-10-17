@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Stage } from './Stage';
 import { BowChat } from './BowChat';
 import { BowInstall } from './BowInstall';
+import { SCRIPTED_DEMO_LABEL } from '@/lib/chat-label';
 
 export function BowTry() {
   return (
@@ -25,7 +26,7 @@ export function BowTry() {
         </p>
       </header>
       <BowChat />
-      <p className="foot">scripted demo, not live</p>
+      <p className="foot">{SCRIPTED_DEMO_LABEL}</p>
     </div>
   );
 }

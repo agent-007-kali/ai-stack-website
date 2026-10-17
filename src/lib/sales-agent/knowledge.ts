@@ -11,6 +11,8 @@
 //   - 1:1 sessions / group class / meetups: booking + session copy on the site
 // Do not alter these values without an owner decision.
 
+import { SCRIPTED_DEMO_LABEL } from '../chat-label.ts';
+
 export const CONTACT_EMAIL = 'tradersbooking@gmail.com';
 
 /** Existing Bow Bot checkout link. Copied verbatim - do not modify. */
@@ -29,9 +31,10 @@ export const PERSONA_LABEL = `bow-sales@ai-solutions`;
 
 /**
  * Honest disclosure. The agent is a scripted demo until a live provider is
- * separately approved and configured, so every surface must say so.
+ * separately approved and configured, so every surface must say so. Shared
+ * with the /try Bow Chat so the two pages cannot drift (see chat-label.ts).
  */
-export const DISCLOSURE = 'scripted demo, not live';
+export const DISCLOSURE = SCRIPTED_DEMO_LABEL;
 
 export type OrderProductId =
   | 'bowbot'
@@ -133,6 +136,16 @@ export function findProduct(id: string): OrderProduct | undefined {
 
 /** Payment handoff copy. The chat NEVER collects payment details. */
 export const PAYMENT_NOTE =
-  'I never take card or payment details in chat. ' +
-  'Bow Bot: pay by card on the existing Stripe checkout, or in crypto when checkout opens. ' +
-  "We'll email you a secure payment link after confirming your order.";
+  'Bow Bot is paid by card on the secure Stripe checkout on our site - never in chat. ' +
+  'Crypto checkout is coming soon, not live yet. ' +
+  "I never ask for or accept card, bank or account details in chat, and we don't take bank transfers. " +
+  "Anything not on our fixed product sheet, the team will confirm by email.";
+
+/** Refusal for bank-transfer / bank-details asks. Same fixed sheet, both pages. */
+export const BANK_TRANSFER_NOTE =
+  "No - we don't take bank transfers. " +
+  'Bow Bot is paid by card on the secure Stripe checkout on our site: ' +
+  BOWBOT_CHECKOUT_URL +
+  '. ' +
+  'Crypto checkout is coming soon, not live yet. ' +
+  'I never ask for or accept card, bank or account details in chat.';
