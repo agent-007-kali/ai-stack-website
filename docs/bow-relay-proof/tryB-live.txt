@@ -1,0 +1,18 @@
+← Back to home
+TRY BOW BOT
+Bow Bot 3-day free trial
+
+Chat with Bow Bot. This is a scripted demo, not a live model.
+
+Bow Bot
+live - relaying to the owner
+$ boot sequence initiated ...
+$ loading bow bot personality matrix ... ok
+$ session opened - scripted demo, not live
+Hello! I am Bow Bot. Welcome to your 3-day free trial experience.
+How can I help you get started today?
+Session B: hello, I would like a free trial
+[live] Jarvis test reply (issue #81 relay proof): I received your message on bow-try-bow-azof44dbj1.
+↑
+
+scripted demo, not live

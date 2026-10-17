@@ -1,0 +1,15 @@
+=== client bundle scan (.next/static) ===
+-- agent-007-kali (repo owner) --
+none
+-- JARVIS_GITHUB_TOKEN --
+none
+-- api.github.com --
+none
+-- bow-relay endpoint refs (expected: /api/bow-relay only) --
+.next/static/chunks/13a~oti8shoo-.js:/api/bow-relay
+.next/static/chunks/13a~oti8shoo-.js:/api/bow-relay?channel=${e}&sessionId=${encodeURIComponent
+.next/static/chunks/18b1e90m_qjbn.js:/api/bow-relay
+.next/static/chunks/18b1e90m_qjbn.js:/api/bow-relay?channel=${e}&sessionId=${encodeURIComponent
+
+=== live relay GET response shape (no issue number / repo / token) ===
+{"ok":true,"messages":[{"from":"visitor","text":"Session A: hello, what does Bow Bot include?","ts":1792237662000},{"from":"advisor","text":"Jarvis test reply (issue #81 relay proof): I received your message on bow-try-bow-mc56ilzqh5.","ts":1792237671000}]}

@@ -1,0 +1,25 @@
+AI Solutions
+/
+sales
+Lobby
+
+BOW SALES CUSTOMER ADVISOR
+
+Ask, or place an order, in one chat.
+
+Our Bow Sales Customer Advisor (Bow Bot family) answers from our fixed product sheet - honest prices, no pressure - and can log an order for the team. Payment is never taken in this chat.
+
+ai-solutions.company / sales
+SCRIPTED DEMO, NOT LIVE
+$ connecting to ai-solutions.company / sales ... ok
+session opened - scripted demo, not live
+bow-sales@ai-solutions ~ $ Hi Priya, I'm the Bow Sales Customer Advisor from the Bow Bot family. This chat is a scripted demo, not live, so I answer from our fixed product sheet and never guess.
+bow-sales@ai-solutions ~ $ Ask about Bow Bot, the AI Solutions Box, 1:1 sessions or classes - or type 'order' to place an order.
+Priya@web ~ $ Session S: can I ask about the AI Solutions Box?
+Bow Sales Customer Advisor is typing ...
+Priya@web
+~ $
+Order
+Send
+scripted demo, not live. I never take card or payment details in chat.
+scripted demo, not live - payment is never collected in chat. Questions? tradersbooking@gmail.com
