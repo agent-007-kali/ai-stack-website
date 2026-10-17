@@ -1,3 +1,6 @@
+import { parseTrialState, type BowTrialState } from './trial.ts';
+import { CHAT_MODE, SHOPPING_MODE, type BowChatMode } from './shopping.ts';
+
 export const BOW_CHAT_LIMITS = {
   maxMessageChars: 500,
   maxSessionIdChars: 64,
@@ -16,6 +19,8 @@ export type BowChatInput = {
   message: string;
   sessionId?: string;
   history?: BowChatTurn[];
+  mode?: BowChatMode;
+  trial?: BowTrialState;
 };
 
 export type BowValidationError =
@@ -33,13 +38,16 @@ export type BowValidationError =
   | 'history-too-long'
   | 'history-entry-invalid'
   | 'history-role-invalid'
-  | 'history-content-invalid';
+  | 'history-content-invalid'
+  | 'mode-invalid'
+  | 'trial-not-object'
+  | 'trial-invalid';
 
 export type BowValidationResult =
   | { ok: true; value: BowChatInput }
   | { ok: false; error: BowValidationError };
 
-const ALLOWED_FIELDS = new Set(['message', 'sessionId', 'history']);
+const ALLOWED_FIELDS = new Set(['message', 'sessionId', 'history', 'mode', 'trial']);
 const SESSION_RE = /^[A-Za-z0-9_-]+$/;
 
 export function validateBowChatInput(body: unknown): BowValidationResult {
@@ -104,9 +112,26 @@ export function validateBowChatInput(body: unknown): BowValidationResult {
     history = out;
   }
 
+  let mode: BowChatMode | undefined;
+  if ('mode' in o && o.mode !== undefined) {
+    if (o.mode !== CHAT_MODE && o.mode !== SHOPPING_MODE) {
+      return { ok: false, error: 'mode-invalid' };
+    }
+    mode = o.mode;
+  }
+
+  let trial: BowTrialState | undefined;
+  if ('trial' in o && o.trial !== undefined) {
+    const parsed = parseTrialState(o.trial);
+    if (!parsed.ok) return { ok: false, error: parsed.error };
+    trial = parsed.value;
+  }
+
   const value: BowChatInput = { message };
   if (sessionId !== undefined) value.sessionId = sessionId;
   if (history !== undefined) value.history = history;
+  if (mode !== undefined) value.mode = mode;
+  if (trial !== undefined) value.trial = trial;
   return { ok: true, value };
 }
 

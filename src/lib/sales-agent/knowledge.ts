@@ -71,7 +71,7 @@ export const ORDER_PRODUCTS: OrderProduct[] = [
   {
     id: 'bowbot',
     name: 'Bow Bot',
-    prices: ['£29 setup', '£20/month'],
+    prices: ['£49 today (£29 setup + first £20 month)', '£20/month'],
     variants: [],
     allowsQuantity: false,
   },
@@ -134,5 +134,5 @@ export function findProduct(id: string): OrderProduct | undefined {
 /** Payment handoff copy. The chat NEVER collects payment details. */
 export const PAYMENT_NOTE =
   'I never take card or payment details in chat. ' +
-  'Bow Bot: pay by card on the existing Stripe checkout. ' +
+  'Bow Bot: pay by card on the existing Stripe checkout, or in crypto when checkout opens. ' +
   "We'll email you a secure payment link after confirming your order.";

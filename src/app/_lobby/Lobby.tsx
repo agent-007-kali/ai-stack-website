@@ -8,7 +8,7 @@ import { HardwareSection } from './HardwareSection';
 import type { Need } from './types';
 
 const BOOK = 'mailto:tradersbooking@gmail.com?subject=Book%20a%201%3A1%20with%20AI%20Solutions';
-const JARVIS = 'mailto:tradersbooking@gmail.com?subject=Write%20to%20Jarvis';
+const BOW = 'mailto:tradersbooking@gmail.com?subject=Write%20to%20Bow';
 
 function Lobby() {
     const [lit, setLit] = useState<Need | null>(null);
@@ -67,10 +67,10 @@ function Lobby() {
 
         <section className="corner">
             <div className="jorb"><i /></div>
-            <div><strong>Jarvis&apos;s corner</strong><p>Runs the house: the diary, the inbox and the doors.</p></div>
-            <a href={JARVIS}>Write to Jarvis</a>
+            <div><strong>Bow&apos;s corner</strong><p>Runs the house: the diary, the inbox and the doors.</p></div>
+            <a href={BOW}>Write to Bow</a>
         </section>
-        <footer className="foot">AI Solutions · Sol, Ana, Tally and Jarvis · <Link href="/privacy">Privacy</Link></footer>
+        <footer className="foot">AI Solutions · Sol, Ana, Tally and Bow · <Link href="/privacy">Privacy</Link></footer>
     </>;
 }
 

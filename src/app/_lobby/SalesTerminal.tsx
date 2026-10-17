@@ -145,7 +145,7 @@ export function SalesTerminal() {
                             </div>
                         ),
                     )}
-                    {busy && <div className="st-m st-sys">{persona === 'sol' ? 'sol' : 'jarvis'} is typing ...</div>}
+                    {busy && <div className="st-m st-sys">{persona === 'sol' ? 'sol' : 'advisor'} is typing ...</div>}
                 </div>
                 <form className="st-in" onSubmit={send}>
                     <label htmlFor="st-input" className="st-g">visitor@web<span className="st-d"> ~ $</span></label>
