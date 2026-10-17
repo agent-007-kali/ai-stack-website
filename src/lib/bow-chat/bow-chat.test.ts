@@ -23,6 +23,7 @@ import { FALLBACK_LABEL } from './adapter.ts';
 import { SCRIPTED_DEMO_LABEL } from '../chat-label.ts';
 import { DISCLOSURE } from '../sales-agent/knowledge.ts';
 import { answerFromKnowledge } from '../sales-agent/engine.ts';
+import { answerWithGroq, isEscalation } from '../bow-relay/groq.ts';
 
 // ---------------------------------------------------------------------------
 // Input contract
@@ -196,6 +197,15 @@ test('/try sheet answers never promise income or mention WhatsApp/Jarvis', () =>
   for (const q of ['how much is it?', 'how do I pay?', 'does it have a free trial?']) {
     const reply = bowScriptReply(q);
     assert.doesNotMatch(reply, /whatsapp|jarvis|guaranteed income|passive income/i, q);
+  }
+});
+
+test('with no GROQ key the relay tier skips price/payment questions entirely', async () => {
+  delete process.env.GROQ_API_KEY;
+  for (const q of ['how much is it?', 'how do I pay?', 'can I pay by bank transfer?']) {
+    assert.equal(isEscalation(q), true, q);
+    const r = await answerWithGroq('try', 'bow-test-nokey', q, '127.0.0.1');
+    assert.equal(r.tier, 'skip', q);
   }
 });
 
