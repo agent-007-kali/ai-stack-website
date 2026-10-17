@@ -169,7 +169,18 @@ test('/try "how do I pay?" gets the Stripe-never-in-chat sheet answer', () => {
     assert.equal(reply, answerFromKnowledge(q).lines.join('\n'), q);
     assert.match(reply, /Stripe/i, q);
     assert.match(reply, /never in chat/i, q);
-    assert.match(reply, /crypto checkout is coming soon, not live/i, q);
+    assert.doesNotMatch(reply, /crypto/i, q);
+  }
+});
+
+test('/try crypto question gets the Stripe card-only answer, never a crypto mention', () => {
+  for (const q of ['do you take crypto?', 'can I pay with crypto?', 'crypto payment?']) {
+    const reply = bowScriptReply(q);
+    assert.equal(reply, answerFromKnowledge(q).lines.join('\n'), q);
+    assert.match(reply, /Stripe/i, q);
+    assert.match(reply, /never in chat/i, q);
+    assert.match(reply, /don't take bank transfers/i, q);
+    assert.doesNotMatch(reply, /crypto|bitcoin|coming soon|not live/i, q);
   }
 });
 

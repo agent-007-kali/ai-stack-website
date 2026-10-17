@@ -161,7 +161,18 @@ test('"how do I pay?" points to Stripe card checkout, never chat', () => {
     assert.match(text, /Stripe/i, q);
     assert.match(text, /card/i, q);
     assert.match(text, /never in chat/i, q);
-    assert.match(text, /crypto checkout is coming soon, not live/i, q);
+    assert.doesNotMatch(text, /crypto/i, q);
+  }
+});
+
+test('"do you take crypto?" gets the Stripe card-only answer, never a crypto mention', () => {
+  for (const q of ['do you take crypto?', 'can I pay with crypto?', 'crypto payment?', 'can I pay with bitcoin?']) {
+    const text = answerFromKnowledge(q).lines.join(' ');
+    assert.match(text, /Stripe/i, q);
+    assert.match(text, /card/i, q);
+    assert.match(text, /never in chat/i, q);
+    assert.match(text, /don't take bank transfers/i, q);
+    assert.doesNotMatch(text, /crypto|bitcoin|ethereum|coming soon|not live/i, q);
   }
 });
 

@@ -298,7 +298,7 @@ function bowbotAnswer(): KnowledgeAnswer {
         BOWBOT_TRIAL_URL +
         '.',
       "It's an AI: it works best at one task at a time, it acts in your accounts only after you connect them, it never handles your money without your approval, and when it's unsure it says so.",
-      'For Bow Bot, payment is by card on the secure Stripe checkout on our site (crypto checkout is coming soon, not live yet) - I never take payment details in chat.',
+      'For Bow Bot, payment is by card on the secure Stripe checkout on our site - I never take payment details in chat.',
     ],
   };
 }
@@ -377,7 +377,7 @@ function subscriptionAnswer(): KnowledgeAnswer {
     lines: [
       'Bow Bot is £49 setup, then £20/month - cancel anytime, no tie-in.',
       'The 3-day free trial needs no card and gives you 20 messages a day.',
-      'Payment is by card on the secure Stripe checkout on our site - never in chat. Crypto checkout is coming soon, not live yet.',
+      'Payment is by card on the secure Stripe checkout on our site - never in chat. We don\'t take bank transfers.',
     ],
   };
 }

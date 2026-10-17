@@ -137,7 +137,6 @@ export function findProduct(id: string): OrderProduct | undefined {
 /** Payment handoff copy. The chat NEVER collects payment details. */
 export const PAYMENT_NOTE =
   'Bow Bot is paid by card on the secure Stripe checkout on our site - never in chat. ' +
-  'Crypto checkout is coming soon, not live yet. ' +
   "I never ask for or accept card, bank or account details in chat, and we don't take bank transfers. " +
   "Anything not on our fixed product sheet, the team will confirm by email.";
 
@@ -147,5 +146,4 @@ export const BANK_TRANSFER_NOTE =
   'Bow Bot is paid by card on the secure Stripe checkout on our site: ' +
   BOWBOT_CHECKOUT_URL +
   '. ' +
-  'Crypto checkout is coming soon, not live yet. ' +
   'I never ask for or accept card, bank or account details in chat.';
