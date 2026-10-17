@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   bootLines,
   handleMessage,
@@ -20,7 +20,7 @@ import {
   PERSONA_TITLE,
 } from '@/lib/sales-agent/knowledge';
 import type { OrderRequest } from '@/lib/leads/schema';
-import { requestAgentReply } from '@/lib/sales-agent/adapter';
+import { useRelay } from '@/lib/bow-relay/useRelay';
 
 const MAX_LINES = SALES_AGENT_LIMITS.maxLines;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -69,12 +69,16 @@ export function SalesAgentChat() {
   const [adapterNote, setAdapterNote] = useState<string | null>(null);
 
   const body = useRef<HTMLDivElement>(null);
-  const sessionRef = useRef('');
+  const [sessionId] = useState(newSessionId);
   const busyRef = useRef(false);
 
-  useEffect(() => {
-    if (!sessionRef.current) sessionRef.current = newSessionId();
+  const onAdvisor = useCallback((text: string) => {
+    setLines((l) => pushBounded(l, [{ who: 'agent', text }]));
+    busyRef.current = false;
+    setBusy(false);
   }, []);
+
+  const { status, send: relaySend } = useRelay('sales', sessionId, stage === 'chat', onAdvisor);
 
   useEffect(() => {
     const el = body.current;
@@ -150,24 +154,15 @@ export function SalesAgentChat() {
       return;
     }
 
-    // Knowledge question: try the (inactive) route, then answer from the sheet.
-    const history = lines
-      .filter((l) => l.who !== 'sys')
-      .map((l) => ({
-        role: (l.who === 'visitor' ? 'user' : 'assistant') as 'user' | 'assistant',
-        content: l.text,
-      }))
-      .slice(-SALES_AGENT_LIMITS.maxTurns);
-
-    const adapter = await requestAgentReply({
-      message: text,
-      sessionId: sessionRef.current || undefined,
-      history,
-    });
-    if (!adapter.ok) {
-      setAdapterNote(`live agent unavailable (${adapter.reason}) - answering from the scripted sheet`);
+    // Knowledge question: relay it live to the owner; if the relay is
+    // unreachable, answer from the scripted sheet (honest fallback).
+    const live = await relaySend(text);
+    if (live) {
+      // Stay busy (pending state) until the polled advisor reply arrives.
+      return;
     }
 
+    setAdapterNote('live advisor unavailable - answering from the scripted demo');
     const reply = handleMessage(chatState, text);
     setChatState(reply.state);
     setLines((l) => pushBounded(l, reply.lines));
@@ -280,7 +275,7 @@ export function SalesAgentChat() {
               ),
             )
           )}
-          {busy && <div className="sa-msg sa-msg--sys">{PERSONA_NAME.toLowerCase()} is working ...</div>}
+          {busy && <div className="sa-msg sa-msg--sys">{PERSONA_NAME} is typing ...</div>}
         </div>
 
         {pendingAction && pendingAction.kind !== 'submit-order' && (
@@ -321,7 +316,8 @@ export function SalesAgentChat() {
 
         <div className="sa-foot">
           <span>
-            {DISCLOSURE}. I never take card or payment details in chat.
+            {status === 'live' ? 'live - relaying to the team' : DISCLOSURE}. I never take card or
+            payment details in chat.
           </span>
           {adapterNote && <span className="sa-foot__note"> {adapterNote}</span>}
         </div>

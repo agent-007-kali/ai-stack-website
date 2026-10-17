@@ -1,6 +1,7 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BowAvatar } from './BowAvatar';
+import { useRelay } from '@/lib/bow-relay/useRelay';
 import './bow-chat.css';
 
 export type BowMsg = {
@@ -35,8 +36,6 @@ function bowScriptReply(message: string): string {
   return 'Good question. I am here to help with your 3-day free trial. Could you tell me a bit more about what you are looking to accomplish?';
 }
 
-type ChatTurn = { role: 'user' | 'assistant'; content: string };
-
 export function BowChat() {
   const [msgs, setMsgs] = useState<BowMsg[]>([]);
   const [typing, setTyping] = useState(false);
@@ -44,9 +43,15 @@ export function BowChat() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [draft, setDraft] = useState('');
-  const [history, setHistory] = useState<ChatTurn[]>([]);
-  const [sessionId] = useState(() => `bow-${Math.random().toString(36).slice(2, 10)}`);
+  const [sessionId] = useState(() => `bow-${Math.random().toString(36).slice(2, 12)}`);
   const end = React.useRef<HTMLDivElement>(null);
+
+  const onAdvisor = useCallback((text: string) => {
+    setTyping(false);
+    setMsgs((x) => [...x, { from: 'bowbot', text: `[live] ${text}` }]);
+  }, []);
+
+  const { status, send: relaySend } = useRelay('try', sessionId, started, onAdvisor);
 
   useEffect(() => {
     const el = end.current;
@@ -67,32 +72,26 @@ export function BowChat() {
     setDraft('');
     setMsgs((x) => [...x, { from: 'me', text: t }]);
     setTyping(true);
-    const nextHistory: ChatTurn[] = [...history, { role: 'user', content: t }];
-    try {
-      const res = await fetch('/api/bow-chat', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ message: t, sessionId, history }),
-      });
-      const data = await res.json();
-      const reply = typeof data?.reply === 'string' && data.reply ? data.reply : bowScriptReply(t);
-      const label = typeof data?.label === 'string' && data.label ? data.label : FALLBACK_LABEL;
+    const live = await relaySend(t);
+    if (!live) {
+      // Relay unreachable: honest scripted fallback, clearly labelled.
+      const reply = bowScriptReply(t);
       window.setTimeout(() => {
         setTyping(false);
-        setMsgs((x) => [...x, { from: 'bowbot', text: `[${label}] ${reply}` }]);
-        setHistory([...nextHistory, { role: 'assistant', content: reply }]);
-      }, 800);
-    } catch {
-      window.setTimeout(() => {
-        setTyping(false);
-        const reply = bowScriptReply(t);
         setMsgs((x) => [...x, { from: 'bowbot', text: `[${FALLBACK_LABEL}] ${reply}` }]);
-        setHistory([...nextHistory, { role: 'assistant', content: reply }]);
-      }, 800);
+      }, 500);
     }
+    // When live, the typing dots stay until an advisor reply arrives (polled).
   };
 
   const emailOk = /^\S+@\S+\.\S+$/.test(email);
+
+  const statusText =
+    status === 'live'
+      ? 'live - relaying to the owner'
+      : status === 'unavailable'
+        ? 'live unavailable - scripted demo'
+        : FALLBACK_LABEL;
 
   return (
     <div className="chat bow-chat" role="log" aria-live="polite">
@@ -101,7 +100,7 @@ export function BowChat() {
         <div>
           <b>Bow Bot</b>
           <small>
-            <span className="pulse" /> {FALLBACK_LABEL}
+            <span className="pulse" /> {statusText}
           </small>
         </div>
       </div>
