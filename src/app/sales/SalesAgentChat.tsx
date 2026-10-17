@@ -206,6 +206,12 @@ export function SalesAgentChat() {
           <i style={{ background: '#ff5f56' }} />
           <i style={{ background: '#ffbd2e' }} />
           <i style={{ background: '#27c93f' }} />
+          <img
+            className="sa-orb"
+            src="/bowbot/assets/orb-static-DETHUGoC.png"
+            alt=""
+            aria-hidden
+          />
           <span className="sa-title">ai-solutions.company / sales</span>
           <span className="sa-badge">{DISCLOSURE}</span>
         </div>
@@ -213,9 +219,15 @@ export function SalesAgentChat() {
         <div className="sa-body" ref={body} aria-live="polite">
           {stage === 'details' ? (
             <div className="sa-start">
+              <img
+                className="sa-start__orb"
+                src="/bowbot/assets/orb-static-DETHUGoC.png"
+                alt=""
+                aria-hidden
+              />
               <p className="sa-start__lead">
-                Hi, I&apos;m {PERSONA_NAME}, the {PERSONA_TITLE}. Tell me your name and email and
-                we&apos;ll start. I&apos;ll use them only to log anything you order or ask for.
+                Hi, I&apos;m {PERSONA_NAME} from the {PERSONA_TITLE}. Tell me your name and email
+                and we&apos;ll start. I&apos;ll use them only to log anything you order or ask for.
               </p>
               <form className="sa-start__form" onSubmit={startChat} noValidate>
                 <label className="sa-field">

@@ -136,6 +136,15 @@
   margin-left: 10px;
 }
 
+.sa-orb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+  box-shadow: 0 0 10px rgba(255, 198, 45, 0.5);
+}
+
 .sa-badge {
   margin-left: auto;
   font-size: 11px;
@@ -197,6 +206,16 @@
   max-width: 420px;
   margin: 8px auto;
   font-family: 'Inter', system-ui, sans-serif;
+}
+
+.sa-start__orb {
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 14px;
+  box-shadow: 0 0 24px rgba(255, 198, 45, 0.45);
 }
 
 .sa-start__lead {

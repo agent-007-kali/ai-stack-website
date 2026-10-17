@@ -5,11 +5,11 @@ import { DISCLOSURE } from '@/lib/sales-agent/knowledge';
 import './sales.css';
 
 export const metadata: Metadata = {
-  title: 'AI Sales Consultant - AI Solutions',
+  title: 'Bow Sales Customer Advisor - AI Solutions',
   description:
-    'Chat with Jarvis, the AI Sales Consultant, about Bow Bot, the AI Solutions Box, 1:1 sessions and classes. Ask a question or place an order in chat.',
+    'Chat with the Bow Sales Customer Advisor (Bow Bot family) about Bow Bot, the AI Solutions Box, 1:1 sessions and classes. Ask a question or place an order in chat.',
   openGraph: {
-    title: 'AI Sales Consultant - AI Solutions',
+    title: 'Bow Sales Customer Advisor - AI Solutions',
     description:
       'Ask about Bow Bot, the AI Solutions Box, 1:1 sessions and classes, or place an order in chat.',
     type: 'website',
@@ -32,11 +32,12 @@ export default function SalesPage() {
       </header>
 
       <section className="sales-hero">
-        <p className="sales-eyebrow">AI Sales Consultant</p>
+        <p className="sales-eyebrow">Bow Sales Customer Advisor</p>
         <h1>Ask, or place an order, in one chat.</h1>
         <p className="sales-sub">
-          Jarvis answers from our fixed product sheet - honest prices, no pressure - and can log an
-          order for the team. Payment is never taken in this chat.
+          Our Bow Sales Customer Advisor (Bow Bot family) answers from our fixed product sheet -
+          honest prices, no pressure - and can log an order for the team. Payment is never taken in
+          this chat.
         </p>
       </section>
 

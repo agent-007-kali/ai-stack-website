@@ -183,7 +183,7 @@ export function bootLines(firstName?: string): AgentLine[] {
     { who: 'sys', text: `session opened - ${DISCLOSURE}` },
     {
       who: 'agent',
-      text: `${hi} Jarvis, the AI Sales Consultant. This chat is a scripted demo, not live, so I answer from our fixed product sheet and never guess.`,
+      text: `${hi} the Bow Sales Customer Advisor from the Bow Bot family. This chat is a scripted demo, not live, so I answer from our fixed product sheet and never guess.`,
     },
     {
       who: 'agent',
@@ -210,7 +210,7 @@ export function answerFromKnowledge(text: string): KnowledgeAnswer {
     return {
       key: 'greet',
       lines: [
-        "Hello. I'm Jarvis, the AI Sales Consultant. Ask about Bow Bot, the AI Solutions Box, sessions or classes - or type 'order' to place an order.",
+        "Hello. I'm the Bow Sales Customer Advisor from the Bow Bot family. Ask about Bow Bot, the AI Solutions Box, sessions or classes - or type 'order' to place an order.",
       ],
     };
   }
@@ -543,7 +543,7 @@ export function orderResult(payload: OrderRequest, reference: string): AgentRepl
   } else {
     lines.push(
       agent(
-        `The team will reply by email to arrange payment (bank transfer), quoting reference ${reference}.`,
+        `We'll email you a secure payment link after confirming your order. Reference ${reference}.`,
       ),
     );
   }

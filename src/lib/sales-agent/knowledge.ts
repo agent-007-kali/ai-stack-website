@@ -23,9 +23,9 @@ export const BOWBOT_TRIAL_URL = '/try';
 /** Existing Luma booking link used for the online 1:1 sessions. */
 export const SESSION_LUMA_URL = 'https://luma.com/c47g3foa';
 
-export const PERSONA_NAME = 'Jarvis';
-export const PERSONA_TITLE = 'AI Sales Consultant';
-export const PERSONA_LABEL = `jarvis@ai-solutions`;
+export const PERSONA_NAME = 'Bow Sales Customer Advisor';
+export const PERSONA_TITLE = 'Bow Bot family';
+export const PERSONA_LABEL = `bow-sales@ai-solutions`;
 
 /**
  * Honest disclosure. The agent is a scripted demo until a live provider is
@@ -135,4 +135,4 @@ export function findProduct(id: string): OrderProduct | undefined {
 export const PAYMENT_NOTE =
   'I never take card or payment details in chat. ' +
   'Bow Bot: pay by card on the existing Stripe checkout. ' +
-  'Everything else: payment is arranged by reply email after I log the order (bank transfer), as stated on our site.';
+  "We'll email you a secure payment link after confirming your order.";
