@@ -1,0 +1,142 @@
+/* Bow Chat terminal skin — imported only by /try. Scoped under .bow-chat so the
+   shared lobby stylesheet (used by every other route) is left byte-identical. */
+.bow-chat {
+  --bow-navy: #0b1530;
+  --bow-navy-2: #070d1f;
+  --bow-line: #22305a;
+  --bow-amber: #ffc62d;
+  --bow-green: #4fd1b5;
+  --bow-sys: #8fb4ff;
+  --bow-muted: #8a98c0;
+  background: rgba(7, 13, 31, 0.82);
+  border-color: var(--bow-line);
+  box-shadow: 0 0 40px rgba(255, 198, 45, 0.1);
+  font-family: ui-monospace, "DejaVu Sans Mono", Menlo, monospace;
+}
+
+.bow-chat .chat-head {
+  background: var(--bow-navy);
+  border-bottom-color: var(--bow-line);
+}
+
+.bow-chat .chat-head b {
+  color: var(--bow-amber);
+}
+
+.bow-chat .chat-head small {
+  color: var(--bow-muted);
+}
+
+.bow-chat .chat-body {
+  background: var(--bow-navy-2);
+}
+
+/* Amber for the bot, green for the visitor — matching the sales terminal. */
+.bow-chat .row.bowbot .msg {
+  background: rgba(255, 198, 45, 0.08);
+  border: 1px solid var(--bow-line);
+  border-bottom-left-radius: 6px;
+  color: var(--bow-amber);
+  font-weight: 700;
+}
+
+.bow-chat .row.me .msg {
+  background: rgba(79, 209, 181, 0.14);
+  border: 1px solid rgba(79, 209, 181, 0.35);
+  border-bottom-right-radius: 6px;
+  color: var(--bow-green);
+}
+
+/* Boot lines print in the navy/blue system colour, un-bubbled. */
+.bow-chat .row.boot .msg {
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  color: var(--bow-sys);
+  font-size: 13px;
+  max-width: 100%;
+}
+
+.bow-chat .row.boot .solav {
+  visibility: hidden;
+}
+
+.bow-chat .composer {
+  background: var(--bow-navy);
+  border-top-color: var(--bow-line);
+}
+
+.bow-chat .composer input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--bow-line);
+  color: #f2f5ff;
+  font-family: inherit;
+}
+
+.bow-chat .composer input:focus {
+  border-color: var(--bow-amber);
+}
+
+.bow-chat .composer input::placeholder {
+  color: #56648f;
+}
+
+.bow-chat .composer button {
+  background: var(--bow-amber);
+  color: #2a1d00;
+}
+
+.bow-chat .gate {
+  background: var(--bow-navy-2);
+}
+
+.bow-chat .gate h3 {
+  color: var(--bow-amber);
+  font-family: inherit;
+}
+
+.bow-chat .gate p {
+  color: var(--bow-muted);
+}
+
+.bow-chat .gate input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--bow-line);
+  color: #f2f5ff;
+  font-family: inherit;
+}
+
+.bow-chat .gate input:focus {
+  border-color: var(--bow-amber);
+}
+
+.bow-chat .cta.full {
+  background: var(--bow-amber);
+  color: #2a1d00 !important;
+  -webkit-text-fill-color: #2a1d00;
+  font-family: inherit;
+  box-shadow: 0 10px 30px rgba(255, 198, 45, 0.3);
+}
+
+.bow-chat .typing i {
+  background: var(--bow-amber);
+}
+
+.solav {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 198, 45, 0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.solav img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
