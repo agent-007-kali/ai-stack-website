@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { readFile } from 'fs/promises';
-import path from 'path';
+import { get } from '@vercel/blob';
 
-// Serves the PDF only if Stripe confirms this exact Checkout Session is paid
-// and belongs to the guide product. The PDF lives outside /public so it has no public URL.
+const GUIDE_BLOB_PATHNAME = 'guide/Hire-Your-First-AI-Employee.pdf';
+
+// Serves the paid guide PDF only if Stripe confirms this exact Checkout Session is paid
+// and belongs to the guide product. The PDF lives in a PRIVATE Vercel Blob store
+// (BLOB_READ_WRITE_TOKEN / OIDC) and is streamed server-side — it is never in this
+// repo and there is no public blob URL involved.
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('session_id') || '';
   const key = process.env.STRIPE_SECRET_KEY;
@@ -21,8 +24,16 @@ export async function GET(req: NextRequest) {
   if (session.payment_status !== 'paid' || session.metadata?.product !== 'guide-hire-first-ai-employee') {
     return NextResponse.json({ error: 'Payment not completed' }, { status: 402 });
   }
-  const file = await readFile(path.join(process.cwd(), 'private', 'Hire-Your-First-AI-Employee.pdf'));
-  return new NextResponse(new Uint8Array(file), {
+  let blobResult: Awaited<ReturnType<typeof get>> | null = null;
+  try {
+    blobResult = await get(GUIDE_BLOB_PATHNAME, { access: 'private' });
+  } catch {
+    blobResult = null;
+  }
+  if (!blobResult || blobResult.statusCode !== 200 || !blobResult.stream) {
+    return NextResponse.json({ error: 'Download unavailable' }, { status: 500 });
+  }
+  return new NextResponse(blobResult.stream, {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'attachment; filename="Hire-Your-First-AI-Employee.pdf"',

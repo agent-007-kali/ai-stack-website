@@ -1,15 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 // One-time payment for the guide. Price comes from env so it is not hard-coded.
 // GUIDE_PRICE_PENCE e.g. "1400" for GBP 14.00. Refuses to run if unset.
-export async function POST() {
+export async function POST(req: NextRequest) {
   const key = process.env.STRIPE_SECRET_KEY;
   const pence = parseInt(process.env.GUIDE_PRICE_PENCE || '', 10);
   if (!key || !pence || pence < 100) {
     return NextResponse.json({ error: 'Guide checkout not configured' }, { status: 500 });
   }
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ai-solutions.company';
+  // Redirect back to wherever the checkout was started (Preview deployments included),
+  // falling back to the configured app URL, then the production domain.
+  const appUrl = (req.headers.get('origin') || '').replace(/\/+$/, '')
+    || process.env.NEXT_PUBLIC_APP_URL
+    || 'https://ai-solutions.company';
   const stripe = new Stripe(key, { apiVersion: '2026-02-25.clover' });
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',

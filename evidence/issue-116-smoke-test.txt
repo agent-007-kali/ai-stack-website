@@ -1,0 +1,23 @@
+== issue-116 local smoke test (2026-10-19T12:43:55Z) ==
+
+-- (a) GET /api/guide/download (no session_id) --
+status=404
+{"error":"Not found"}
+
+-- (b) GET /api/guide/download?session_id=cs_test_abc (no STRIPE_SECRET_KEY) --
+status=404
+{"error":"Not found"}
+
+-- (c) POST /api/guide/checkout (unconfigured) --
+status=500
+{"error":"Guide checkout not configured"}
+
+-- (d) GET /guide --
+status=200
+
+-- (e) route source no longer reads local private/ file --
+0
+0 matches (good)
+3:import { get } from '@vercel/blob';
+29:    blobResult = await get(GUIDE_BLOB_PATHNAME, { access: 'private' });
+33:  if (!blobResult || blobResult.statusCode !== 200 || !blobResult.stream) {

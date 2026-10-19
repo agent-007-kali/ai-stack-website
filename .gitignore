@@ -43,6 +43,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# The real 62-page paid guide PDF is owner-supplied and must NEVER be committed
-# to this public repo. Only the tiny marked placeholder below is tracked.
-private/*.pdf
+# The real paid guide PDF lives in a PRIVATE Vercel Blob store and must NEVER
+# be committed to this public repo. Keep any local copy out of git.
+private/
