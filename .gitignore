@@ -42,3 +42,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# The real 62-page paid guide PDF is owner-supplied and must NEVER be committed
+# to this public repo. Only the tiny marked placeholder below is tracked.
+private/*.pdf
