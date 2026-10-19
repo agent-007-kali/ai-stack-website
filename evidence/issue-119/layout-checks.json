@@ -1,0 +1,200 @@
+{
+  "checks": [
+    {
+      "check": "desktop: band present",
+      "pass": true
+    },
+    {
+      "check": "desktop: copy exact",
+      "pass": true
+    },
+    {
+      "check": "desktop: button text",
+      "pass": true
+    },
+    {
+      "check": "desktop: button href /guide",
+      "pass": true
+    },
+    {
+      "check": "desktop: band adds no horizontal overflow",
+      "pass": true
+    },
+    {
+      "check": "desktop: band contents stay inside band",
+      "pass": true
+    },
+    {
+      "check": "desktop: band bottom within document",
+      "pass": true
+    },
+    {
+      "check": "desktop: band visible at page bottom",
+      "pass": true
+    },
+    {
+      "check": "desktop: button min height >= 44",
+      "pass": true
+    },
+    {
+      "check": "desktop: no price in band copy",
+      "pass": true
+    },
+    {
+      "check": "desktop: band inside viewport width",
+      "pass": true
+    },
+    {
+      "check": "mobile: band present",
+      "pass": true
+    },
+    {
+      "check": "mobile: copy exact",
+      "pass": true
+    },
+    {
+      "check": "mobile: button text",
+      "pass": true
+    },
+    {
+      "check": "mobile: button href /guide",
+      "pass": true
+    },
+    {
+      "check": "mobile: band adds no horizontal overflow",
+      "pass": true
+    },
+    {
+      "check": "mobile: band contents stay inside band",
+      "pass": true
+    },
+    {
+      "check": "mobile: band bottom within document",
+      "pass": true
+    },
+    {
+      "check": "mobile: band visible at page bottom",
+      "pass": true
+    },
+    {
+      "check": "mobile: button min height >= 44",
+      "pass": true
+    },
+    {
+      "check": "mobile: no price in band copy",
+      "pass": true
+    },
+    {
+      "check": "mobile: band inside viewport width",
+      "pass": true
+    }
+  ],
+  "desktop": {
+    "label": "desktop",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "metrics": {
+      "missing": false,
+      "copyText": "New: Hire Your First AI Employee - a 62-page PDF guide, written by an AI agent",
+      "btnText": "See the guide",
+      "btnHref": "/guide",
+      "bandRect": {
+        "top": 5442.90625,
+        "bottom": 5563.90625,
+        "width": 1425,
+        "height": 121
+      },
+      "bandDocTop": 5442.90625,
+      "bandBackground": "rgb(10, 15, 36)",
+      "btnRect": {
+        "top": 5469.90625,
+        "bottom": 5537.90625,
+        "width": 136.171875,
+        "height": 68,
+        "left": 1056.328125,
+        "right": 1192.5
+      },
+      "copyRect": {
+        "top": 5492.28125,
+        "bottom": 5515.53125,
+        "width": 491.171875,
+        "left": 232.5,
+        "right": 723.671875
+      },
+      "btnBackground": "rgb(247, 201, 72)",
+      "btnColor": "rgb(26, 20, 5)",
+      "btnRadius": "999px",
+      "appBottom": 5478.90625,
+      "overlapPx": 36,
+      "docHeight": 5627,
+      "docWidth": 1461,
+      "clientWidth": 1425,
+      "horizontalOverflowPx": 36,
+      "docBottom": 5627,
+      "baselineScrollWidth": 1461,
+      "scrollWidthWithBand": 1461
+    },
+    "visibleAtBottom": {
+      "top": 700.90625,
+      "bottom": 821.90625,
+      "viewportH": 900,
+      "inView": true
+    }
+  },
+  "mobile": {
+    "label": "mobile",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "metrics": {
+      "missing": false,
+      "copyText": "New: Hire Your First AI Employee - a 62-page PDF guide, written by an AI agent",
+      "btnText": "See the guide",
+      "btnHref": "/guide",
+      "bandRect": {
+        "top": 8342.78125,
+        "bottom": 8526.28125,
+        "width": 390,
+        "height": 183.5
+      },
+      "bandDocTop": 8342.78125,
+      "bandBackground": "rgb(10, 15, 36)",
+      "btnRect": {
+        "top": 8432.28125,
+        "bottom": 8500.28125,
+        "width": 136.171875,
+        "height": 68,
+        "left": 24,
+        "right": 160.171875
+      },
+      "copyRect": {
+        "top": 8369.78125,
+        "bottom": 8416.28125,
+        "width": 342,
+        "left": 24,
+        "right": 366
+      },
+      "btnBackground": "rgb(247, 201, 72)",
+      "btnColor": "rgb(26, 20, 5)",
+      "btnRadius": "999px",
+      "appBottom": 8366.78125,
+      "overlapPx": 24,
+      "docHeight": 8590,
+      "docWidth": 414,
+      "clientWidth": 390,
+      "horizontalOverflowPx": 24,
+      "docBottom": 8590,
+      "baselineScrollWidth": 414,
+      "scrollWidthWithBand": 414
+    },
+    "visibleAtBottom": {
+      "top": 648.78125,
+      "bottom": 832.28125,
+      "viewportH": 896,
+      "inView": true
+    }
+  }
+}
