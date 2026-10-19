@@ -1,0 +1,30 @@
+== issue-115 local tests (2026-10-19T12:19:27Z) == server: next start -p 3188 (no STRIPE_SECRET_KEY set on purpose)
+-- (a-pre) GET /guide
+status=200
+Buy the guide - £14
+1
+-- checkout POST (no Stripe key configured)
+status=500
+{"error":"Guide checkout not configured"}
+-- (c) GET download?session_id=cs_test_fake
+status=404
+{"error":"Not found"}
+-- GET download (no session)
+status=404
+{"error":"Not found"}
+-- GET download?session_id=not-a-session
+status=404
+{"error":"Not found"}
+-- (e) GET /private/Hire-Your-First-AI-Employee.pdf
+status=404
+-- (e) GET /Hire-Your-First-AI-Employee.pdf
+status=404
+-- (e) GET /private/ and traversal
+status=308
+status=404
+-- GET /guide/thanks?session_id=cs_test_fake
+status=200
+href="/api/guide/download?session_id=cs_test_fake"
+-- GET /guide/thanks (no session)
+status=200
+Missing session. Use the link from your payment.

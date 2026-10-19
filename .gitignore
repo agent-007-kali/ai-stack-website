@@ -42,3 +42,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# The real paid guide PDF lives in a PRIVATE Vercel Blob store and must NEVER
+# be committed to this public repo. Keep any local copy out of git.
+private/
