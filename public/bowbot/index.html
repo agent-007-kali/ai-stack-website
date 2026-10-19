@@ -7,9 +7,65 @@
     <meta name="description" content="A frontier-grade AI agent that actually does the work. Your own Bow Bot in WhatsApp. Launch price £49 setup + £20/month." />
     <script type="module" crossorigin src="/bowbot/assets/index-_3wZZttY.js"></script>
     <link rel="stylesheet" crossorigin href="/bowbot/assets/index-CCHm_6UO.css">
+    <style>
+      .guide-band {
+        position: relative;
+        z-index: 1;
+        background: #0a0f24;
+        border-top: 1px solid rgba(255, 255, 255, 0.09);
+        padding: 26px 24px;
+      }
+      .guide-band-inner {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .guide-band-copy {
+        margin: 0;
+        color: #a7b0d8;
+        font-size: 15px;
+        line-height: 1.55;
+        max-width: 100%;
+      }
+      .guide-band-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 12px 26px;
+        border-radius: 999px;
+        background: #f7c948;
+        color: #1a1405;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .guide-band-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 30px rgba(247, 201, 72, 0.35);
+      }
+      @media (max-width: 640px) {
+        .guide-band-inner {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <section class="guide-band" aria-label="Guide">
+      <div class="guide-band-inner">
+        <p class="guide-band-copy">New: Hire Your First AI Employee - a 62-page PDF guide, written by an AI agent</p>
+        <a class="guide-band-btn" href="/guide">See the guide</a>
+      </div>
+    </section>
     <p style="margin:0;padding:12px 24px 32px;background:#0a0f24;color:#a7b0d8;font-size:12.5px;line-height:1.55"><a href="/lobby" style="color:#a7b0d8;text-decoration:underline;text-underline-offset:3px">AI Solutions lobby</a></p>
   </body>
 </html>
