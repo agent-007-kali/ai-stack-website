@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
+const stripeKey = (process.env.STRIPE_SECRET_KEY ?? '').trim();
+const stripe = new Stripe(stripeKey || 'sk_test_placeholder', {
   apiVersion: '2026-02-25.clover'
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+const webhookSecret = (process.env.STRIPE_WEBHOOK_SECRET ?? '').trim();
 
 export async function POST(request: NextRequest) {
   try {
