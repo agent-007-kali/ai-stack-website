@@ -10,7 +10,7 @@ const GUIDE_BLOB_PATHNAME = 'guide/Hire-Your-First-AI-Employee.pdf';
 // repo and there is no public blob URL involved.
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('session_id') || '';
-  const key = process.env.STRIPE_SECRET_KEY;
+  const key = (process.env.STRIPE_SECRET_KEY ?? '').trim();
   if (!key || !id.startsWith('cs_')) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }

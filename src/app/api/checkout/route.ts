@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { features } from '@/lib/features';
 
 export async function POST(request: NextRequest) {
-  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  const stripeKey = (process.env.STRIPE_SECRET_KEY ?? '').trim();
   
   if (!stripeKey) {
     return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
