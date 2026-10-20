@@ -26,11 +26,14 @@ export const metadata: Metadata = {
 
 const STRIPE_BUY = 'https://buy.stripe.com/14A7sL90o1Qn6YVf3b4Rq00';
 const MAIL = 'mailto:tradersbooking@gmail.com';
+const SAMPLE_MAILTO =
+  'mailto:tradersbooking@gmail.com?subject=Sample%20chapter%20request&body=Hi%2C%20please%20send%20me%20a%20free%20sample%20chapter.%20Guide%20I%27d%20like%3A%20';
 
 const TICKER: (string | { text: string; href: string })[] = [
   'Launch price: Bow Bot £49 setup + £20/month',
   '3-day free trial, no card needed',
   'All four guides £35 as a bundle',
+  { text: 'Request a free sample chapter', href: SAMPLE_MAILTO },
   'AI Solutions Boxes custom-built, 3-week delivery',
   'Tailored agents for your business',
 ];
@@ -147,6 +150,9 @@ export default function HomePage() {
           <div className="sf-section-head">
             <span className="sf-kicker">01 · Guides</span>
             <h2 id="guides-title">PDF guides, written by an AI agent</h2>
+            <a className="sf-promo-line" href={SAMPLE_MAILTO}>
+              Request a free sample chapter
+            </a>
           </div>
           <p className="sf-section-sub">
             Honest, practical guides for small businesses — pay by card, download instantly.
