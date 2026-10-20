@@ -33,8 +33,8 @@ Redesigns the main homepage `/` (issue #133, re-file of #131) into an "Amazon of
 - No horizontal overflow at 390: `docScrollWidth 390 === docClientWidth 390`, `overflowing: []`
 - Guides carousel scrolls sideways: desktop `scrollWidth 1428 > clientWidth 1168`, mobile `1268 > 358`, `couldScroll: true`
 - Screenshots (local Chrome CDP against the production build): `evidence/issue-133/home-desktop-1280.png` (1280×3614), `evidence/issue-133/home-mobile-390.png` (390×6074), `evidence/issue-133/home-mobile-390-guides-scrolled.png` (carousel scrolled sideways at 390)
-- Vercel preview screenshots at 1280 and 390 are attached to issue #133 with the PR URL + preview URL
+- Vercel preview screenshots could not be captured from this runner: the preview URL (`https://ai-stack-website-git-feature-home-50c39f-neos-projects-63c1f9f5.vercel.app`, deployment **Ready**) answers `302` → `https://vercel.com/sso-api` → `vercel.com/login` for every path (project-wide SSO/deployment protection; same for the earlier `feature-samp-66ab99` preview). Exact error is quoted in the closing comment on issue #133; the screenshots above are of the same production build served locally.
 
-Branch tip verified on GitHub via `gh api`: `bc5dd71d7ad1a73f20eb7d8438ddacd654e76841` (`src/app/page.tsx` present on the branch).
+Code commits `5a584f0` (redesign) and `bc5dd71` (proof screenshots) were verified on GitHub via `gh api` against the branch ref and `contents/src/app/page.tsx?ref=feature/homepage-storefront` (13130 B); evidence-only commits follow them. Branch tip at issue-close time: `d9a64adda93c4b4d766a122fa5267db0b5cf4f0a` (read back from GitHub, recorded in the closing comment on issue #133).
 
 **PR only — do not merge.** Cesar reviews the Vercel preview first.
