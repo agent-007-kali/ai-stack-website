@@ -1,0 +1,62 @@
+
+> ai-stack-website@0.1.0 build
+> next build
+
+▲ Next.js 16.2.0 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.8s
+  Running TypeScript ...
+  Finished TypeScript in 4.8s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/32) ...
+  Generating static pages using 7 workers (8/32) 
+  Generating static pages using 7 workers (16/32) 
+  Generating static pages using 7 workers (24/32) 
+✓ Generating static pages using 7 workers (32/32) in 558ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /_not-found
+├ ○ /academy
+├ ○ /accounting
+├ ƒ /api/bow-chat
+├ ƒ /api/bow-relay
+├ ƒ /api/chat
+├ ƒ /api/checkout
+├ ƒ /api/guide/checkout
+├ ƒ /api/guide/download
+├ ƒ /api/jarvis-chat
+├ ƒ /api/leads
+├ ƒ /api/sales-agent
+├ ƒ /api/sales-chat
+├ ƒ /api/sample
+├ ƒ /api/sample/download
+├ ƒ /api/sample/signups
+├ ƒ /api/status
+├ ƒ /api/stripe-webhook
+├ ○ /apple-icon.png
+├ ○ /box
+├ ○ /box-max
+├ ○ /box-pro
+├ ○ /guide
+├ ƒ /guide/thanks
+├ ○ /icon.svg
+├ ○ /jarvis-bridge
+├ ○ /learn
+├ ○ /lobby
+├ ○ /manifest.webmanifest
+├ ○ /opengraph-image
+├ ○ /privacy
+├ ○ /robots.txt
+├ ○ /sales
+├ ○ /sample
+├ ƒ /sample/thanks
+├ ○ /sitemap.xml
+└ ○ /try
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

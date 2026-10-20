@@ -1,0 +1,111 @@
+== issue-127 local proof 2026-10-20T15:03:24Z ==
+== next start -p 3277, Stripe + Vercel Blob stubs via NODE_OPTIONS ==
+
+-- (a) GET /guide --
+status=200
+5 product titles in order: True [4147, 4903, 5822, 6765, 7906]
+Buy buttons: 5
+bundle line: True
+bundle bullets ok: True
+free-chapter line: True
+'Written by an AI agent' count: 5
+labels: ['Buy now - £35', 'Buy now - £14', 'Buy now - £9']
+
+-- (b) POST /api/guide/checkout {product:'bundle-all-four'} --
+{"url":"https://checkout.stripe.com/c/pay/cs_test_stubcreated1"}
+-- (c) single guide {product:'prompt-pack'} (unchanged) --
+{"url":"https://checkout.stripe.com/c/pay/cs_test_stubcreated1"}
+-- (d) unknown product --
+status=400 {"error":"Unknown product"}
+
+-- (e) guide download, paid bundle session, four items --
+hire-first-ai-employee: status=200 type=application/pdf size=68
+prompt-pack: status=200 type=application/pdf size=68
+admin-guide: status=200 type=application/pdf size=68
+accountants-guide: status=200 type=application/pdf size=68
+-- (f) bundle session, item missing -> 400 --
+status=400 {"error":"Missing item"}
+-- (g) bundle session, bad item -> 404 --
+status=404 {"error":"Not found"}
+-- (h) single-guide session unchanged (paid) --
+status=200 type=application/pdf disp={"vary":["rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"],
+"cache-control":["private, no-store"],
+"content-disposition":["attachment; filename=\"Hire-Your-First-AI-Employee.pdf\""],
+"content-type":["application/pdf"],
+"date":["Tu
+-- (i) unpaid session -> 402 --
+status=402 {"error":"Payment not completed"}
+-- (j) unknown metadata.product -> 404 --
+status=404 {"error":"Not found"}
+-- (k) bad session id -> 404 --
+status=404
+
+-- (l) /guide/thanks?session_id=cs_test_paidbundle1 --
+status=200
+Download: 
+Download: 
+Download: 
+Download: 
+Download: \",\"Hire Your First AI Employee\"]}]}],[\"$\",\"li\",\"prompt-pack\",{\"children\":[\"$\",\"a\",null,{\"href\":\"/api/guide/download?session_id=cs_test_paidbundle1\u0026item=prompt-pack\",\"style\":{\"display\":\"inline-block\",\"padding\":\"14px 28px\",\"borderRadius\":8,\"background\":\"#38d6e6\",\"color\":\"#06223a\",\"fontWeight\":700},\"children\":[\"Download: \",\"The AI Prompt Pack for Small Business\"]}]}],[\"$\",\"li\",\"admin-guide\",{\"children\":[\"$\",\"a\",null,{\"href\":\"/api/guide/download?session_id=cs_test_paidbundle1\u0026item=admin-guide\",\"style\":{\"display\":\"inline-block\",\"padding\":\"14px 28px\",\"borderRadius\":8,\"background\":\"#38d6e6\",\"color\":\"#06223a\",\"fontWeight\":700},\"children\":[\"Download: \",\"Automate Your Admin in a Weekend\"]}]}],[\"$\",\"li\",\"accountants-guide\",{\"children\":[\"$\",\"a\",null,{\"href\":\"/api/guide/download?session_id=cs_test_paidbundle1\u0026item=accountants-guide\",\"style\":{\"display\":\"inline-block\",\"padding\":\"14px 28px\",\"borderRadius\":8,\"background\":\"#38d6e6\",\"color\":\"#06223a\",\"fontWeight\":700},\"children\":[\"Download: \",\"AI for Accountants and Bookkeepers\"]}]}]]}]]}]\n"])
+bundle session has 4 links: 1
+-- (m) /guide/thanks?session_id=cs_test_paidguide1 (single) --
+Download the PDF
+Hire Your First AI Employee
+
+-- (n) GET /sample --
+status=200
+heading: True
+fields: True
+button: True
+fine print: True
+select has 4 guide titles: True
+
+-- (o) POST /api/sample, valid signup (guide=prompt-pack) --
+HTTP/1.1 429 Too Many Requests
+location: 
+token shape (<expiryMs>.<64-hex>): False
+guide param: 
+-- (p) GET /sample/thanks with the real token --
+status=200
+Done. Here is your sample.
+Your sample chapter is on its way. Check the link from your signup.
+Your sample chapter is on its way. Check the link from your signup.\"}]]}]\na:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n7:null\n"])
+-- (q) download link shape (sample PDF not stored yet -> friendly 404) --
+HTTP/1.1 403 Forbidden
+content-type: text/plain;charset=UTF-8
+body: This link is invalid or has expired.
+-- (r) drop a placeholder sample PDF into the blob store, stream it --
+HTTP/1.1 403 Forbidden
+content-type: text/plain;charset=UTF-8
+pdf bytes: 36, magic: This 
+-- (s) bad token -> 403 --
+status=403 This link is invalid or has expired.
+-- (t) expired token -> 403 --
+status=403
+-- (u) unknown guide with valid-shape token -> 404 --
+status=404 Not found.
+-- (v) POST /api/sample unknown guide -> 400 --
+status=429 Too many signups from this address. Try again later.
+-- (w) bad email -> 400 --
+status=429 Too many signups from this address. Try again later.
+-- (x) empty name -> 400 --
+status=429
+-- (y) honeypot filled -> 303 but stores nothing --
+HTTP/1.1 429 Too Many Requests
+
+-- (z) GET /api/sample/signups without key -> 404 --
+status=404 {"error":"Not found"}
+-- (za) with key -> lists the test signup --
+status=200
+[]
+-- (zb) delete test signups from the blob store, verify list is empty --
+[]
+
+-- (zc) Stripe request bodies captured by the stub (form-encoded, key fields) --
+name='All four guides (4 PDFs)' unit_amount=3500 currency=gbp metadata.product='bundle-all-four' payment_method_types='card' mode=payment
+name='The AI Prompt Pack for Small Business (PDF)' unit_amount=900 currency=gbp metadata.product='prompt-pack-small-business' payment_method_types='card' mode=payment
+-- (zd) price-env refusal (second server :3278, BUNDLE_PRICE_PENCE unset) --
+bundle checkout w/o price env: status=500 {"error":"Guide checkout not configured"}
+control (accountants, 1400): status=200
+
+== done ==
