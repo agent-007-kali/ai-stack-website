@@ -1,0 +1,19 @@
+Verified via gh api against github.com (agent-007-kali/ai-stack-website, ref feature/homepage-storefront):
+Branch tip SHA: 9c8685899c863823d3b6410ed3f03c614cd7af59
+PR #24: https://github.com/agent-007-kali/ai-stack-website/pull/24
+
+src/app/page.tsx (base64-decoded from GitHub API):
+  grep -c "Request a free sample chapter" = 2
+  grep -ci "sample chapter"            = 2
+  matching lines:
+36:  { text: 'Request a free sample chapter', href: SAMPLE_MAILTO },
+154:              Request a free sample chapter
+  mailto URL literal count             = 1
+
+src/app/_home/home.css (base64-decoded from GitHub API):
+  grep -c "Request a free sample chapter" = 0
+0
+  sf-ticker-track a rule present        = 1
+
+Local: npm run build passed on this exact tree before push (commit 9c86858).
+Vercel preview (branch-scoped, auto-redeploys): https://ai-stack-website-git-feature-home-50c39f-neos-projects-63c1f9f5.vercel.app

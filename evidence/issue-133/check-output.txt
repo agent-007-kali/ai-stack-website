@@ -1,0 +1,84 @@
+{
+  "desktop1280": {
+    "innerWidth": 1280,
+    "docScrollWidth": 1280,
+    "docClientWidth": 1280,
+    "bodyScrollWidth": 1280,
+    "overflowing": [],
+    "sectionOrder": [
+      "hero",
+      "guides",
+      "bowbot",
+      "boxes",
+      "academy",
+      "agents"
+    ],
+    "railScrollable": {
+      "scrollWidth": 1428,
+      "clientWidth": 1168,
+      "scrolledTo": 260,
+      "couldScroll": true
+    },
+    "title": "AI Solutions | AI agents, guides and Boxes",
+    "h1": "A frontier-grade AI agent that actually does the work.",
+    "stripeLinks": 2,
+    "mailtoLinks": 3,
+    "lobbyLinks": 3,
+    "brokenImages": [],
+    "imageCount": 12,
+    "heroBg": "radial-gradient(900px 340px at 12% -20%,",
+    "btnBg": "rgb(55, 224, 200)",
+    "guideCards": 5,
+    "boxCards": 3,
+    "searchHits": [
+      "The Boxes - Vega, Altair, RigelHardware"
+    ],
+    "searchJumped": true,
+    "searchCleared": true,
+    "pulseApplied": true,
+    "boxesInViewAfterSearch": true,
+    "consoleErrors": [],
+    "pass": true
+  },
+  "mobile390": {
+    "innerWidth": 390,
+    "docScrollWidth": 390,
+    "docClientWidth": 390,
+    "bodyScrollWidth": 390,
+    "overflowing": [],
+    "sectionOrder": [
+      "hero",
+      "guides",
+      "bowbot",
+      "boxes",
+      "academy",
+      "agents"
+    ],
+    "railScrollable": {
+      "scrollWidth": 1268,
+      "clientWidth": 358,
+      "scrolledTo": 258,
+      "couldScroll": true
+    },
+    "title": "AI Solutions | AI agents, guides and Boxes",
+    "h1": "A frontier-grade AI agent that actually does the work.",
+    "stripeLinks": 2,
+    "mailtoLinks": 3,
+    "lobbyLinks": 3,
+    "brokenImages": [],
+    "imageCount": 12,
+    "heroBg": "radial-gradient(900px 340px at 12% -20%,",
+    "btnBg": "rgb(55, 224, 200)",
+    "guideCards": 5,
+    "boxCards": 3,
+    "searchHits": [
+      "The Boxes - Vega, Altair, RigelHardware"
+    ],
+    "searchJumped": true,
+    "searchCleared": true,
+    "pulseApplied": true,
+    "boxesInViewAfterSearch": true,
+    "consoleErrors": [],
+    "pass": true
+  }
+}
