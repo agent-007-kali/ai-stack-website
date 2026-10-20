@@ -8,6 +8,11 @@ export type GuideProduct = {
   title: string;
   description: string;
   bullets: string[];
+  /** Public cover image path (served from public/guides/). */
+  cover: string;
+  /** Intrinsic cover pixel size, so the <img> reserves space (no layout shift). */
+  coverWidth: number;
+  coverHeight: number;
   /** Checkout Session metadata.product that marks a session as this guide. */
   metaProduct: string;
   /** Private Vercel Blob pathname (served server-side only, never a public URL). */
@@ -29,6 +34,9 @@ export const GUIDES: GuideProduct[] = [
       'No coding needed',
       'Honest about what agents get wrong. No income or savings promises.',
     ],
+    cover: '/guides/hire-first-ai-employee.jpg',
+    coverWidth: 440,
+    coverHeight: 660,
     metaProduct: 'guide-hire-first-ai-employee',
     blobPathname: 'guide/Hire-Your-First-AI-Employee.pdf',
     priceEnv: 'GUIDE_PRICE_PENCE',
@@ -44,6 +52,9 @@ export const GUIDES: GuideProduct[] = [
       'No coding needed',
       'No income or savings promises.',
     ],
+    cover: '/guides/prompt-pack.jpg',
+    coverWidth: 400,
+    coverHeight: 600,
     metaProduct: 'prompt-pack-small-business',
     blobPathname: 'prompt-pack/The-AI-Prompt-Pack-for-Small-Business.pdf',
     priceEnv: 'PROMPT_PACK_PRICE_PENCE',
@@ -59,6 +70,9 @@ export const GUIDES: GuideProduct[] = [
       'No coding needed',
       'No income or savings promises.',
     ],
+    cover: '/guides/admin-guide.jpg',
+    coverWidth: 400,
+    coverHeight: 600,
     metaProduct: 'admin-weekend-automation',
     blobPathname: 'admin-guide/Automate-Your-Admin-in-a-Weekend.pdf',
     priceEnv: 'ADMIN_GUIDE_PRICE_PENCE',
@@ -74,6 +88,9 @@ export const GUIDES: GuideProduct[] = [
       'No coding needed',
       'Not tax, legal or accounting advice. No income or savings promises.',
     ],
+    cover: '/guides/accountants-guide.jpg',
+    coverWidth: 400,
+    coverHeight: 600,
     metaProduct: 'ai-for-accountants',
     blobPathname: 'accountants-guide/AI-for-Accountants-and-Bookkeepers.pdf',
     priceEnv: 'ACCOUNTANTS_GUIDE_PRICE_PENCE',
