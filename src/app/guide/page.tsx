@@ -84,6 +84,24 @@ export default function GuidePage() {
 
       {err && <p style={{ color: '#ff8a8a' }}>{err}</p>}
       <p style={{ fontSize: 13, color: '#9bb', marginTop: 28 }}>Secure card payment by Stripe. Digital product. Contact us if there is a problem with your download.</p>
+
+      <a
+        href="/audit"
+        style={{
+          display: 'block',
+          marginTop: 28,
+          padding: '16px 22px',
+          borderRadius: 12,
+          background: '#0d2a3d',
+          border: '1px solid #1d3a4d',
+          color: '#e8f1f5',
+          textAlign: 'center',
+          fontSize: 17,
+          textDecoration: 'none',
+        }}
+      >
+        Want it done for you? <strong style={{ color: '#38d6e6' }}>The £75 AI Audit.</strong>
+      </a>
     </main>
   );
 }
