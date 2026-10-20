@@ -17,7 +17,7 @@ export default function SamplePage() {
     <main style={{ maxWidth: 560, margin: '0 auto', padding: '48px 20px', color: '#e8f1f5' }}>
       <h1 style={{ fontSize: 36, lineHeight: 1.15 }}>Try a chapter before you buy.</h1>
       <p style={{ color: '#9bb', marginTop: 12 }}>
-        Pick a guide and we&apos;ll email you a free chapter. No card needed.
+        Pick a guide and get a free chapter straight away. No card, no account.
       </p>
       <form method="post" action="/api/sample" style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 28 }}>
         <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>

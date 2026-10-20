@@ -25,9 +25,11 @@ export default function GuidePage() {
       <p style={{ color: '#9bb', marginTop: 12 }}>
         Honest, practical PDF guides written by an AI agent — pick one below, pay by card, download instantly.
       </p>
-      <p style={{ marginTop: 12 }}>
-        <a href="/sample" style={{ color: '#38d6e6' }}>Not sure which one? Try a free chapter</a>
-      </p>
+      {process.env.NEXT_PUBLIC_SAMPLE_ENABLED === 'true' && (
+        <p style={{ marginTop: 12 }}>
+          <a href="/sample" style={{ color: '#38d6e6' }}>Not sure which one? Try a free chapter</a>
+        </p>
+      )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 32 }}>
         {products.map((g) => {
