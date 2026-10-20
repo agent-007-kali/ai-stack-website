@@ -2,7 +2,7 @@
 
 **PR:** https://github.com/agent-007-kali/ai-stack-website/pull/24 (`feature/homepage-storefront` → `main`, OPEN, not merged — PR only, nothing goes live)
 **Vercel preview:** https://ai-stack-website-git-feature-home-50c39f-neos-projects-63c1f9f5.vercel.app
-**Branch tip (read back from GitHub via `gh api`, not the local clone):** `bc5dd71d7ad1a73f20eb7d8438ddacd654e76841` — verified `src/app/page.tsx` exists on the branch (13130 B). Commits: `5a584f0` redesign, `bc5dd71` refreshed proof screenshots. Based on latest green `main` (`ad75631`, PRs #19/#20/#21 + hotfix #23 merged).
+**Branch tip (read back from GitHub via `gh api`, not the local clone):** `13f68811c6432b411e71927dfc90d95e2c28894e` — verified on the branch (matches local HEAD; `src/app/page.tsx` present at 13130 B). Commits: `5a584f0` redesign, `bc5dd71` proof screenshots, `13f6881` PR/closing-comment evidence. Based on latest green `main` (`ad75631`, PRs #19/#20/#21 + hotfix #23 merged).
 
 **What changed (homepage only):** `src/app/page.tsx`, `src/app/_home/StoreHeader.tsx`, `src/app/_home/home.css`, `next.config.ts` (drops the `/` → `/bowbot/index.html` rewrite so the new page serves at `/`). `/guide`, `/sample`, `/lobby`, `/try`, `/sales`, `/box*`, all checkout/Stripe code, env vars and `public/guides/` untouched; `mailto:tradersbooking@gmail.com` and the `/lobby` link kept (hero contact row + footer).
 
