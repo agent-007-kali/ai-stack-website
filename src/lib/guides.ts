@@ -101,12 +101,32 @@ export const GUIDES: GuideProduct[] = [
 /** Guide 1 — kept for a bodyless POST /api/guide/checkout, exactly as before. */
 export const DEFAULT_GUIDE_SLUG = 'hire-first-ai-employee';
 
+// Fifth product: the four-guide bundle (issue #127). Not part of GUIDES —
+// it has no single PDF — but checkout accepts its slug and the download
+// handler fans a paid bundle session out to the four individual guides.
+export const BUNDLE: GuideProduct = {
+  slug: 'bundle-all-four',
+  title: 'All four guides',
+  description: 'All four PDF guides in one purchase. £51 if bought separately, £35 as a bundle.',
+  bullets: [
+    'All four PDFs in one purchase',
+    'Instant download after payment',
+    'No income or savings promises.',
+  ],
+  metaProduct: 'bundle-all-four',
+  blobPathname: '',
+  priceEnv: 'BUNDLE_PRICE_PENCE',
+  labelEnv: 'NEXT_PUBLIC_BUNDLE_PRICE_LABEL',
+};
+
 function readEnv(name: string): string {
   if (typeof process === 'undefined' || !process.env) return '';
   return process.env[name] || '';
 }
 
 export function guideBySlug(slug: string): GuideProduct | undefined {
+  if (!slug) return undefined;
+  if (slug === BUNDLE.slug) return BUNDLE;
   return GUIDES.find((g) => g.slug === slug);
 }
 
@@ -117,6 +137,11 @@ export function guideByMetaProduct(metaProduct: string): GuideProduct | undefine
 
 export function guideFilename(guide: GuideProduct): string {
   return guide.blobPathname.split('/').pop() || 'guide.pdf';
+}
+
+/** Stripe product_data.name for the checkout line item. */
+export function checkoutName(guide: GuideProduct): string {
+  return guide.slug === BUNDLE.slug ? 'All four guides (4 PDFs)' : `${guide.title} (PDF)`;
 }
 
 /** One-time price in pence from env; 0 when unset or unusable. */
@@ -137,6 +162,8 @@ export function priceLabel(guide: GuideProduct): string {
       return (process.env.NEXT_PUBLIC_ADMIN_GUIDE_PRICE_LABEL || '').trim();
     case 'NEXT_PUBLIC_ACCOUNTANTS_GUIDE_PRICE_LABEL':
       return (process.env.NEXT_PUBLIC_ACCOUNTANTS_GUIDE_PRICE_LABEL || '').trim();
+    case 'NEXT_PUBLIC_BUNDLE_PRICE_LABEL':
+      return (process.env.NEXT_PUBLIC_BUNDLE_PRICE_LABEL || '').trim();
     default:
       return '';
   }

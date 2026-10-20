@@ -1,0 +1,20 @@
+2026-10-20T15:03:24.649Z POST /v1/checkout/sessions mode=payment&payment_method_types[0]=card&line_items[0][quantity]=1&line_items[0][price_data][currency]=gbp&line_items[0][price_data][unit_amount]=3500&line_items[0][price_data][product_data][name]=All%20four%20guides%20%284%20PDFs%29&line_items[0][price_data][product_data][description]=Digital%20PDF%2C%20written%20by%20an%20AI%20agent.%20Instant%20download%20after%20payment.&metadata[product]=bundle-all-four&success_url=https%3A%2F%2Fai-solutions.company%2Fguide%2Fthanks%3Fsession_id%3D%7BCHECKOUT_SESSION_ID%7D&cancel_url=https%3A%2F%2Fai-solutions.company%2Fguide%3Fcanceled%3D1
+2026-10-20T15:03:24.658Z POST /v1/checkout/sessions mode=payment&payment_method_types[0]=card&line_items[0][quantity]=1&line_items[0][price_data][currency]=gbp&line_items[0][price_data][unit_amount]=900&line_items[0][price_data][product_data][name]=The%20AI%20Prompt%20Pack%20for%20Small%20Business%20%28PDF%29&line_items[0][price_data][product_data][description]=Digital%20PDF%2C%20written%20by%20an%20AI%20agent.%20Instant%20download%20after%20payment.&metadata[product]=prompt-pack-small-business&success_url=https%3A%2F%2Fai-solutions.company%2Fguide%2Fthanks%3Fsession_id%3D%7BCHECKOUT_SESSION_ID%7D&cancel_url=https%3A%2F%2Fai-solutions.company%2Fguide%3Fcanceled%3D1
+2026-10-20T15:03:24.684Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.697Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.707Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.716Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.726Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.735Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.745Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.754Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.762Z GET /v1/checkout/sessions/cs_test_paidguide1 
+2026-10-20T15:03:24.773Z GET /v1/checkout/sessions/cs_test_unpaid1 
+2026-10-20T15:03:24.782Z GET /v1/checkout/sessions/cs_test_unpaid1 
+2026-10-20T15:03:24.791Z GET /v1/checkout/sessions/cs_test_paidunknown1 
+2026-10-20T15:03:24.799Z GET /v1/checkout/sessions/cs_test_paidunknown1 
+2026-10-20T15:03:24.808Z GET /v1/checkout/sessions/cs_fake 
+2026-10-20T15:03:24.818Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.831Z GET /v1/checkout/sessions/cs_test_paidbundle1 
+2026-10-20T15:03:24.848Z GET /v1/checkout/sessions/cs_test_paidguide1 
+2026-10-20T15:03:30.248Z POST /v1/checkout/sessions mode=payment&payment_method_types[0]=card&line_items[0][quantity]=1&line_items[0][price_data][currency]=gbp&line_items[0][price_data][unit_amount]=1400&line_items[0][price_data][product_data][name]=AI%20for%20Accountants%20and%20Bookkeepers%20%28PDF%29&line_items[0][price_data][product_data][description]=Digital%20PDF%2C%20written%20by%20an%20AI%20agent.%20Instant%20download%20after%20payment.&metadata[product]=ai-for-accountants&success_url=https%3A%2F%2Fai-solutions.company%2Fguide%2Fthanks%3Fsession_id%3D%7BCHECKOUT_SESSION_ID%7D&cancel_url=https%3A%2F%2Fai-solutions.company%2Fguide%3Fcanceled%3D1
