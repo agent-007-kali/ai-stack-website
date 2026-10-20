@@ -8,11 +8,11 @@ export type GuideProduct = {
   title: string;
   description: string;
   bullets: string[];
-  /** Public cover image path (served from public/guides/). */
-  cover: string;
+  /** Public cover image path (served from public/guides/). Absent on the bundle. */
+  cover?: string;
   /** Intrinsic cover pixel size, so the <img> reserves space (no layout shift). */
-  coverWidth: number;
-  coverHeight: number;
+  coverWidth?: number;
+  coverHeight?: number;
   /** Checkout Session metadata.product that marks a session as this guide. */
   metaProduct: string;
   /** Private Vercel Blob pathname (served server-side only, never a public URL). */
