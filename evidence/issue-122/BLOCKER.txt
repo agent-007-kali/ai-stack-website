@@ -1,0 +1,24 @@
+issue-122 blocker (this sandbox, 2026-10-19)
+
+The code change is complete, built, verified and committed locally on branch
+feature/guide-shelf (commit b0a68b8, based on origin/main fab37bf). It could not
+be pushed, so no pull request could be opened:
+
+  git push https://github.com/agent-007-kali/ai-stack-website.git feature/guide-shelf
+    -> remote: Permission to agent-007-kali/ai-stack-website.git denied to agent-007-kali.
+    -> The requested URL returned error: 403
+
+  GitHub REST write probe (same GITHUB_TOKEN):
+    POST /repos/agent-007-kali/ai-stack-website/git/refs   -> 403
+    POST /repos/agent-007-kali/ai-stack-website/git/blobs  -> 403
+    body: {"message":"Resource not accessible by personal access token"}
+
+  SSH fallback: the only key in the ssh-agent (neo@box1-agents, ED25519) is
+  offered to git@github.com and rejected:
+    -> git@github.com: Permission denied (publickey).
+
+So the provided credential is read-only for this repository and there is no
+authorized SSH key. Recover by applying evidence/issue-122/feature-guide-shelf.patch
+to origin/main (or by pushing the local feature/guide-shelf branch) with a
+credential that has contents:write, then opening the PR described in
+evidence/issue-122/PR.md.

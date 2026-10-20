@@ -1,35 +1,58 @@
 'use client';
 import { useState } from 'react';
-
-const PRICE = process.env.NEXT_PUBLIC_GUIDE_PRICE_LABEL || ''; // e.g. "£14"
+import { GUIDES, priceLabel } from '@/lib/guides';
 
 export default function GuidePage() {
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState('');
   const [err, setErr] = useState('');
-  async function buy() {
-    setBusy(true); setErr('');
+  async function buy(slug: string) {
+    setBusy(slug); setErr('');
     try {
-      const r = await fetch('/api/guide/checkout', { method: 'POST' });
+      const r = await fetch('/api/guide/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: slug }),
+      });
       const j = await r.json();
       if (j.url) window.location.href = j.url; else throw new Error(j.error || 'Checkout failed');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) { setErr(e.message); setBusy(false); }
+    } catch (e: any) { setErr(e.message); setBusy(''); }
   }
   return (
     <main style={{ maxWidth: 720, margin: '0 auto', padding: '48px 20px', color: '#e8f1f5' }}>
-      <h1 style={{ fontSize: 40, lineHeight: 1.1 }}>Hire Your First AI Employee</h1>
-      <p style={{ color: '#38d6e6' }}>Written by an AI agent</p>
-      <p>A practical, honest PDF guide for any small business: what an AI agent is, a 7-day no-code setup plan, 32 copy-paste prompts, safety rules, cost tables, troubleshooting and 10 fill-in templates.</p>
-      <ul>
-        <li>62-page PDF, instant download after payment</li>
-        <li>No coding needed</li>
-        <li>Honest about what agents get wrong. No income or savings promises.</li>
-      </ul>
-      <button onClick={buy} disabled={busy} style={{ padding: '14px 28px', fontSize: 18, borderRadius: 8, border: 0, background: '#38d6e6', color: '#06223a', fontWeight: 700 }}>
-        {busy ? 'Opening checkout...' : `Buy the guide${PRICE ? ' - ' + PRICE : ''}`}
-      </button>
+      <h1 style={{ fontSize: 40, lineHeight: 1.1 }}>Guides for small businesses</h1>
+      <p style={{ color: '#9bb', marginTop: 12 }}>
+        Honest, practical PDF guides written by an AI agent — pick one below, pay by card, download instantly.
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 32 }}>
+        {GUIDES.map((g) => {
+          const label = priceLabel(g);
+          return (
+            <section
+              key={g.slug}
+              style={{ border: '1px solid #1d3a4d', borderRadius: 12, padding: '24px 24px 28px', background: '#0c1722' }}
+            >
+              <h2 style={{ fontSize: 26, lineHeight: 1.2, margin: 0 }}>{g.title}</h2>
+              <p style={{ color: '#38d6e6', margin: '8px 0 12px' }}>Written by an AI agent</p>
+              <p style={{ margin: '0 0 12px' }}>{g.description}</p>
+              <ul style={{ margin: '0 0 18px', paddingLeft: 20 }}>
+                {g.bullets.map((b) => <li key={b} style={{ marginBottom: 6 }}>{b}</li>)}
+              </ul>
+              <button
+                onClick={() => buy(g.slug)}
+                disabled={busy === g.slug}
+                style={{ padding: '14px 28px', fontSize: 18, borderRadius: 8, border: 0, background: '#38d6e6', color: '#06223a', fontWeight: 700 }}
+              >
+                {busy === g.slug ? 'Opening checkout...' : `Buy now${label ? ' - ' + label : ''}`}
+              </button>
+            </section>
+          );
+        })}
+      </div>
+
       {err && <p style={{ color: '#ff8a8a' }}>{err}</p>}
-      <p style={{ fontSize: 13, color: '#9bb' }}>Secure card payment by Stripe. Digital product. Contact us if there is a problem with your download.</p>
+      <p style={{ fontSize: 13, color: '#9bb', marginTop: 28 }}>Secure card payment by Stripe. Digital product. Contact us if there is a problem with your download.</p>
     </main>
   );
 }

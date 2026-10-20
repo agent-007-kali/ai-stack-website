@@ -1,0 +1,70 @@
+== issue-122 local proof 2026-10-19T15:20:21Z ==
+== server: next start -p 3145, next build with price env; Stripe SDK calls redirected
+== to evidence/issue-122/stripe-api-stub.cjs via NODE_OPTIONS (no real Stripe key exists
+== in this sandbox), so the route logic itself runs over real HTTP. ==
+
+-- (a) GET /guide --
+status=200
+heading + 4 titles present in order: True [3630, 4034, 4953, 5896, 7037]
+Buy buttons: ['Buy now - £14', 'Buy now - £9', 'Buy now - £14', 'Buy now - £14']
+'Written by an AI agent' x 4
+'No coding needed' x 4
+'No income or savings promises' x 4
+'not importable workflow files': True
+'Not tax, legal or accounting advice': True
+Stripe footer note x 1
+
+-- (b) POST /api/guide/checkout, no body (guide 1) --
+{"url":"https://checkout.stripe.com/c/pay/cs_test_stubcreated1"}
+status=200
+-- (c) POST {product:'prompt-pack'} --
+{"url":"https://checkout.stripe.com/c/pay/cs_test_stubcreated1"}
+status=200
+-- (d) POST {product:'admin-guide'} --
+{"url":"https://checkout.stripe.com/c/pay/cs_test_stubcreated1"}
+status=200
+-- (e) POST {product:'accountants-guide'} --
+{"url":"https://checkout.stripe.com/c/pay/cs_test_stubcreated1"}
+status=200
+-- (f) POST {product:'does-not-exist'} --
+{"error":"Unknown product"}
+status=400
+-- (g) POST malformed body --
+{"error":"Unknown product"}
+status=400
+-- (h) GET download?session_id=cs_test_unpaid1 (unpaid session) --
+{"error":"Payment not completed"}
+status=402
+-- (i) GET download?session_id=cs_definitely_fake (Stripe: unrecognised session) --
+{"error":"Not found"}
+status=404
+-- (j) GET download (no session_id) --
+{"error":"Not found"}
+status=404
+-- (k) GET download?session_id=not-a-session (bad prefix) --
+{"error":"Not found"}
+status=404
+-- (l) GET download paid session, unknown metadata.product --
+{"error":"Not found"}
+status=404
+-- (m) GET download paid session, known product (blob store not configured locally) --
+{"error":"Download unavailable"}
+status=500
+-- (n) GET /guide/thanks?session_id=cs_test_paidguide1 --
+status=200
+Download the PDF
+Hire Your First AI Employee
+Thank you
+
+-- (o) exact Stripe request bodies captured by the stub (method, path, body; no headers/keys) --
+  name='The AI Prompt Pack for Small Business (PDF)' unit_amount=900 currency=gbp payment_method_types='card' metadata.product='prompt-pack-small-business' mode='payment'
+  name='Hire Your First AI Employee (PDF)' unit_amount=1400 currency=gbp payment_method_types='card' metadata.product='guide-hire-first-ai-employee' mode='payment'
+  name='Automate Your Admin in a Weekend (PDF)' unit_amount=1400 currency=gbp payment_method_types='card' metadata.product='admin-weekend-automation' mode='payment'
+  name='AI for Accountants and Bookkeepers (PDF)' unit_amount=1400 currency=gbp payment_method_types='card' metadata.product='ai-for-accountants' mode='payment'
+  (amounts required: 1400 / 900 / 1400 / 1400 pence = GBP 14.00 / 9.00 / 14.00 / 14.00)
+
+-- (p) price env checks on a second server (port 3146, no NEXT_PUBLIC_ labels needed) --
+  GUIDE_PRICE_PENCE=50 (below 100), PROMPT_PACK_PRICE_PENCE unset, ACCOUNTANTS_GUIDE_PRICE_PENCE=1400
+  POST no body (guide 1, price 50): {"error":"Guide checkout not configured"} status=500
+  POST {product:'prompt-pack'} (price unset): {"error":"Guide checkout not configured"} status=500
+  POST {product:'accountants-guide'} (price 1400, control): {"url":"https://checkout.stripe.com/c/pay/cs_test_stubcreated1"} status=200
