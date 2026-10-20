@@ -50,15 +50,17 @@ export default function GuidePage() {
               style={{ border: '1px solid #1d3a4d', borderRadius: 12, padding: '24px 24px 28px', background: '#0c1722' }}
             >
               <div className="guide-card-row">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={g.cover}
-                  width={g.coverWidth}
-                  height={g.coverHeight}
-                  loading="lazy"
-                  alt={`${g.title} cover`}
-                  className="guide-cover"
-                />
+                {g.cover && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={g.cover}
+                    width={g.coverWidth}
+                    height={g.coverHeight}
+                    loading="lazy"
+                    alt={`${g.title} cover`}
+                    className="guide-cover"
+                  />
+                )}
                 <div className="guide-card-body">
                   <h2 style={{ fontSize: 26, lineHeight: 1.2, margin: 0 }}>{g.title}</h2>
                   <p style={{ color: '#38d6e6', margin: '8px 0 12px' }}>Written by an AI agent</p>
