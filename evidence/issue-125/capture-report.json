@@ -1,0 +1,78 @@
+{
+  "base": "http://127.0.0.1:3188",
+  "consoleErrors": [],
+  "pages": [
+    {
+      "viewport": "desktop-1280",
+      "file": "evidence/issue-125/guide-desktop-1280.png",
+      "imgs": [
+        {
+          "src": "/guides/hire-first-ai-employee.jpg",
+          "w": 440,
+          "h": 660,
+          "cw": 200,
+          "complete": true
+        },
+        {
+          "src": "/guides/prompt-pack.jpg",
+          "w": 400,
+          "h": 600,
+          "cw": 200,
+          "complete": true
+        },
+        {
+          "src": "/guides/admin-guide.jpg",
+          "w": 400,
+          "h": 600,
+          "cw": 200,
+          "complete": true
+        },
+        {
+          "src": "/guides/accountants-guide.jpg",
+          "w": 400,
+          "h": 600,
+          "cw": 200,
+          "complete": true
+        }
+      ],
+      "scrollW": 1280,
+      "clientW": 1280
+    },
+    {
+      "viewport": "mobile-390",
+      "file": "evidence/issue-125/guide-mobile-390.png",
+      "imgs": [
+        {
+          "src": "/guides/hire-first-ai-employee.jpg",
+          "w": 440,
+          "h": 660,
+          "cw": 220,
+          "complete": true
+        },
+        {
+          "src": "/guides/prompt-pack.jpg",
+          "w": 400,
+          "h": 600,
+          "cw": 220,
+          "complete": true
+        },
+        {
+          "src": "/guides/admin-guide.jpg",
+          "w": 400,
+          "h": 600,
+          "cw": 220,
+          "complete": true
+        },
+        {
+          "src": "/guides/accountants-guide.jpg",
+          "w": 400,
+          "h": 600,
+          "cw": 220,
+          "complete": true
+        }
+      ],
+      "scrollW": 390,
+      "clientW": 390
+    }
+  ]
+}
