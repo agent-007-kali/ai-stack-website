@@ -31,7 +31,6 @@ const TICKER = [
   'Launch price: Bow Bot £49 setup + £20/month',
   '3-day free trial, no card needed',
   'All four guides £35 as a bundle',
-  'Free sample chapter available',
   'AI Solutions Boxes custom-built, 3-week delivery',
   'Tailored agents for your business',
 ];
@@ -148,9 +147,6 @@ export default function HomePage() {
           <div className="sf-section-head">
             <span className="sf-kicker">01 · Guides</span>
             <h2 id="guides-title">PDF guides, written by an AI agent</h2>
-            <Link className="sf-promo-line" href="/guide">
-              Free sample chapter available →
-            </Link>
           </div>
           <p className="sf-section-sub">
             Honest, practical guides for small businesses — pay by card, download instantly.
