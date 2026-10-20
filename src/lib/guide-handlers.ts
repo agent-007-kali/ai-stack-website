@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { get } from '@vercel/blob';
 import {
+  BUNDLE,
   DEFAULT_GUIDE_SLUG,
+  checkoutName,
   guideByMetaProduct,
   guideBySlug,
   guideFilename,
   pricePence,
+  type GuideProduct,
 } from './guides';
 
 const CHECKOUT_DESCRIPTION = 'Digital PDF, written by an AI agent. Instant download after payment.';
@@ -64,10 +67,10 @@ export async function createGuideCheckout(req: NextRequest): Promise<NextRespons
         price_data: {
           currency: 'gbp',
           unit_amount: pence,
-          product_data: {
-            name: `${guide.title} (PDF)`,
-            description: CHECKOUT_DESCRIPTION,
-          },
+      product_data: {
+        name: checkoutName(guide),
+        description: CHECKOUT_DESCRIPTION,
+      },
         },
       }],
       metadata: { product: guide.metaProduct },
@@ -106,9 +109,25 @@ export async function guideDownload(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Payment not completed' }, { status: 402 });
   }
 
-  const guide = guideByMetaProduct(session.metadata?.product || '');
-  if (!guide) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  // metadata.product picks the product: a bundle session needs an ?item=
+  // slug naming which of the four guides to stream; a single-guide session
+  // behaves exactly as before (issue #127).
+  const meta = session.metadata?.product || '';
+  let guide: GuideProduct | undefined;
+  if (meta === BUNDLE.metaProduct) {
+    const item = req.nextUrl.searchParams.get('item') || '';
+    if (!item) {
+      return NextResponse.json({ error: 'Missing item' }, { status: 400 });
+    }
+    guide = item === BUNDLE.slug ? undefined : guideBySlug(item);
+    if (!guide) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+  } else {
+    guide = guideByMetaProduct(meta);
+    if (!guide) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
   }
 
   let blobResult: Awaited<ReturnType<typeof get>> | null = null;

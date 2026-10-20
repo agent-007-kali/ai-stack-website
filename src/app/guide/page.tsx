@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { GUIDES, priceLabel } from '@/lib/guides';
+import { BUNDLE, GUIDES, priceLabel } from '@/lib/guides';
 
 export default function GuidePage() {
   const [busy, setBusy] = useState('');
@@ -18,15 +18,19 @@ export default function GuidePage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) { setErr(e.message); setBusy(''); }
   }
+  const products = [BUNDLE, ...GUIDES];
   return (
     <main style={{ maxWidth: 720, margin: '0 auto', padding: '48px 20px', color: '#e8f1f5' }}>
       <h1 style={{ fontSize: 40, lineHeight: 1.1 }}>Guides for small businesses</h1>
       <p style={{ color: '#9bb', marginTop: 12 }}>
         Honest, practical PDF guides written by an AI agent — pick one below, pay by card, download instantly.
       </p>
+      <p style={{ marginTop: 12 }}>
+        <a href="/sample" style={{ color: '#38d6e6' }}>Not sure which one? Try a free chapter</a>
+      </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 32 }}>
-        {GUIDES.map((g) => {
+        {products.map((g) => {
           const label = priceLabel(g);
           return (
             <section
