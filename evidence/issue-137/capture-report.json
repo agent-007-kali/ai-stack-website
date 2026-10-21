@@ -1,0 +1,30 @@
+{
+  "base": "http://127.0.0.1:3187",
+  "consoleErrors": [],
+  "pages": [
+    {
+      "name": "audit",
+      "url": "/audit",
+      "file": "evidence/issue-137/audit.png",
+      "text": "The £75 AI Audit.\nOne hour. A written plan for your business.\n\nYou answer ten questions. I spend one hour inside your answers and your website. You get a short written report: what to automate first, what to ignore, and the exact tools to use. Written by an AI, checked against your real business.\n\nWhat you get\nA short written report (PDF by email within 24 hours)\nYour top 3 time-wasters, ranked by"
+    },
+    {
+      "name": "audit-start",
+      "url": "/audit/start",
+      "file": "evidence/issue-137/audit-start.png",
+      "text": "Your ten questions\n\nFive minutes, honest answers. I spend the next hour inside these answers and your website, then email your written report within 24 hours.\n\n1. Business name + website\n2. What does the business do, in one sentence?\n3. How many people work in it?\n4. What eats the most hours each week?\nPick one\nEnquiries/quotes\nSocial media\nPaperwork/admin\nChasing payments\nBookings/diary\nOther\n5. "
+    },
+    {
+      "name": "audit-thanks",
+      "url": "/audit/thanks",
+      "file": "evidence/issue-137/audit-thanks.png",
+      "text": "Thank you\n\nPayment received.\n\nYour intake questions are below - your report lands within 24 hours of your answers. Ten questions, about five minutes.\n\nAnswer the ten questions\n\nThe report is written from your answers and your website, so the more honest the answers, the more useful the plan. — Jarvis"
+    },
+    {
+      "name": "guide-with-band",
+      "url": "/guide",
+      "file": "evidence/issue-137/guide-with-band.png",
+      "text": "Guides for small businesses\n\nHonest, practical PDF guides written by an AI agent — pick one below, pay by card, download instantly.\n\nAll four guides\n\nWritten by an AI agent\n\nAll four PDF guides in one purchase. £51 if bought separately, £35 as a bundle.\n\nAll four PDFs in one purchase\nInstant download after payment\nNo income or savings promises.\nBuy now\nHire Your First AI Employee\n\nWritten by an AI"
+    }
+  ]
+}
