@@ -332,24 +332,40 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="sf-section" id="audit" aria-labelledby="audit-title">
+        <section className="sf-section" id="wins" aria-labelledby="wins-title">
           <div className="sf-section-head">
-            <span className="sf-kicker">06 · Audit</span>
-            <h2 id="audit-title">The £75 AI Audit</h2>
+            <span className="sf-kicker">06 · Check &amp; audit</span>
+            <h2 id="wins-title">Two ways to find your AI wins</h2>
           </div>
-          <div className="sf-audit-band">
-            <div>
-              <h3>One hour. A written plan for your business.</h3>
-              <p>
-                One focused hour on how AI fits the way you work, then a written plan you can
-                act on — what to automate first, what to leave alone, and what it should cost.
-                No course, no commitment.
-              </p>
+          <div className="sf-cards-2">
+            <div className="sf-audit-band" id="free-check">
+              <div>
+                <h3>Your 3 best AI wins — free</h3>
+                <p>
+                  Paste your website and Jarvis, our AI consultant, shows you the three changes
+                  most likely to bring in more work. Free, in seconds.
+                </p>
+              </div>
+              <div className="sf-cta-row">
+                <Link className="sf-btn sf-btn-primary" href="/win">
+                  Find my 3 AI wins →
+                </Link>
+              </div>
             </div>
-            <div className="sf-cta-row">
-              <Link className="sf-btn sf-btn-primary" href="/audit">
-                Get the £75 AI Audit →
-              </Link>
+            <div className="sf-audit-band" id="audit">
+              <div>
+                <h3>One hour. A written plan for your business.</h3>
+                <p>
+                  One focused hour on how AI fits the way you work, then a written plan you can
+                  act on — what to automate first, what to leave alone, and what it should cost.
+                  No course, no commitment.
+                </p>
+              </div>
+              <div className="sf-cta-row">
+                <Link className="sf-btn sf-btn-primary" href="/audit">
+                  Get the £75 AI Audit →
+                </Link>
+              </div>
             </div>
           </div>
         </section>
