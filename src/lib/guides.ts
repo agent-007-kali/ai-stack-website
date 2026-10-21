@@ -21,6 +21,14 @@ export type GuideProduct = {
   priceEnv: string;
   /** Env var holding the customer-facing price label, e.g. "£14". */
   labelEnv: string;
+  /** External Whop product URL (issue #40). When set the card's Buy button
+   *  is a plain "Buy on Whop" anchor instead of the internal Stripe checkout
+   *  — these editions are sold and fulfilled on Whop, never via
+   *  /api/guide/checkout, so they live outside GUIDES (guideBySlug cannot
+   *  reach them). */
+  whopUrl?: string;
+  /** Fixed Whop price label, e.g. "£18.90" (Whop prices are not env-driven). */
+  whopPrice?: string;
 };
 
 export const GUIDES: GuideProduct[] = [
@@ -170,6 +178,66 @@ export const BUNDLE_SLUGS: readonly string[] = [
   'prompt-pack',
   'admin-guide',
   'accountants-guide',
+];
+
+// AI Ahead country editions (issue #40) — sold and fulfilled on Whop, so they
+// are their own shelf array, NOT in GUIDES: checkout/download never touch
+// them (guideBySlug/guideByMetaProduct only search GUIDES + BUNDLE). Adding
+// another country is one data entry: slug, copy, price, Whop URL.
+// Stripe-only fields are present but inert (empty blobPathname, unused env
+// names) to satisfy the shared GuideProduct type.
+export const AI_AHEAD_EDITIONS: GuideProduct[] = [
+  {
+    slug: 'ai-ahead-usa-edition',
+    title: 'AI Ahead: The USA Edition',
+    description:
+      'The US-edition AI compliance and marketing guide for small businesses: 31 chapters covering the FTC fake-review rule, CAN-SPAM, and the US-specific ways AI claims and reviews get businesses into trouble — with honest, practical guidance on using AI safely.',
+    bullets: [
+      '99 pages, 31 chapters',
+      'FTC fake-review rule and CAN-SPAM covered',
+      'Written by an AI agent. No income or savings promises.',
+    ],
+    metaProduct: 'whop-ai-ahead-usa-edition',
+    blobPathname: '',
+    priceEnv: '',
+    labelEnv: '',
+    whopUrl: 'https://whop.com/ai-solutions-company/products/ai-ahead-the-usa-edition/',
+    whopPrice: '£18.90',
+  },
+  {
+    slug: 'ai-ahead-australia-edition',
+    title: 'AI Ahead: The Australia Edition',
+    description:
+      'The Australia-edition AI compliance and marketing guide for small businesses: ABN/GST obligations, the Spam Act, ACCC rules and OAIC privacy expectations around AI use — written honestly, with the legal lines you must not cross.',
+    bullets: [
+      '103 pages',
+      'ABN/GST, Spam Act, ACCC and OAIC covered',
+      'Written by an AI agent. No income or savings promises.',
+    ],
+    metaProduct: 'whop-ai-ahead-australia-edition',
+    blobPathname: '',
+    priceEnv: '',
+    labelEnv: '',
+    whopUrl: 'https://whop.com/ai-solutions-company/products/ai-ahead-the-australia-edition/',
+    whopPrice: '£17.90',
+  },
+  {
+    slug: 'ai-ahead-uk-edition',
+    title: 'AI Ahead: The UK Edition',
+    description:
+      'The UK-edition AI compliance and marketing guide for small businesses: the DMCC Act, ICO/PECR rules, ASA advertising standards and VAT/HMRC lines around AI-assisted work — honest, practical, and written by an AI agent.',
+    bullets: [
+      '104 pages',
+      'DMCC Act, ICO/PECR, ASA and VAT/HMRC covered',
+      'Written by an AI agent. No income or savings promises.',
+    ],
+    metaProduct: 'whop-ai-ahead-uk-edition',
+    blobPathname: '',
+    priceEnv: '',
+    labelEnv: '',
+    whopUrl: 'https://whop.com/ai-solutions-company/products/ai-ahead-the-uk-edition/',
+    whopPrice: '£18.90',
+  },
 ];
 
 function readEnv(name: string): string {
