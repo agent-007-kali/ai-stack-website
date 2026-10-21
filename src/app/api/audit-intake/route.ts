@@ -1,8 +1,12 @@
-// Ten-question intake for the £75 AI audit (issue #25). Same approved
-// pattern as the /sample signup: a plain HTML form POST, no JS, server-side
-// validation and a 303 redirect to /audit/thanks?intake=1. The answers go to
-// the team inbox via Formspree (FORMSPREE_FORM_ID -> tradersbooking@gmail.com)
-// and a private Blob copy, both best-effort, like the jarvis-bridge mail path.
+// Ten-question intake for the £75 AI audit (issue #25, reliability fix
+// issue #39). Same approved pattern as the /sample signup: a plain HTML form
+// POST, no JS, server-side validation and a 303 redirect to
+// /audit/thanks?intake=1. Order matters: the private Blob record is written
+// FIRST and its failure is fatal (real 500, no fake thanks) so an answer
+// can never vanish silently; the Formspree notification is best-effort but
+// LOUD — a missing env or a failed POST is console.error'd for the Vercel
+// runtime logs, never skipped in silence. Submissions are readable via
+// GET /api/audit-intake/list (SIGNUPS_ADMIN_TOKEN bearer).
 import { NextRequest, NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
 import { rateAllowed } from '@/lib/sample';
@@ -52,11 +56,32 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // Honeypot filled = bot: pretend success, send nothing.
   if (!honeypot) {
-    // 1. Formspree -> tradersbooking@gmail.com (best effort).
+    // 1. Private Blob record FIRST - storage failure is fatal. A submission
+    // the store rejects must NOT see a fake thanks page (issue #39).
+    const record = { ...answers, ts: new Date().toISOString() };
+    try {
+      await put(`audit-intake/${Date.now()}.json`, JSON.stringify(record), {
+        access: 'private',
+        addRandomSuffix: true,
+        contentType: 'application/json',
+      });
+    } catch (e) {
+      console.error('[audit-intake] private Blob store FAILED, submission not saved:', e);
+      return new NextResponse(
+        'We could not store your answers, please email tradersbooking@gmail.com',
+        { status: 500 },
+      );
+    }
+    // 2. Notification email -> tradersbooking@gmail.com. Best effort, but a
+    // missing env or a failed POST is logged loudly, never silent (issue #39).
     const formspreeId = (process.env.FORMSPREE_FORM_ID ?? '').trim();
-    if (formspreeId) {
+    if (!formspreeId) {
+      console.error(
+        '[audit-intake] FORMSPREE_FORM_ID is not set - notification email NOT sent; answers are stored in the private Blob only',
+      );
+    } else {
       try {
-        await fetch(`https://formspree.io/f/${encodeURIComponent(formspreeId)}`, {
+        const res = await fetch(`https://formspree.io/f/${encodeURIComponent(formspreeId)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({
@@ -65,20 +90,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             _template: 'table',
           }),
         });
-      } catch {
-        // best effort - the Blob copy below is the fallback
+        if (!res.ok) {
+          console.error(`[audit-intake] Formspree notification FAILED: HTTP ${res.status}`);
+        }
+      } catch (e) {
+        console.error('[audit-intake] Formspree notification FAILED with error:', e);
       }
-    }
-    // 2. Private Blob copy (best effort), one JSON record per submission.
-    const record = { ...answers, ts: new Date().toISOString() };
-    try {
-      await put(`audit-intake/${Date.now()}.json`, JSON.stringify(record), {
-        access: 'private',
-        addRandomSuffix: true,
-        contentType: 'application/json',
-      });
-    } catch {
-      // best effort
     }
   }
 
