@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { withUsd } from '@/lib/usd';
 
 // Offer page for the £75 one-hour AI audit (issue #25). House style: dark
 // page, inline styles, no income claims. Copy is fixed by the issue spec -
@@ -35,7 +36,7 @@ export default function AuditPage() {
   return (
     <main style={{ maxWidth: 720, margin: '0 auto', padding: '48px 20px', color: '#e8f1f5' }}>
       <h1 style={{ fontSize: 40, lineHeight: 1.1, margin: 0 }}>
-        The £75 AI Audit.
+        The {withUsd('£75 AI Audit')}.
         <br />
         <span style={{ color: '#38d6e6' }}>One hour. A written plan for your business.</span>
       </h1>
@@ -59,7 +60,7 @@ export default function AuditPage() {
       <section style={{ ...card, marginTop: 20 }}>
         <h2 style={h2}>How it works</h2>
         <ol style={{ margin: 0, paddingLeft: 20, lineHeight: 1.6 }}>
-          <li>Pay £75 (secure checkout by Stripe)</li>
+          <li>{withUsd('Pay £75 (secure checkout by Stripe)')}</li>
           <li>Answer ten questions about your business (5 minutes)</li>
           <li>Get your written report by email within 24 hours</li>
         </ol>
@@ -78,14 +79,14 @@ export default function AuditPage() {
         {faq.map((f) => (
           <div key={f.q} style={{ marginBottom: 14 }}>
             <p style={{ margin: '0 0 4px', fontWeight: 700 }}>{f.q}</p>
-            <p style={{ margin: 0, color: '#9bb' }}>{f.a}</p>
+            <p style={{ margin: 0, color: '#9bb' }}>{withUsd(f.a)}</p>
           </div>
         ))}
       </section>
 
       <div style={{ marginTop: 28 }}>
         <button onClick={buy} disabled={busy} style={btn}>
-          {busy ? 'Opening checkout...' : 'Buy the audit - £75'}
+          {busy ? 'Opening checkout...' : 'Buy the audit - ' + withUsd('£75')}
         </button>
         {canceled && (
           <p style={{ color: '#9bb', marginTop: 12 }}>
@@ -94,8 +95,8 @@ export default function AuditPage() {
         )}
         {err && <p style={{ color: '#ff8a8a', marginTop: 12 }}>{err}</p>}
         <p style={{ fontSize: 13, color: '#9bb', marginTop: 16 }}>
-          Secure card payment by Stripe. One-off £75.00 GBP. Your written report arrives by email within 24
-          hours of your intake answers.
+          Secure card payment by Stripe. One-off {withUsd('£75.00 GBP')}. Your written report arrives by email
+          within 24 hours of your intake answers.
         </p>
       </div>
     </main>
