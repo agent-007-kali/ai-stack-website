@@ -96,6 +96,51 @@ export const GUIDES: GuideProduct[] = [
     priceEnv: 'ACCOUNTANTS_GUIDE_PRICE_PENCE',
     labelEnv: 'NEXT_PUBLIC_ACCOUNTANTS_GUIDE_PRICE_LABEL',
   },
+  {
+    slug: 'car-dealers-guide',
+    title: 'AI for Car Dealers',
+    description:
+      'A practical, honest PDF guide for independent car dealers: where AI helps a small dealership and where it does not, a one-week starter plan, copy-paste prompts for listings and adverts, enquiries, follow-ups, reviews and after-sale, the legal lines you must not cross, safety rules and fill-in templates.',
+    bullets: [
+      '34-page PDF, instant download after payment',
+      'No coding needed',
+      'No income or savings promises.',
+    ],
+    metaProduct: 'ai-for-car-dealers',
+    blobPathname: 'car-dealers-guide/AI-for-Car-Dealers.pdf',
+    priceEnv: 'CAR_DEALERS_GUIDE_PRICE_PENCE',
+    labelEnv: 'NEXT_PUBLIC_CAR_DEALERS_GUIDE_PRICE_LABEL',
+  },
+  {
+    slug: 'coffee-shops-guide',
+    title: 'AI for Coffee Shops',
+    description:
+      'A practical, honest PDF guide for independent coffee shops: where AI helps and where it does not, a one-week starter plan, copy-paste prompts for menus and boards, social posts and local marketing, reviews and customer replies, rotas, suppliers and back office, the legal lines you must not cross, safety rules and fill-in templates.',
+    bullets: [
+      '41-page PDF, instant download after payment',
+      'No coding needed',
+      'No income or savings promises.',
+    ],
+    metaProduct: 'ai-for-coffee-shops',
+    blobPathname: 'coffee-shops-guide/AI-for-Coffee-Shops.pdf',
+    priceEnv: 'COFFEE_SHOPS_GUIDE_PRICE_PENCE',
+    labelEnv: 'NEXT_PUBLIC_COFFEE_SHOPS_GUIDE_PRICE_LABEL',
+  },
+  {
+    slug: 'barbers-salons-guide',
+    title: 'AI for Barbers and Salons',
+    description:
+      'A practical, honest PDF guide for barbershops and salons: where AI helps and where it does not, a one-week starter plan, copy-paste prompts for DMs, bookings and client messages, posts and captions, reviews, back office and the team, the legal lines you must not cross (including patch-test policy), safety rules and fill-in templates.',
+    bullets: [
+      '41-page PDF, instant download after payment',
+      'No coding needed',
+      'No income or savings promises.',
+    ],
+    metaProduct: 'ai-for-barbers-salons',
+    blobPathname: 'barbers-salons-guide/AI-for-Barbers-and-Salons.pdf',
+    priceEnv: 'BARBERS_SALONS_GUIDE_PRICE_PENCE',
+    labelEnv: 'NEXT_PUBLIC_BARBERS_SALONS_GUIDE_PRICE_LABEL',
+  },
 ];
 
 /** Guide 1 — kept for a bodyless POST /api/guide/checkout, exactly as before. */
@@ -106,10 +151,10 @@ export const DEFAULT_GUIDE_SLUG = 'hire-first-ai-employee';
 // handler fans a paid bundle session out to the four individual guides.
 export const BUNDLE: GuideProduct = {
   slug: 'bundle-all-four',
-  title: 'All four guides',
-  description: 'All four PDF guides in one purchase. £51 if bought separately, £35 as a bundle.',
+  title: 'The original four guides',
+  description: 'The four original PDF guides in one purchase. £51 if bought separately, £35 as a bundle.',
   bullets: [
-    'All four PDFs in one purchase',
+    'The four original PDFs in one purchase',
     'Instant download after payment',
     'No income or savings promises.',
   ],
@@ -118,6 +163,14 @@ export const BUNDLE: GuideProduct = {
   priceEnv: 'BUNDLE_PRICE_PENCE',
   labelEnv: 'NEXT_PUBLIC_BUNDLE_PRICE_LABEL',
 };
+
+/** The £35 bundle is exactly these four guides, forever (new guides are not bundled). */
+export const BUNDLE_SLUGS: readonly string[] = [
+  'hire-first-ai-employee',
+  'prompt-pack',
+  'admin-guide',
+  'accountants-guide',
+];
 
 function readEnv(name: string): string {
   if (typeof process === 'undefined' || !process.env) return '';
@@ -141,7 +194,7 @@ export function guideFilename(guide: GuideProduct): string {
 
 /** Stripe product_data.name for the checkout line item. */
 export function checkoutName(guide: GuideProduct): string {
-  return guide.slug === BUNDLE.slug ? 'All four guides (4 PDFs)' : `${guide.title} (PDF)`;
+  return guide.slug === BUNDLE.slug ? 'The original four guides (4 PDFs)' : `${guide.title} (PDF)`;
 }
 
 /** One-time price in pence from env; 0 when unset or unusable. */
@@ -162,6 +215,12 @@ export function priceLabel(guide: GuideProduct): string {
       return (process.env.NEXT_PUBLIC_ADMIN_GUIDE_PRICE_LABEL || '').trim();
     case 'NEXT_PUBLIC_ACCOUNTANTS_GUIDE_PRICE_LABEL':
       return (process.env.NEXT_PUBLIC_ACCOUNTANTS_GUIDE_PRICE_LABEL || '').trim();
+    case 'NEXT_PUBLIC_CAR_DEALERS_GUIDE_PRICE_LABEL':
+      return (process.env.NEXT_PUBLIC_CAR_DEALERS_GUIDE_PRICE_LABEL || '').trim();
+    case 'NEXT_PUBLIC_COFFEE_SHOPS_GUIDE_PRICE_LABEL':
+      return (process.env.NEXT_PUBLIC_COFFEE_SHOPS_GUIDE_PRICE_LABEL || '').trim();
+    case 'NEXT_PUBLIC_BARBERS_SALONS_GUIDE_PRICE_LABEL':
+      return (process.env.NEXT_PUBLIC_BARBERS_SALONS_GUIDE_PRICE_LABEL || '').trim();
     case 'NEXT_PUBLIC_BUNDLE_PRICE_LABEL':
       return (process.env.NEXT_PUBLIC_BUNDLE_PRICE_LABEL || '').trim();
     default:

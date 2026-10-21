@@ -2,6 +2,9 @@
 import { useState } from 'react';
 import { BUNDLE, GUIDES, priceLabel } from '@/lib/guides';
 
+const SAMPLE_MAILTO =
+  'mailto:tradersbooking@gmail.com?subject=Sample%20chapter%20request&body=Hi%2C%20please%20send%20me%20a%20free%20sample%20chapter.%20Guide%20I%27d%20like%3A%20';
+
 export default function GuidePage() {
   const [busy, setBusy] = useState('');
   const [err, setErr] = useState('');
@@ -68,13 +71,19 @@ export default function GuidePage() {
                   <ul style={{ margin: '0 0 18px', paddingLeft: 20 }}>
                     {g.bullets.map((b) => <li key={b} style={{ marginBottom: 6 }}>{b}</li>)}
                   </ul>
-                  <button
-                    onClick={() => buy(g.slug)}
-                    disabled={busy === g.slug}
-                    style={{ padding: '14px 28px', fontSize: 18, borderRadius: 8, border: 0, background: '#38d6e6', color: '#06223a', fontWeight: 700 }}
-                  >
-                    {busy === g.slug ? 'Opening checkout...' : `Buy now${label ? ' - ' + label : ''}`}
-                  </button>
+                  {label ? (
+                    <button
+                      onClick={() => buy(g.slug)}
+                      disabled={busy === g.slug}
+                      style={{ padding: '14px 28px', fontSize: 18, borderRadius: 8, border: 0, background: '#38d6e6', color: '#06223a', fontWeight: 700 }}
+                    >
+                      {busy === g.slug ? 'Opening checkout...' : `Buy now${label ? ' - ' + label : ''}`}
+                    </button>
+                  ) : (
+                    <a href={SAMPLE_MAILTO} style={{ display: 'inline-block', padding: '14px 28px', fontSize: 18, borderRadius: 8, border: '1px solid #38d6e6', color: '#38d6e6', fontWeight: 700, textDecoration: 'none' }}>
+                      Request a free sample chapter
+                    </a>
+                  )}
                 </div>
               </div>
             </section>
