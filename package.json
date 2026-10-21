@@ -12,7 +12,8 @@
     "test:leads": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/leads/leads.test.ts",
     "test:usd": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/usd.test.ts",
     "evidence:sales": "node scripts/capture-sales.mjs && node scripts/analyze-png.mjs",
-    "test:bow-chat": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/bow-chat/bow-chat.test.ts"
+    "test:bow-chat": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/bow-chat/bow-chat.test.ts",
+    "test:club": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/club-members.test.ts"
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.11.0",

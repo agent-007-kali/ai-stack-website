@@ -104,6 +104,31 @@ export default function ClubPage() {
         ))}
       </div>
 
+      <section style={{ ...card, marginTop: 18, border: '1px solid #24506a' }}>
+        <h2 style={h2}>Already a member?</h2>
+        <p style={{ color: '#c3cfe6', fontSize: 15, lineHeight: 1.6, margin: '0 0 14px' }}>
+          Chat is part of the £12/month paid membership. Your username and passcode come from Neo
+          when your membership is set up - enter them here. The free tier gets the Friday note and
+          club updates, not the chat.
+        </p>
+        <a
+          href="/club/login"
+          style={{
+            display: 'inline-block',
+            padding: '12px 26px',
+            borderRadius: 8,
+            background: 'transparent',
+            color: '#38d6e6',
+            border: '1px solid #38d6e6',
+            fontWeight: 700,
+            fontSize: 15,
+            textDecoration: 'none',
+          }}
+        >
+          Enter the club chat →
+        </a>
+      </section>
+
       <section style={{ ...card, marginTop: 28 }}>
         <h2 style={h2}>Honest details</h2>
         <ul style={{ margin: 0, paddingLeft: 20, lineHeight: 1.6 }}>
