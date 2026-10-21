@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { withUsd } from '@/lib/usd';
+import CryptoPay from '@/components/CryptoPay';
 
 // Offer page for the £75 one-hour AI audit (issue #25). House style: dark
 // page, inline styles, no income claims. Copy is fixed by the issue spec -
@@ -88,6 +89,7 @@ export default function AuditPage() {
         <button onClick={buy} disabled={busy} style={btn}>
           {busy ? 'Opening checkout...' : 'Buy the audit - ' + withUsd('£75')}
         </button>
+        <CryptoPay product="audit" />
         {canceled && (
           <p style={{ color: '#9bb', marginTop: 12 }}>
             Checkout canceled - no charge was made. Start again whenever you are ready.
