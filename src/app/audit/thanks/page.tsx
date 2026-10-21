@@ -66,6 +66,36 @@ export default async function AuditThanks({
           </p>
         </>
       )}
+
+      <div
+        style={{
+          marginTop: 36,
+          padding: '18px 22px',
+          borderRadius: 12,
+          background: '#0d2a3d',
+          border: '1px solid #1d3a4d',
+          textAlign: 'center',
+        }}
+      >
+        <p style={{ margin: 0, color: '#e8f1f5' }}>
+          Your plan is on its way. Want the wins built for you?
+        </p>
+        <a
+          href="/build"
+          style={{
+            display: 'inline-block',
+            marginTop: 12,
+            padding: '13px 26px',
+            borderRadius: 8,
+            background: '#38d6e6',
+            color: '#06223a',
+            fontWeight: 700,
+            textDecoration: 'none',
+          }}
+        >
+          See the build options
+        </a>
+      </div>
     </main>
   );
 }
