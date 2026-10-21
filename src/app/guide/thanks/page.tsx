@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { BUNDLE, GUIDES, guideByMetaProduct } from '@/lib/guides';
+import { BUNDLE, BUNDLE_SLUGS, GUIDES, guideByMetaProduct } from '@/lib/guides';
 
 type Purchased = { title: string; items: { slug: string; title: string }[] };
 
@@ -14,7 +14,10 @@ async function purchased(id: string): Promise<Purchased> {
     const session = await stripe.checkout.sessions.retrieve(id);
     const meta = session.metadata?.product || '';
     if (meta === BUNDLE.metaProduct) {
-      return { title: BUNDLE.title, items: GUIDES.map((g) => ({ slug: g.slug, title: g.title })) };
+      return {
+        title: BUNDLE.title,
+        items: GUIDES.filter((g) => BUNDLE_SLUGS.includes(g.slug)).map((g) => ({ slug: g.slug, title: g.title })),
+      };
     }
     const guide = guideByMetaProduct(meta);
     return guide ? { title: guide.title, items: [] } : { title: '', items: [] };

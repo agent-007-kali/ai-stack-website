@@ -32,7 +32,7 @@ const SAMPLE_MAILTO =
 const TICKER: (string | { text: string; href: string })[] = [
   'Launch price: Bow Bot £49 setup + £20/month',
   '3-day free trial, no card needed',
-  'All four guides £35 as a bundle',
+  'The original four guides £35 as a bundle',
   { text: 'Request a free sample chapter', href: SAMPLE_MAILTO },
   'AI Solutions Boxes custom-built, 3-week delivery',
   'Tailored agents for your business',
@@ -176,8 +176,17 @@ export default function HomePage() {
                   ) : (
                     <div className="sf-card-art sf-card-art-bundle">
                       <div>
-                        <b>All four guides</b>
-                        <small>£51 bought separately</small>
+                        {g.slug === BUNDLE.slug ? (
+                          <>
+                            <b>All four guides</b>
+                            <small>£51 bought separately</small>
+                          </>
+                        ) : (
+                          <>
+                            <b>{g.title}</b>
+                            <small>Cover coming soon</small>
+                          </>
+                        )}
                       </div>
                     </div>
                   )}

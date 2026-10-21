@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { get } from '@vercel/blob';
 import {
   BUNDLE,
+  BUNDLE_SLUGS,
   DEFAULT_GUIDE_SLUG,
   checkoutName,
   guideByMetaProduct,
@@ -119,7 +120,10 @@ export async function guideDownload(req: NextRequest): Promise<NextResponse> {
     if (!item) {
       return NextResponse.json({ error: 'Missing item' }, { status: 400 });
     }
-    guide = item === BUNDLE.slug ? undefined : guideBySlug(item);
+    guide =
+      item === BUNDLE.slug || !BUNDLE_SLUGS.includes(item)
+        ? undefined
+        : guideBySlug(item);
     if (!guide) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
