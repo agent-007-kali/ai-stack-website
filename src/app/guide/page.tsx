@@ -1,9 +1,49 @@
 'use client';
 import { useState } from 'react';
-import { BUNDLE, GUIDES, priceLabel } from '@/lib/guides';
+import { AI_AHEAD_EDITIONS, BUNDLE, GUIDES, WHOP_SHELF, priceLabel, type GuideProduct } from '@/lib/guides';
 
 const SAMPLE_MAILTO =
   'mailto:tradersbooking@gmail.com?subject=Sample%20chapter%20request&body=Hi%2C%20please%20send%20me%20a%20free%20sample%20chapter.%20Guide%20I%27d%20like%3A%20';
+
+/** One Whop-sold card (issue #40): external Buy link, never Stripe checkout. */
+function WhopCard({ g }: { g: GuideProduct }) {
+  return (
+    <section
+      key={g.slug}
+      style={{ border: '1px solid #1d3a4d', borderRadius: 12, padding: '24px 24px 28px', background: '#0c1722' }}
+    >
+      <div className="guide-card-row">
+        {g.cover && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={g.cover}
+            width={g.coverWidth}
+            height={g.coverHeight}
+            loading="lazy"
+            alt={`${g.title} cover`}
+            className="guide-cover"
+          />
+        )}
+        <div className="guide-card-body">
+          <h3 style={{ fontSize: 26, lineHeight: 1.2, margin: 0 }}>{g.title}</h3>
+          <p style={{ color: '#38d6e6', margin: '8px 0 12px' }}>Written by an AI agent</p>
+          <p style={{ margin: '0 0 12px' }}>{g.description}</p>
+          <ul style={{ margin: '0 0 18px', paddingLeft: 20 }}>
+            {g.bullets.map((b) => <li key={b} style={{ marginBottom: 6 }}>{b}</li>)}
+          </ul>
+          <a
+            href={g.whopUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ display: 'inline-block', padding: '14px 28px', fontSize: 18, borderRadius: 8, border: 0, background: '#38d6e6', color: '#06223a', fontWeight: 700, textDecoration: 'none' }}
+          >
+            {`Buy on Whop - ${g.whopPrice} →`}
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function GuidePage() {
   const [busy, setBusy] = useState('');
@@ -90,6 +130,33 @@ export default function GuidePage() {
           );
         })}
       </div>
+
+      {/* AI Ahead country editions (issue #40) — sold on Whop, separate shelf. */}
+      <section aria-labelledby="ai-ahead-title" style={{ marginTop: 44 }}>
+        <h2 id="ai-ahead-title" style={{ fontSize: 30, lineHeight: 1.2, margin: 0 }}>
+          AI Ahead - country editions
+        </h2>
+        <p style={{ color: '#9bb', marginTop: 8 }}>
+          Country-specific AI compliance guides. Sold and fulfilled on Whop — the Buy button
+          opens Whop in a new tab.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
+          {AI_AHEAD_EDITIONS.map((g) => <WhopCard key={g.slug} g={g} />)}
+        </div>
+      </section>
+
+      {/* The rest of the Whop shelf (issue #40) — same pattern, after AI Ahead. */}
+      <section aria-labelledby="whop-shelf-title" style={{ marginTop: 44 }}>
+        <h2 id="whop-shelf-title" style={{ fontSize: 30, lineHeight: 1.2, margin: 0 }}>
+          More guides on Whop
+        </h2>
+        <p style={{ color: '#9bb', marginTop: 8 }}>
+          Practical AI guides sold and fulfilled on Whop — the Buy button opens Whop in a new tab.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
+          {WHOP_SHELF.map((g) => <WhopCard key={g.slug} g={g} />)}
+        </div>
+      </section>
 
       {err && <p style={{ color: '#ff8a8a' }}>{err}</p>}
       <p style={{ fontSize: 13, color: '#9bb', marginTop: 28 }}>Secure card payment by Stripe. Digital product. Contact us if there is a problem with your download.</p>
