@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { withUsd } from '@/lib/usd';
+import CryptoPay from '@/components/CryptoPay';
 
 // Exact PR #30 fallback: shown instead of a Buy CTA while the tier's price
 // label env is unset, so a card can never offer a purchase that would fail.
@@ -87,21 +88,24 @@ export default function BuildTiers() {
           </ul>
           <p style={{ color: '#38d6e6', margin: '0 0 16px' }}>{t.delivery}</p>
           {t.priceLabel ? (
-            <button
-              onClick={() => buy(t.id)}
-              disabled={busy === t.id}
-              style={{
-                padding: '14px 28px',
-                fontSize: 18,
-                borderRadius: 8,
-                border: 0,
-                background: '#38d6e6',
-                color: '#06223a',
-                fontWeight: 700,
-              }}
-            >
-              {busy === t.id ? 'Opening checkout...' : `Buy now — ${t.name} - ${withUsd(t.priceLabel)}`}
-            </button>
+            <>
+              <button
+                onClick={() => buy(t.id)}
+                disabled={busy === t.id}
+                style={{
+                  padding: '14px 28px',
+                  fontSize: 18,
+                  borderRadius: 8,
+                  border: 0,
+                  background: '#38d6e6',
+                  color: '#06223a',
+                  fontWeight: 700,
+                }}
+              >
+                {busy === t.id ? 'Opening checkout...' : `Buy now — ${t.name} - ${withUsd(t.priceLabel)}`}
+              </button>
+              <CryptoPay receiveNoun="build" />
+            </>
           ) : (
             <a
               href={SAMPLE_MAILTO}

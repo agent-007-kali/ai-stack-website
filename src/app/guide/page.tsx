@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { BUNDLE, GUIDES, priceLabel } from '@/lib/guides';
 import { withUsd } from '@/lib/usd';
+import CryptoPay from '@/components/CryptoPay';
 
 const SAMPLE_MAILTO =
   'mailto:tradersbooking@gmail.com?subject=Sample%20chapter%20request&body=Hi%2C%20please%20send%20me%20a%20free%20sample%20chapter.%20Guide%20I%27d%20like%3A%20';
@@ -73,13 +74,16 @@ export default function GuidePage() {
                     {g.bullets.map((b) => <li key={b} style={{ marginBottom: 6 }}>{b}</li>)}
                   </ul>
                   {label ? (
-                    <button
-                      onClick={() => buy(g.slug)}
-                      disabled={busy === g.slug}
-                      style={{ padding: '14px 28px', fontSize: 18, borderRadius: 8, border: 0, background: '#38d6e6', color: '#06223a', fontWeight: 700 }}
-                    >
-                      {busy === g.slug ? 'Opening checkout...' : `Buy now${label ? ' - ' + label : ''}`}
-                    </button>
+                    <>
+                      <button
+                        onClick={() => buy(g.slug)}
+                        disabled={busy === g.slug}
+                        style={{ padding: '14px 28px', fontSize: 18, borderRadius: 8, border: 0, background: '#38d6e6', color: '#06223a', fontWeight: 700 }}
+                      >
+                        {busy === g.slug ? 'Opening checkout...' : `Buy now${label ? ' - ' + label : ''}`}
+                      </button>
+                      <CryptoPay />
+                    </>
                   ) : (
                     <a href={SAMPLE_MAILTO} style={{ display: 'inline-block', padding: '14px 28px', fontSize: 18, borderRadius: 8, border: '1px solid #38d6e6', color: '#38d6e6', fontWeight: 700, textDecoration: 'none' }}>
                       Request a free sample chapter

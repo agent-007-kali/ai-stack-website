@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { withUsd } from '@/lib/usd';
+import CryptoPay from '@/components/CryptoPay';
 
 // Offer page for the £75 one-hour AI audit (issue #25). House style: dark
 // page, inline styles, no income claims. Copy is fixed by the issue spec -
@@ -94,6 +95,7 @@ export default function AuditPage() {
           </p>
         )}
         {err && <p style={{ color: '#ff8a8a', marginTop: 12 }}>{err}</p>}
+        <CryptoPay />
         <p style={{ fontSize: 13, color: '#9bb', marginTop: 16 }}>
           Secure card payment by Stripe. One-off {withUsd('£75.00 GBP')}. Your written report arrives by email
           within 24 hours of your intake answers.
