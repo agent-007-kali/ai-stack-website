@@ -721,6 +721,37 @@
   }
 }
 
+/* AI Audit band (bottom of homepage) -------------------------------------- */
+
+.sf-audit-band {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  margin-top: 18px;
+  padding: 24px;
+  background: var(--sf-panel-2);
+  border: 1px solid var(--sf-line);
+  border-radius: 16px;
+}
+
+.sf-audit-band h3 {
+  margin: 0;
+  font-size: clamp(20px, 3vw, 26px);
+}
+
+.sf-audit-band p {
+  margin: 10px 0 0;
+  color: #c3cfe6;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 70ch;
+}
+
+.sf-audit-band .sf-cta-row {
+  margin-top: 16px;
+}
+
 /* Footer ---------------------------------------------------------------- */
 
 .sf-footer {
