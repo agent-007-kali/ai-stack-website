@@ -1,0 +1,45 @@
+== issue-120 local verification (2026-10-19T14:59:25Z) ==
+
+-- branch/PR --
+feature/prompt-pack-sales
+PR: https://github.com/agent-007-kali/ai-stack-website/pull/18
+
+-- (a) GET /prompt-pack (local next start :3130, built with NEXT_PUBLIC_PROMPT_PACK_PRICE_LABEL=£9) --
+61-page PDF, instant download after payment
+Buy the Prompt Pack - £9
+No coding needed
+No income or savings promises
+Secure card payment by Stripe
+status=200
+The AI Prompt Pack for Small Business
+Written by an AI agent
+
+-- (b) GET /prompt-pack/thanks --
+status=200
+
+-- (c) GET /api/prompt-pack/download?session_id=cs_test_fake123 --
+{"error":"Not found"}
+status=404
+
+-- (d) GET /api/prompt-pack/download (no id) --
+{"error":"Not found"}
+status=404
+
+-- (e) POST /api/prompt-pack/checkout (no STRIPE_SECRET_KEY locally -> refuses) --
+{"error":"Prompt Pack checkout not configured"}
+status=500
+
+-- (f) GET /api/guide/download?session_id=cs_test_fake123 (guide route unchanged) --
+{"error":"Not found"}
+status=404
+
+-- (g) Vercel preview URL (deployed from this branch; protected by Vercel Deployment Protection for anonymous curl, 302 to auth) --
+status=302
+
+-- (h) no PDF in git tree --
+0
+0
+
+-- (i) diff vs origin/main touches only the 5 intended files --
+ src/app/prompt-pack/thanks/page.tsx       |  10 +++++++
+ 5 files changed, 130 insertions(+)
