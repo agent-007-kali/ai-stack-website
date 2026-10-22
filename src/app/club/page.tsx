@@ -109,8 +109,8 @@ export default function ClubPage() {
         <h2 style={h2}>Already a member?</h2>
         <p style={{ color: '#c3cfe6', fontSize: 15, lineHeight: 1.6, margin: '0 0 14px' }}>
           Chat is part of the £12/month paid membership. Your username and passcode come from Neo
-          when your membership is set up - enter them here. The free tier gets the Friday note and
-          club updates, not the chat.
+          when your membership is set up - enter them here. The free tier gets the Monday idea and
+          the free Starter Plan guide, not the chat.
         </p>
         <a
           href="/club/login"
