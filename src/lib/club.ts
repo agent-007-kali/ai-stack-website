@@ -24,10 +24,10 @@ export const CLUB_TIERS: ClubTier[] = [
     name: 'Free tier',
     price: 'Free',
     priceNote: 'no card needed',
-    blurb: 'Start with the weekly note. Join free on Whop.',
+    blurb: 'Start with the Monday idea and the free Starter Plan guide. Join free on Whop.',
     benefits: [
-      'The Friday honest market note - one honest email every week',
-      'Club information and updates',
+      'The Monday idea - one practical money-with-AI idea every week',
+      'Your First £100 With AI - the free Starter Plan guide',
     ],
     cta: 'Join free',
     href: CLUB_FREE_WHOP_URL,
@@ -37,15 +37,17 @@ export const CLUB_TIERS: ClubTier[] = [
     name: 'AI Money Club',
     price: '£12/month',
     priceNote: 'cancel anytime',
-    blurb: 'The full membership: the week\'s ideas and tools, the chat, and the guides.',
+    blurb: 'The full membership: the week\'s ideas and tools, the members chat on Whop, and 2 guides every month.',
     benefits: [
       'Everything in the free tier',
       'The Monday idea - one idea every week',
       'The Wednesday tool - one tool every week',
       'The Friday honest market note',
-      'A community chat hosted by Jarvis, our AI - with the founder (Neo) in the room',
-      'The guide library included free',
-      'Founder access - Neo is in the chat',
+      'Exclusive members-only chat on Whop, hosted by Jarvis, our AI - with Neo (the founder) in the room',
+      '2 guides of your choice from our guide library every month, emailed to you - the first 2 as soon as you join',
+      '30% off all guides, any time, with code CLUB30',
+      'Starter Kit bonus - paid members get the Starter Kit on day one',
+      'Monthly live Q&A with Jarvis in the members chat',
       'Cancel anytime, managed through Whop',
     ],
     cta: 'Join - £12/month',
@@ -54,18 +56,18 @@ export const CLUB_TIERS: ClubTier[] = [
 ];
 
 // Short homepage band copy (Cesar, 21 Oct 20:31 BST - verbatim), plus the
-// guides-included line from the 20:35 benefits update.
+// paid-tier extras line matching the live Whop terms.
 export const CLUB_BAND_COPY =
   'One idea every Monday. One tool every Wednesday. One honest market note every Friday. ' +
   'Plus a community chat hosted by Jarvis, our AI - with the founder in the room.';
 
 export const CLUB_BAND_EXTRAS =
-  'The guide library is included free with the £12/month club. Cancel anytime.';
+  'The £12/month club adds the members-only chat on Whop, 2 guides a month, 30% off all guides with code CLUB30, the Starter Kit bonus and a monthly live Q&A. Cancel anytime.';
 
 export const CLUB_FAQ: { q: string; a: string }[] = [
   {
     q: 'What do I get?',
-    a: 'Free: the Friday honest market note. At £12/month: everything in free plus the Monday idea, the Wednesday tool, the community chat hosted by Jarvis with the founder in the room, and the guide library included free.',
+    a: 'Free: the Monday idea every week and the free Your First £100 With AI Starter Plan guide. At £12/month: everything in free plus the Wednesday tool, the Friday honest market note, the exclusive members-only chat on Whop hosted by Jarvis with Neo (the founder) in the room, 2 guides of your choice every month (the first 2 as soon as you join), 30% off all guides with code CLUB30, the Starter Kit bonus on day one, and a monthly live Q&A with Jarvis. Cancel anytime.',
   },
   {
     q: 'How does billing work?',
@@ -73,7 +75,7 @@ export const CLUB_FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'Who writes it?',
-    a: 'An AI agent. The notes and posts are written by an AI agent (Jarvis), with Neo - the founder - in the chat. We say that plainly because it is true.',
+    a: 'Jarvis, an AI consultant at AI Solutions. The notes and posts are written by Jarvis, with Neo - the founder - in the chat. We say that plainly because it is true.',
   },
   {
     q: 'What about refunds?',
