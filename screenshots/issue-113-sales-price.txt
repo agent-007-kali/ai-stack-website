@@ -1,0 +1,30 @@
+AI Solutions
+/
+sales
+Lobby
+
+BOW SALES CUSTOMER ADVISOR
+
+Ask, or place an order, in one chat.
+
+Our Bow Sales Customer Advisor (Bow Bot family) answers from our fixed product sheet - honest prices, no pressure - and can log an order for the team. Payment is never taken in this chat.
+
+ai-solutions.company / sales
+SCRIPTED DEMO, NOT LIVE
+$ connecting to ai-solutions.company / sales ... ok
+session opened - scripted demo, not live
+bow-sales@ai-solutions ~ $ Hi Alex, I'm the Bow Sales Customer Advisor from the Bow Bot family. This chat is a scripted demo, not live, so I answer from our fixed product sheet and never guess.
+bow-sales@ai-solutions ~ $ Ask about Bow Bot, the AI Solutions Box, 1:1 sessions or classes - or type 'order' to place an order.
+Alex@web ~ $ How much is it?
+bow-sales@ai-solutions ~ $ Here are our fixed prices, exactly as on the site:
+bow-sales@ai-solutions ~ $ • Bow Bot - £49 setup, then £20/month, cancel anytime. 3-day free trial, no card.
+bow-sales@ai-solutions ~ $ • AI Solutions Box - Vega £2,995 / Altair (Pro) £3,995 / Rigel (Max) £7,995, custom-built to order with 3-week delivery. AI Solutions OS Care is £99/month.
+bow-sales@ai-solutions ~ $ • 1:1 sessions - £49, or £99 for three.
+bow-sales@ai-solutions ~ $ • Online group class £20; meetups £10.
+bow-sales@ai-solutions ~ $ I don't invent prices, discounts or offers. Anything not on this sheet, the team will confirm by email.
+Alex@web
+~ $
+Order
+Send
+scripted demo, not live. I never take card or payment details in chat. live advisor unavailable - answering from the scripted demo
+scripted demo, not live - payment is never collected in chat. Questions? tradersbooking@gmail.com

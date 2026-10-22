@@ -1,5 +1,6 @@
 import { parseTrialState, type BowTrialState } from './trial.ts';
 import { CHAT_MODE, SHOPPING_MODE, type BowChatMode } from './shopping.ts';
+import { answerFromKnowledge } from '../sales-agent/engine.ts';
 
 export const BOW_CHAT_LIMITS = {
   maxMessageChars: 500,
@@ -154,7 +155,18 @@ const SCRIPT_RESPONSES = [
   },
 ];
 
+// Price / payment / trial questions must get the SAME fixed-sheet answers on
+// /try as on /sales (issue #113). This regex routes them to the sales-agent
+// knowledge engine; everything else keeps the light Bow trial script below.
+const FIXED_SHEET_RE =
+  /price|pricing|cost|how much|£|payment|pay|card|stripe|crypto|subscription|subscribe|recurring|cancel|bank (?:transfer|details|account)|iban|sort code|wire transfer|free trial|trial/i;
+
 export function bowScriptReply(message: string): string {
+  if (FIXED_SHEET_RE.test(message)) {
+    const sheet = answerFromKnowledge(message);
+    // Fallback means the match was incidental - keep the light trial script.
+    if (sheet.key !== 'fallback') return sheet.lines.join('\n');
+  }
   const q = message.toLowerCase();
   for (const { test, reply } of SCRIPT_RESPONSES) {
     if (test.test(q)) return reply;

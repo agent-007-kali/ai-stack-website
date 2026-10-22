@@ -23,9 +23,10 @@
 // disabled for spend by default and is intended for owner-configured activation
 // only. No paid call is made in the default configuration.
 
-import { bowScriptReply } from './script';
+import { SCRIPTED_DEMO_LABEL } from '../chat-label.ts';
+import { bowScriptReply } from './script.ts';
 
-export const FALLBACK_LABEL = 'scripted demo, not live';
+export const FALLBACK_LABEL = SCRIPTED_DEMO_LABEL;
 
 export type BowProviderResult =
   | { ok: true; live: true; reply: string }

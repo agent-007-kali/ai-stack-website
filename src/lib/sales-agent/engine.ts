@@ -20,6 +20,7 @@ import {
   SESSION_LUMA_URL,
   DISCLOSURE,
   PAYMENT_NOTE,
+  BANK_TRANSFER_NOTE,
   ORDER_PRODUCTS,
   findProduct,
   type OrderProduct,
@@ -163,6 +164,7 @@ export type AnswerKey =
   | 'group-class'
   | 'meetup'
   | 'payment'
+  | 'subscription'
   | 'delivery'
   | 'thanks'
   | 'forbidden'
@@ -236,10 +238,15 @@ export function answerFromKnowledge(text: string): KnowledgeAnswer {
   if (/meetup|meet-up|meet up/.test(t)) return meetupAnswer();
   if (/trial|free trial/.test(t)) return bowbotTrialAnswer();
 
+  // Bank transfers are refused outright - Stripe card checkout only.
+  if (/bank (?:transfer|details|account)|iban|sort code|wire transfer|transfer you (?:the )?money/.test(t)) {
+    return bankTransferAnswer();
+  }
   if (/price|pricing|cost|how much|£|\bquote\b|budget|afford/.test(t)) {
     return priceAnswer();
   }
-  if (/pay|payment|card|bank transfer|stripe|refund/.test(t)) return paymentAnswer();
+  if (/subscription|subscribe|recurring|cancel|tie-?in/.test(t)) return subscriptionAnswer();
+  if (/pay|payment|card|stripe|refund|crypto/.test(t)) return paymentAnswer();
   if (/deliver|delivery|shipping|lead time|how long|when will|build time/.test(t)) {
     return deliveryAnswer();
   }
@@ -278,7 +285,7 @@ function priceAnswer(): KnowledgeAnswer {
       '• AI Solutions Box - Vega £2,995 / Altair (Pro) £3,995 / Rigel (Max) £7,995, custom-built to order with 3-week delivery. AI Solutions OS Care is £99/month.',
       '• 1:1 sessions - £49, or £99 for three.',
       '• Online group class £20; meetups £10.',
-      "I don't invent prices or discounts. Anything outside this list, I'll check rather than guess.",
+      "I don't invent prices, discounts or offers. Anything not on this sheet, the team will confirm by email.",
     ],
   };
 }
@@ -291,7 +298,7 @@ function bowbotAnswer(): KnowledgeAnswer {
         BOWBOT_TRIAL_URL +
         '.',
       "It's an AI: it works best at one task at a time, it acts in your accounts only after you connect them, it never handles your money without your approval, and when it's unsure it says so.",
-      'For Bow Bot, payment is by card on the existing Stripe checkout (crypto checkout opens soon) - I never take payment details in chat.',
+      'For Bow Bot, payment is by card on the secure Stripe checkout on our site - I never take payment details in chat.',
     ],
   };
 }
@@ -358,6 +365,21 @@ function meetupAnswer(): KnowledgeAnswer {
 
 function paymentAnswer(): KnowledgeAnswer {
   return { key: 'payment', lines: [PAYMENT_NOTE] };
+}
+
+function bankTransferAnswer(): KnowledgeAnswer {
+  return { key: 'payment', lines: [BANK_TRANSFER_NOTE] };
+}
+
+function subscriptionAnswer(): KnowledgeAnswer {
+  return {
+    key: 'subscription',
+    lines: [
+      'Bow Bot is £49 setup, then £20/month - cancel anytime, no tie-in.',
+      'The 3-day free trial needs no card and gives you 20 messages a day.',
+      'Payment is by card on the secure Stripe checkout on our site - never in chat. We don\'t take bank transfers.',
+    ],
+  };
 }
 
 function deliveryAnswer(): KnowledgeAnswer {
