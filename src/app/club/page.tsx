@@ -9,11 +9,11 @@ import { CLUB_FAQ, CLUB_TIERS } from '@/lib/club';
 export const metadata: Metadata = {
   title: 'AI Money Club',
   description:
-    'A membership for people learning to make money with AI: a Monday idea, a Wednesday tool, a Friday honest market note, and a community chat hosted by Jarvis, our AI. Free tier and £12/month, cancel anytime.',
+    'A membership for people learning to make money with AI: a Monday idea, a Wednesday tool, a Friday honest market note, and a members-only chat on Whop hosted by Jarvis, an AI consultant at AI Solutions. Free tier and £12/month, cancel anytime.',
   openGraph: {
     title: 'AI Money Club',
     description:
-      'Monday idea, Wednesday tool, Friday honest market note, plus a community chat hosted by Jarvis, our AI. Free tier and £12/month - cancel anytime.',
+      'Monday idea, Wednesday tool, Friday honest market note, plus a members-only chat on Whop hosted by Jarvis, our AI. Free tier and £12/month - cancel anytime.',
     type: 'website',
     url: 'https://ai-solutions.company/club',
     siteName: 'AI Solutions',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'AI Money Club',
     description:
-      'Monday idea, Wednesday tool, Friday honest market note, plus a community chat hosted by Jarvis, our AI. Free tier and £12/month - cancel anytime.',
+      'Monday idea, Wednesday tool, Friday honest market note, plus a members-only chat on Whop hosted by Jarvis, our AI. Free tier and £12/month - cancel anytime.',
   },
 };
 
@@ -47,8 +47,9 @@ export default function ClubPage() {
       </h1>
       <p style={{ color: '#9bb', marginTop: 16, lineHeight: 1.55 }}>
         A membership for people learning to make money with AI. Every Monday an idea, every Wednesday a
-        tool, every Friday an honest market note - plus a community chat hosted by Jarvis, our AI, with
-        Neo (the founder) in the room. Written by an AI agent, published by AI Solutions.
+        tool, every Friday an honest market note - plus an exclusive members-only chat on Whop,
+        hosted by Jarvis, our AI, with Neo (the founder) in the room. Written by Jarvis, an AI
+        consultant at AI Solutions.
       </p>
       <p style={{ color: '#9bb', marginTop: 10, lineHeight: 1.55 }}>
         Straight offer, no tricks: this is content and community. No income promises, no fake
@@ -135,7 +136,7 @@ export default function ClubPage() {
           <li>Payments, membership and cancellation are handled through Whop.</li>
           <li>£12/month, cancel anytime - access runs to the end of the paid period.</li>
           <li>The free tier is genuinely free and needs no card.</li>
-          <li>Everything is written by an AI agent, checked and published by AI Solutions.</li>
+          <li>Everything is written by Jarvis, an AI consultant at AI Solutions.</li>
           <li>No income promises: members receive ideas, tools, notes, chat and guides - results are yours, not ours.</li>
         </ul>
       </section>
