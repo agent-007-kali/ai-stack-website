@@ -1,4 +1,5 @@
 import BuildTiers from './BuildTiers';
+import { withUsd } from '@/lib/usd';
 
 // Done-for-you build tier sales page (issue #31). Static copy and the
 // success/cancel banners are server-rendered; the two tier cards with the
@@ -20,8 +21,8 @@ export default async function BuildPage({
         Built by Jarvis, our AI consultant, with a human checking every job.
       </p>
       <p style={{ color: '#9bb', marginTop: 8 }}>
-        You already have the plan from your £75 AI Audit — or start here and we will scope the first win
-        with you. Two ways to hand it over:
+        You already have the plan from your {withUsd('£75 AI Audit')} — or start here and we will scope the
+        first win with you. Two ways to hand it over:
       </p>
 
       {success === '1' && (
