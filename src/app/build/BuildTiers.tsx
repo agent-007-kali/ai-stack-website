@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { withUsd } from '@/lib/usd';
 
 // Exact PR #30 fallback: shown instead of a Buy CTA while the tier's price
 // label env is unset, so a card can never offer a purchase that would fail.
@@ -80,7 +81,7 @@ export default function BuildTiers() {
           <ul style={{ margin: '16px 0 14px', paddingLeft: 20 }}>
             {t.bullets.map((b) => (
               <li key={b} style={{ marginBottom: 6 }}>
-                {b}
+                {withUsd(b)}
               </li>
             ))}
           </ul>
@@ -99,7 +100,7 @@ export default function BuildTiers() {
                 fontWeight: 700,
               }}
             >
-              {busy === t.id ? 'Opening checkout...' : `Buy now — ${t.name} - ${t.priceLabel}`}
+              {busy === t.id ? 'Opening checkout...' : `Buy now — ${t.name} - ${withUsd(t.priceLabel)}`}
             </button>
           ) : (
             <a

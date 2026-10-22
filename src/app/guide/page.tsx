@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { AI_AHEAD_EDITIONS, BUNDLE, GUIDES, WHOP_SHELF, priceLabel, type GuideProduct } from '@/lib/guides';
+import { withUsd } from '@/lib/usd';
 
 const SAMPLE_MAILTO =
   'mailto:tradersbooking@gmail.com?subject=Sample%20chapter%20request&body=Hi%2C%20please%20send%20me%20a%20free%20sample%20chapter.%20Guide%20I%27d%20like%3A%20';
@@ -86,7 +87,7 @@ export default function GuidePage() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 32 }}>
         {products.map((g) => {
-          const label = priceLabel(g);
+          const label = withUsd(priceLabel(g));
           return (
             <section
               key={g.slug}
@@ -107,7 +108,7 @@ export default function GuidePage() {
                 <div className="guide-card-body">
                   <h2 style={{ fontSize: 26, lineHeight: 1.2, margin: 0 }}>{g.title}</h2>
                   <p style={{ color: '#38d6e6', margin: '8px 0 12px' }}>Written by an AI agent</p>
-                  <p style={{ margin: '0 0 12px' }}>{g.description}</p>
+                  <p style={{ margin: '0 0 12px' }}>{withUsd(g.description)}</p>
                   <ul style={{ margin: '0 0 18px', paddingLeft: 20 }}>
                     {g.bullets.map((b) => <li key={b} style={{ marginBottom: 6 }}>{b}</li>)}
                   </ul>
@@ -176,7 +177,7 @@ export default function GuidePage() {
           textDecoration: 'none',
         }}
       >
-        Want it done for you? <strong style={{ color: '#38d6e6' }}>The £75 AI Audit.</strong>
+        Want it done for you? <strong style={{ color: '#38d6e6' }}>{withUsd('The £75 AI Audit.')}</strong>
       </a>
     </main>
   );

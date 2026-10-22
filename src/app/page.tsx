@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BUNDLE, GUIDES, priceLabel } from '@/lib/guides';
+import { withUsd } from '@/lib/usd';
 import StoreHeader from './_home/StoreHeader';
 import './_home/home.css';
 
@@ -72,7 +73,7 @@ const BOXES = [
 ];
 
 function guidePrice(g: (typeof GUIDES)[number] | typeof BUNDLE): string {
-  return priceLabel(g) || (g.slug === BUNDLE.slug ? '£35' : '');
+  return withUsd(priceLabel(g) || (g.slug === BUNDLE.slug ? '£35' : ''));
 }
 
 export default function HomePage() {
@@ -86,7 +87,7 @@ export default function HomePage() {
             <span key={copy}>
               {TICKER.map((t) => (
                 <span key={typeof t === 'string' ? t : t.text}>
-                  {typeof t === 'string' ? t : <a href={t.href}>{t.text}</a>} <b>✦</b>{' '}
+                  {typeof t === 'string' ? withUsd(t) : <a href={t.href}>{withUsd(t.text)}</a>} <b>✦</b>{' '}
                 </span>
               ))}
             </span>
