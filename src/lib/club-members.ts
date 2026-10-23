@@ -20,6 +20,8 @@ export type MemberRecord = {
   tier: MemberTier;
   createdAt: number;
   revokedAt?: number;
+  setupTokenHash?: string;
+  setupTokenExpiresAt?: number;
 };
 
 const MEMBER_PREFIX = 'club-members/';
@@ -64,6 +66,30 @@ export function verifyPasscode(passcode: string, record: MemberRecord): boolean 
   }
   const expected = Buffer.from(record.passcodeHash, 'hex');
   return given.length === expected.length && timingSafeEqual(given, expected);
+}
+
+export function newSetupToken(): string {
+  return randomBytes(24).toString('base64url');
+}
+
+export function hashSetupToken(token: string, salt: string): string {
+  return hashPasscode(token, salt);
+}
+
+export function verifySetupToken(token: string, record: MemberRecord): boolean {
+  if (!record.setupTokenHash || !record.salt) return false;
+  let given: Buffer;
+  try {
+    given = Buffer.from(hashSetupToken(token, record.salt), 'hex');
+  } catch {
+    return false;
+  }
+  const expected = Buffer.from(record.setupTokenHash, 'hex');
+  return given.length === expected.length && timingSafeEqual(given, expected);
+}
+
+export function isValidChosenPasscode(s: string): boolean {
+  return typeof s === 'string' && s.length >= 10 && s.length <= 64 && /^[A-Za-z0-9_-]+$/.test(s);
 }
 
 async function memberPath(username: string): Promise<string> {

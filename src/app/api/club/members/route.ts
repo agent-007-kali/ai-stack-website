@@ -16,6 +16,8 @@ import {
   hashPasscode,
   readMember,
   writeMember,
+  newSetupToken,
+  hashSetupToken,
   type MemberTier,
 } from '@/lib/club-members';
 import { randomBytes } from 'node:crypto';
@@ -95,6 +97,26 @@ export async function POST(req: NextRequest) {
     const passcode = newPasscode();
     await writeMember({ ...record, salt, passcodeHash: hashPasscode(passcode, salt) });
     return json({ ok: true, username, passcode });
+  }
+
+  if (body.action === 'setup-link') {
+    const username = normalizeUsername(body.username);
+    if (!username) return json({ error: 'Unknown username' }, 400);
+    const record = await readMember(username);
+    if (!record) return json({ error: 'No such member' }, 404);
+    if (record.revokedAt) return json({ error: 'Member revoked' }, 400);
+
+    const token = newSetupToken();
+    const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+    const setupTokenHash = hashSetupToken(token, record.salt);
+    await writeMember({
+      ...record,
+      setupTokenHash,
+      setupTokenExpiresAt: expiresAt,
+    });
+
+    const setupUrl = `https://www.ai-solutions.company/club/set-passcode?u=${encodeURIComponent(username)}&t=${encodeURIComponent(token)}`;
+    return json({ ok: true, username, setupUrl, expiresAt });
   }
 
   return json({ error: 'Unknown action' }, 400);
