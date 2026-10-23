@@ -10,11 +10,14 @@
     "test:sales-chat": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/sales-chat/sales-chat.test.ts",
     "test:sales-agent": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/sales-agent/agent.test.ts",
     "test:leads": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/leads/leads.test.ts",
+    "test:usd": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/usd.test.ts",
     "evidence:sales": "node scripts/capture-sales.mjs && node scripts/analyze-png.mjs",
-    "test:bow-chat": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/bow-chat/bow-chat.test.ts"
+    "test:bow-chat": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/bow-chat/bow-chat.test.ts",
+    "test:club": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/lib/club-members.test.ts"
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.11.0",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.8.2",
     "framer-motion": "^11.0.0",
     "lucide-react": "^0.400.0",

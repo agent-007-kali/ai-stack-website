@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
         rules: {
             userAgent: '*',
             allow: '/',
-            disallow: ['/api/', '/jarvis-bridge'],
+            disallow: ['/api/', '/jarvis-bridge', '/club/login', '/club/chat'],
         },
         sitemap: 'https://ai-solutions.company/sitemap.xml',
     };

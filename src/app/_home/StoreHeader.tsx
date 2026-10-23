@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { BUNDLE, GUIDES, priceLabel } from '@/lib/guides';
+import { withUsd } from '@/lib/usd';
 
 type Hit = {
   id: string;
@@ -49,7 +50,7 @@ function guideHits(): Hit[] {
   return rows.map((g) => ({
     id: 'guides',
     label: g.title,
-    hint: priceLabel(g) ? `Guides · ${priceLabel(g)}` : 'Guides',
+    hint: priceLabel(g) ? `Guides · ${withUsd(priceLabel(g))}` : 'Guides',
     terms: `${g.slug} ${g.description} ${g.bullets.join(' ')} pdf guide bundle`,
   }));
 }

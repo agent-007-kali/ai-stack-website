@@ -7,7 +7,9 @@ export const dynamic = 'force-dynamic';
 const REPO = 'agent-007-kali/jarvis-bridge';
 const ISSUE = 2; // private thread: https://github.com/agent-007-kali/jarvis-bridge/issues/2
 const MARK = '**Jorge:** ';
-const PASSWORD = process.env.JARVIS_CHAT_PASSWORD || 'santiago';
+// Security repair (issue #53): the old fallback `|| 'santiago'` shipped the
+// production password in this public repo. Missing env now fails CLOSED.
+const PASSWORD = process.env.JARVIS_CHAT_PASSWORD ?? '';
 
 const gh = (path: string, init?: RequestInit) =>
   fetch('https://api.github.com/repos/' + REPO + path, {
@@ -36,6 +38,10 @@ const toMsg = (c: Comment) =>
 
 async function authed(req: Request) {
   if (!process.env.JARVIS_GITHUB_TOKEN) return json({ error: 'not configured' }, 500);
+  if (!PASSWORD) {
+    console.error('[jarvis-chat] JARVIS_CHAT_PASSWORD not set - chat is disabled (fail-closed).');
+    return json({ error: 'not configured' }, 500);
+  }
   if (req.headers.get('x-chat-password') !== PASSWORD) {
     await new Promise((r) => setTimeout(r, 800)); // slow down guessing
     return json({ error: 'unauthorized' }, 401);
