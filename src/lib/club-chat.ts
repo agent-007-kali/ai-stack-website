@@ -183,7 +183,10 @@ export const ONLINE_WINDOW_MS = 3 * 60 * 1000;
 
 export async function getRoster(): Promise<RosterDoc> {
   try {
-    const text = await clubStoreGet(ROSTER_PATH);
+    // The roster is read-modify-written by every poll (claimRoomVisit), so a
+    // CDN-cached read can return the pre-visit state and re-trigger a welcome.
+    // Read straight from origin instead.
+    const text = await clubStoreGet(ROSTER_PATH, { noCache: true });
     if (text === null) return { users: {} };
     const doc = JSON.parse(text) as RosterDoc;
     return doc && typeof doc.users === 'object' && doc.users ? doc : { users: {} };
