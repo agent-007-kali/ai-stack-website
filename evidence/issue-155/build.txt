@@ -1,0 +1,103 @@
+
+> ai-stack-website@0.1.0 build
+> next build
+
+▲ Next.js 16.2.0 (Turbopack)
+
+  Creating an optimized production build ...
+Turbopack build encountered 1 warnings:
+./next.config.ts
+Encountered unexpected file in NFT list
+A file was traced that indicates that the whole project was traced unintentionally. Somewhere in the import trace below, there are:
+- filesystem operations (like path.join, path.resolve or fs.readFile), or
+- very dynamic requires (like require('./' + foo)).
+To resolve this, you can
+- remove them if possible, or
+- only use them in development, or
+- make sure they are statically scoped to some subfolder: path.join(process.cwd(), 'data', bar), or
+- add ignore comments: path.join(/*turbopackIgnore: true*/ process.cwd(), bar)
+
+Import trace:
+  App Route:
+    ./next.config.ts
+    ./src/lib/club-store.ts
+    ./src/lib/club-host.ts
+    ./src/app/api/club/chat/route.ts
+
+
+✓ Compiled successfully in 4.7s
+  Running TypeScript ...
+  Finished TypeScript in 6.8s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/49) ...
+  Generating static pages using 7 workers (12/49) 
+  Generating static pages using 7 workers (24/49) 
+  Generating static pages using 7 workers (36/49) 
+✓ Generating static pages using 7 workers (49/49) in 983ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /academy
+├ ○ /accounting
+├ ƒ /api/audit-checkout
+├ ƒ /api/audit-intake
+├ ƒ /api/audit-intake/list
+├ ƒ /api/bow-chat
+├ ƒ /api/bow-relay
+├ ƒ /api/build/checkout
+├ ƒ /api/chat
+├ ƒ /api/checkout
+├ ƒ /api/club/chat
+├ ƒ /api/club/cron
+├ ƒ /api/club/login
+├ ƒ /api/club/members
+├ ƒ /api/club/set-passcode
+├ ƒ /api/crypto-pay
+├ ƒ /api/crypto-pay/create
+├ ƒ /api/crypto-pay/download
+├ ƒ /api/crypto-pay/status
+├ ƒ /api/guide/checkout
+├ ƒ /api/guide/download
+├ ƒ /api/jarvis-chat
+├ ƒ /api/leads
+├ ƒ /api/sales-agent
+├ ƒ /api/sales-chat
+├ ƒ /api/sample
+├ ƒ /api/sample/download
+├ ƒ /api/sample/signups
+├ ƒ /api/status
+├ ƒ /api/stripe-webhook
+├ ○ /apple-icon.png
+├ ○ /audit
+├ ○ /audit/start
+├ ƒ /audit/thanks
+├ ○ /box
+├ ○ /box-max
+├ ○ /box-pro
+├ ƒ /build
+├ ○ /club
+├ ƒ /club/chat
+├ ƒ /club/login
+├ ○ /club/set-passcode
+├ ○ /guide
+├ ƒ /guide/thanks
+├ ○ /icon.svg
+├ ○ /jarvis-bridge
+├ ○ /learn
+├ ○ /lobby
+├ ○ /manifest.webmanifest
+├ ○ /opengraph-image
+├ ○ /privacy
+├ ○ /robots.txt
+├ ○ /sales
+├ ○ /sample
+├ ƒ /sample/thanks
+├ ○ /sitemap.xml
+└ ○ /try
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

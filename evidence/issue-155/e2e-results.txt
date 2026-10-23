@@ -1,0 +1,35 @@
+AI Money Club set-passcode E2E (local production build)
+Run: 2026-10-23T20:13:36.884Z
+Base: http://127.0.0.1:3215
+
+PASS issue e2e-155 - status=200
+PASS setup-link e2e-155 - status=200
+PASS setup-link e2e-155 uses club domain - origin=https://ai-solutions.company path=/club/set-passcode
+PASS active login still works after setup-link is issued
+PASS set passcode succeeds - status=200
+PASS setup token is one-time (replay rejected)
+PASS old passcode rejected after set
+PASS new passcode works after set
+PASS issue e2e-155b - status=200
+PASS setup-link e2e-155b - status=200
+PASS setup-link e2e-155b uses club domain - origin=https://ai-solutions.company path=/club/set-passcode
+PASS too-short passcode rejected - status=400
+PASS failed set leaves active login working
+PASS link still usable after rejected passcode - status=200
+PASS issue e2e-155c - status=200
+PASS setup-link e2e-155c - status=200
+PASS setup-link e2e-155c uses club domain - origin=https://ai-solutions.company path=/club/set-passcode
+PASS setup-link e2e-155c - status=200
+PASS setup-link e2e-155c uses club domain - origin=https://ai-solutions.company path=/club/set-passcode
+PASS older setup link rejected after reissue
+PASS rejected older link did not change passcode
+PASS newest setup link succeeds - status=200
+PASS issue e2e-155d - status=200
+PASS setup-link e2e-155d - status=200
+PASS setup-link e2e-155d uses club domain - origin=https://ai-solutions.company path=/club/set-passcode
+PASS expired setup link rejected
+PASS expired link leaves active login working
+PASS bogus setup link rejected
+PASS no setup token in server log - leaked=0
+
+29/29 checks passed

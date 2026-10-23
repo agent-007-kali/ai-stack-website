@@ -246,9 +246,8 @@ test('setup-link flow with file store', async () => {
     assert.equal(verifySetupToken(token, (await readMember('neo'))!), false);
     // old passcode no longer works
     assert.equal((await checkLogin('neo', 'OLDCODE1234')).ok, false);
-    // new passcode works
-    const r3 = await readMember('neo');
-    assert.equal(verifyPasscode('NEWPASSCODE1', { ...r3!, salt: newSalt, passcodeHash: hashPasscode('NEWPASSCODE1', newSalt) }), true); // verify logic
+    // new passcode works through the real login path
+    assert.equal((await checkLogin('neo', 'NEWPASSCODE1')).ok, true);
   } finally {
     if (prev === undefined) delete process.env.CLUB_STORE_DIR;
     else process.env.CLUB_STORE_DIR = prev;
@@ -269,6 +268,34 @@ test('reissue setup link invalidates first', async () => {
     await writeMember({ ...(await readMember('alice'))!, setupTokenHash: hashSetupToken(tokenB, (await readMember('alice'))!.salt), setupTokenExpiresAt: Date.now()+3600000 });
     assert.equal(verifySetupToken(tokenA, (await readMember('alice'))!), false);
     assert.equal(verifySetupToken(tokenB, (await readMember('alice'))!), true);
+  } finally {
+    if (prev === undefined) delete process.env.CLUB_STORE_DIR;
+    else process.env.CLUB_STORE_DIR = prev;
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('expired or wrong setup token leaves the active passcode intact', async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'club-'));
+  const prev = process.env.CLUB_STORE_DIR;
+  process.env.CLUB_STORE_DIR = dir;
+  try {
+    const salt = 'd'.repeat(32);
+    await writeMember({ username: 'dana', salt, passcodeHash: hashPasscode('KEEPTHIS123', salt), tier: 'paid', createdAt: 1 });
+    const token = newSetupToken();
+    const record = (await readMember('dana'))!;
+    await writeMember({ ...record, setupTokenHash: hashSetupToken(token, record.salt), setupTokenExpiresAt: Date.now() - 1000 });
+
+    // expired token is rejected and does not touch the passcode/salt
+    assert.equal(verifySetupToken(token, (await readMember('dana'))!), false);
+    assert.equal((await checkLogin('dana', 'KEEPTHIS123')).ok, true);
+    const after = (await readMember('dana'))!;
+    assert.equal(after.salt, salt);
+    assert.equal(after.passcodeHash, hashPasscode('KEEPTHIS123', salt));
+
+    // a wrong token is rejected too, same result
+    assert.equal(verifySetupToken('not-the-token', after), false);
+    assert.equal((await checkLogin('dana', 'KEEPTHIS123')).ok, true);
   } finally {
     if (prev === undefined) delete process.env.CLUB_STORE_DIR;
     else process.env.CLUB_STORE_DIR = prev;

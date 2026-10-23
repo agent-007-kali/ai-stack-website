@@ -1,8 +1,9 @@
 // AI Money Club member credentials, sessions and login rate limiting
-// (issue #53, login spec). Per-member username + passcode issued by us via
-// the admin route; records live in the PRIVATE Blob store and hold ONLY
-// {username, passcodeHash, salt, tier, createdAt, revokedAt?} - never
-// plaintext passcodes, never in logs, no emails required.
+// (issue #53, login spec; email-based setup added for issue #139/#155).
+// Per-member username + passcode issued by us via the admin route; records
+// live in the PRIVATE Blob store and hold ONLY {username, passcodeHash, salt,
+// tier, createdAt, revokedAt?, setupTokenHash?, setupTokenExpiresAt?} - never
+// plaintext passcodes or setup tokens, never in logs, no emails required.
 //
 // Session = signed httpOnly cookie (30 days) carrying only username + expiry.
 // The member record is re-read on every authenticated request, so a revoke
@@ -34,6 +35,14 @@ export const LOGIN_WINDOW_MS = 10 * 60 * 1000;
 
 /** Per-member post rate limit: 1 message / 3 s (in-memory, per instance). */
 export const POST_MIN_INTERVAL_MS = 3000;
+
+/** Member-chosen passcode rules shared by /club/set-passcode and login. */
+export const PASSCODE_MIN_LENGTH = 10;
+export const PASSCODE_MAX_LENGTH = 64;
+const PASSCODE_CHARS_RE = /^[A-Za-z0-9_-]+$/;
+
+/** Setup links are one-time and expire after 24 hours. */
+export const SETUP_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
 const USERNAME_RE = /^[a-z0-9][a-z0-9_-]{2,23}$/;
 // Human-readable passcode alphabet: no 0/O, 1/I/L ambiguity.
@@ -76,8 +85,9 @@ export function hashSetupToken(token: string, salt: string): string {
   return hashPasscode(token, salt);
 }
 
-export function verifySetupToken(token: string, record: MemberRecord): boolean {
+export function verifySetupToken(token: string, record: MemberRecord, now = Date.now()): boolean {
   if (!record.setupTokenHash || !record.salt) return false;
+  if (typeof record.setupTokenExpiresAt !== 'number' || now > record.setupTokenExpiresAt) return false;
   let given: Buffer;
   try {
     given = Buffer.from(hashSetupToken(token, record.salt), 'hex');
@@ -89,7 +99,12 @@ export function verifySetupToken(token: string, record: MemberRecord): boolean {
 }
 
 export function isValidChosenPasscode(s: string): boolean {
-  return typeof s === 'string' && s.length >= 10 && s.length <= 64 && /^[A-Za-z0-9_-]+$/.test(s);
+  return (
+    typeof s === 'string'
+    && s.length >= PASSCODE_MIN_LENGTH
+    && s.length <= PASSCODE_MAX_LENGTH
+    && PASSCODE_CHARS_RE.test(s)
+  );
 }
 
 async function memberPath(username: string): Promise<string> {

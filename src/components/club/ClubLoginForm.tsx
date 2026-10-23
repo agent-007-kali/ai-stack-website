@@ -99,7 +99,7 @@ export default function ClubLoginForm() {
           onChange={(e) => setPasscode(e.target.value)}
           autoComplete="current-password"
           spellCheck={false}
-          maxLength={40}
+          maxLength={64}
           required
         />
       </label>

@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: normalizeUsername: valid shapes only, lowercased
+ok 1 - normalizeUsername: valid shapes only, lowercased
+  ---
+  duration_ms: 3.164023
+  type: 'test'
+  ...
+# Subtest: newPasscode: 10 chars, unambiguous alphabet only
+ok 2 - newPasscode: 10 chars, unambiguous alphabet only
+  ---
+  duration_ms: 0.84158
+  type: 'test'
+  ...
+# Subtest: passcode hash: roundtrip verify, wrong code fails
+ok 3 - passcode hash: roundtrip verify, wrong code fails
+  ---
+  duration_ms: 208.337982
+  type: 'test'
+  ...
+# Subtest: login lockout: 5 fails in 10 minutes locks, window prunes
+ok 4 - login lockout: 5 fails in 10 minutes locks, window prunes
+  ---
+  duration_ms: 0.876458
+  type: 'test'
+  ...
+# Subtest: checkLogin: bad input 400, unknown user generic 401 (no enumeration)
+ok 5 - checkLogin: bad input 400, unknown user generic 401 (no enumeration)
+  ---
+  duration_ms: 824.611995
+  type: 'test'
+  ...
+# Subtest: sessions: create/verify roundtrip, expiry and tampering rejected
+ok 6 - sessions: create/verify roundtrip, expiry and tampering rejected
+  ---
+  duration_ms: 4.634549
+  type: 'test'
+  ...
+# Subtest: session cookies: httpOnly/lax/30 days, cleared variant expires
+ok 7 - session cookies: httpOnly/lax/30 days, cleared variant expires
+  ---
+  duration_ms: 0.564966
+  type: 'test'
+  ...
+# Subtest: sessionFromCookieHeader: absent/garbage cookies are just null
+ok 8 - sessionFromCookieHeader: absent/garbage cookies are just null
+  ---
+  duration_ms: 0.681782
+  type: 'test'
+  ...
+# Subtest: post rate limit: 1 per 3 s per key
+ok 9 - post rate limit: 1 per 3 s per key
+  ---
+  duration_ms: 0.7534
+  type: 'test'
+  ...
+# Subtest: admin token: header must match, missing config never matches
+ok 10 - admin token: header must match, missing config never matches
+  ---
+  duration_ms: 0.900243
+  type: 'test'
+  ...
+# Subtest: rooms: the eight spec rooms, guarded ids
+ok 11 - rooms: the eight spec rooms, guarded ids
+  ---
+  duration_ms: 0.470439
+  type: 'test'
+  ...
+# Subtest: moderation: credential leaks, misplaced referral links, spam
+ok 12 - moderation: credential leaks, misplaced referral links, spam
+  ---
+  duration_ms: 1.083832
+  type: 'test'
+  ...
+# Subtest: jarvis addressing + orientation copy
+ok 13 - jarvis addressing + orientation copy
+  ---
+  duration_ms: 0.406116
+  type: 'test'
+  ...
+# Subtest: setup token utilities
+ok 14 - setup token utilities
+  ---
+  duration_ms: 0.337324
+  type: 'test'
+  ...
+# Subtest: isValidChosenPasscode
+ok 15 - isValidChosenPasscode
+  ---
+  duration_ms: 0.293186
+  type: 'test'
+  ...
+# Subtest: setup-link flow with file store
+ok 16 - setup-link flow with file store
+  ---
+  duration_ms: 679.593488
+  type: 'test'
+  ...
+# Subtest: reissue setup link invalidates first
+ok 17 - reissue setup link invalidates first
+  ---
+  duration_ms: 191.099949
+  type: 'test'
+  ...
+# Subtest: expired or wrong setup token leaves the active passcode intact
+ok 18 - expired or wrong setup token leaves the active passcode intact
+  ---
+  duration_ms: 200.662854
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2745.471964

@@ -15,7 +15,18 @@ function SetPasscodeForm() {
   const [done, setDone] = useState(false);
 
   if (!u || !t) {
-    return <p style={{ color: '#f66', marginTop: 18 }}>Invalid or expired setup link</p>;
+    return (
+      <div style={{ marginTop: 18 }}>
+        <p style={{ color: '#f66' }}>This setup link is invalid or has expired.</p>
+        <p style={{ color: '#9bb', marginTop: 10 }}>
+          Ask Neo for a fresh link, or{' '}
+          <Link href="/club/login" style={{ color: '#38d6e6' }}>
+            go to the AI Money Club login
+          </Link>
+          .
+        </p>
+      </div>
+    );
   }
 
   if (done) {
@@ -40,7 +51,7 @@ function SetPasscodeForm() {
       return;
     }
     if (passcode.length < 10 || passcode.length > 64 || !/^[A-Za-z0-9_-]+$/.test(passcode)) {
-      setError('Invalid or expired setup link');
+      setError('Passcode must be 10-64 characters: letters, numbers, - or _');
       return;
     }
 
@@ -68,6 +79,10 @@ function SetPasscodeForm() {
         <input
           type="password"
           autoComplete="new-password"
+          minLength={10}
+          maxLength={64}
+          pattern="[A-Za-z0-9_-]+"
+          title="10-64 characters: letters, numbers, hyphen or underscore"
           value={passcode}
           onChange={(e) => setPasscode(e.target.value)}
           style={{
@@ -84,6 +99,10 @@ function SetPasscodeForm() {
         <input
           type="password"
           autoComplete="new-password"
+          minLength={10}
+          maxLength={64}
+          pattern="[A-Za-z0-9_-]+"
+          title="10-64 characters: letters, numbers, hyphen or underscore"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           style={{
@@ -122,7 +141,8 @@ export default function SetPasscodePage() {
         <span style={{ color: '#38d6e6' }}>Set your passcode.</span>
       </h1>
       <p style={{ color: '#9bb', marginTop: 14, lineHeight: 1.55 }}>
-        Choose your own passcode for the AI Money Club.
+        Choose your own passcode for the AI Money Club. Use 10-64 characters:
+        letters, numbers, hyphen or underscore.
       </p>
       <Suspense fallback={<p style={{ color: '#9bb', marginTop: 18 }}>Loading...</p>}>
         <SetPasscodeForm />
