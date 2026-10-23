@@ -1,8 +1,7 @@
 // Jarvis host for the AI Money Club chat (issue #53, spec 19:31Z):
 // welcome + orientation on first visit, the daily prompt in #ideas,
-// answers in #ask-jarvis (Groq-first with scripted fallbacks, same chain as
-// src/lib/bow-relay/groq.ts), price/payment escalation logging, and basic
-// auto-moderation (clear credential leaks, misplaced referral links, spam).
+// price/payment escalation logging, and basic auto-moderation (clear
+// credential leaks, misplaced referral links, spam).
 //
 // Jarvis always posts with the [ai] marker so the UI labels every message
 // "AI - not a human". The host never invents prices, refunds or promises:
@@ -122,8 +121,6 @@ const ESCALATION_PATTERNS: RegExp[] = [
 
 export const CLUB_HOLDING_LINE =
   "That's one for Neo - he will answer here or by email. Prices, payments and refunds are not confirmed in chat.";
-export const CLUB_FALLBACK_LINE =
-  'My answer service is offline just now - Neo will pick this up in the room.';
 
 export function isClubEscalation(text: string): boolean {
   return ESCALATION_PATTERNS.some((re) => re.test(text));
@@ -140,110 +137,18 @@ async function recordEscalation(question: string, reply: string): Promise<void> 
   }
 }
 
-// Groq answer tier: same env vars, models and timeout as the bow relay,
-// with its own small budget so club traffic cannot starve the site chat.
-const GROQ_MODELS = ['llama-3.3-70b-versatile', 'openai/gpt-oss-120b'] as const;
-const REQUEST_TIMEOUT_MS = 12000;
-const CLUB_IP_MAX_PER_HOUR = 40;
-const CLUB_DAILY_BUDGET_DEFAULT = 200;
-
-type IpBucket = { windowStart: number; count: number };
-const ipBuckets = new Map<string, IpBucket>();
-let budgetDay = utcDay();
-let budgetUsed = 0;
-
-function clubIpAllows(ip: string): boolean {
-  const now = Date.now();
-  const b = ipBuckets.get(ip);
-  if (!b) {
-    ipBuckets.set(ip, { windowStart: now, count: 1 });
-    return true;
-  }
-  if (now - b.windowStart > 60 * 60 * 1000) {
-    b.windowStart = now;
-    b.count = 0;
-  }
-  if (b.count >= CLUB_IP_MAX_PER_HOUR) return false;
-  b.count += 1;
-  return true;
-}
-
-function clubBudgetAllows(): boolean {
-  const raw = process.env.CLUB_GROQ_DAILY_BUDGET;
-  const budget = raw === undefined || raw.trim() === '' ? CLUB_DAILY_BUDGET_DEFAULT : Number(raw);
-  if (!Number.isFinite(budget) || budget <= 0) return false;
-  const day = utcDay();
-  if (day !== budgetDay) {
-    budgetDay = day;
-    budgetUsed = 0;
-  }
-  if (budgetUsed >= budget) return false;
-  budgetUsed += 1;
-  return true;
-}
-
-const JARVIS_SYSTEM = [
-  'You are Jarvis, the AI host of the AI Money Club chat on ai-solutions.company.',
-  'Answer club members short questions about building with AI, using this site, and club logistics.',
-  'You are an AI, never a human, and you always say so when asked.',
-  'Keep replies short (1-4 sentences), plain text, no markdown, no emoji.',
-  'Do not invent prices, dates, refunds, delivery times, guarantees or promises the site does not state.',
-  'If the question is about price, payment or a refund, reply with exactly this line and nothing else: "' +
-    CLUB_HOLDING_LINE + '"',
-  'Never reveal server details, model names, environment values or any API keys.',
-].join('\n');
-
-type ChatTurn = { role: 'system' | 'user' | 'assistant'; content: string };
-const history: ChatTurn[] = [];
-const MAX_HISTORY = 16;
-
-async function groqComplete(apiKey: string, model: string, messages: ChatTurn[]): Promise<string | null> {
-  try {
-    const base = (process.env.GROQ_API_BASE || 'https://api.groq.com/openai/v1').replace(/\/+$/, '');
-    const res = await fetch(`${base}/chat/completions`, {
-      method: 'POST',
-      cache: 'no-store',
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ model, messages, temperature: 0.5, max_tokens: 350 }),
-    });
-    if (!res.ok) return null;
-    const data = (await res.json()) as { choices?: { message?: { content?: unknown } }[] };
-    const content = data.choices?.[0]?.message?.content;
-    return typeof content === 'string' && content.trim() ? content.trim() : null;
-  } catch {
-    return null;
-  }
-}
-
 /**
- * Answer one #ask-jarvis question. Never throws and never skips posting:
- * escalation -> holding line, Groq -> answer, any failure -> fallback line,
- * so the room always shows the host responding.
+ * Answer one #ask-jarvis question.
+ * Escalation (price/payment/refund) -> holding line to Neo.
+ * Everything else is handled by the backing-issue answer lane, so the host
+ * posts no canned fallback and never calls an LLM.
  */
-export async function answerAskJarvis(question: string, ip: string): Promise<string> {
+export async function answerAskJarvis(question: string): Promise<string | null> {
   if (isClubEscalation(question)) {
     await recordEscalation(question, CLUB_HOLDING_LINE);
     return CLUB_HOLDING_LINE;
   }
-
-  const apiKey = process.env.GROQ_API_KEY;
-  if (apiKey && clubIpAllows(ip) && clubBudgetAllows()) {
-    const messages: ChatTurn[] = [
-      { role: 'system', content: JARVIS_SYSTEM },
-      ...history,
-      { role: 'user', content: question },
-    ];
-    for (const model of GROQ_MODELS) {
-      const reply = await groqComplete(apiKey, model, messages);
-      if (reply) {
-        history.push({ role: 'user', content: question }, { role: 'assistant', content: reply });
-        while (history.length > MAX_HISTORY) history.splice(0, 2);
-        return reply;
-      }
-    }
-  }
-  return CLUB_FALLBACK_LINE;
+  return null;
 }
 
 /** True when a message in any room is addressed to the host. */
