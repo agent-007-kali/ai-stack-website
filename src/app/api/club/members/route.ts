@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
       setupTokenExpiresAt: expiresAt,
     });
 
-    const setupUrl = `https://www.ai-solutions.company/club/set-passcode?u=${encodeURIComponent(username)}&t=${encodeURIComponent(token)}`;
+    const setupUrl = `https://ai-solutions.company/club/set-passcode?u=${encodeURIComponent(username)}&t=${encodeURIComponent(token)}`;
     return json({ ok: true, username, setupUrl, expiresAt });
   }
 

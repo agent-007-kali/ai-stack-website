@@ -24,7 +24,7 @@ function SetPasscodeForm() {
         <p style={{ color: '#e8f1f5' }}>Passcode set.</p>
         <p style={{ color: '#9bb', marginTop: 10 }}>
           <Link href="/club/login" style={{ color: '#38d6e6' }}>
-            Go to login
+            Go to AI Money Club login
           </Link>
         </p>
       </div>
@@ -117,7 +117,9 @@ export default function SetPasscodePage() {
   return (
     <main style={{ maxWidth: 560, margin: '0 auto', padding: '56px 20px', color: '#e8f1f5' }}>
       <h1 style={{ fontSize: 36, lineHeight: 1.1, margin: 0 }}>
-        Set your passcode.
+        AI Solutions / AI Money Club
+        <br />
+        <span style={{ color: '#38d6e6' }}>Set your passcode.</span>
       </h1>
       <p style={{ color: '#9bb', marginTop: 14, lineHeight: 1.55 }}>
         Choose your own passcode for the AI Money Club.
