@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BUNDLE, GUIDES, priceLabel } from '@/lib/guides';
 import { withUsd } from '@/lib/usd';
+import { CLUB_BAND_COPY, CLUB_BAND_EXTRAS } from '@/lib/club';
 import StoreHeader from './_home/StoreHeader';
 import './_home/home.css';
 
@@ -354,6 +355,25 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        <section className="sf-section" id="club" aria-labelledby="club-title">
+          <div className="sf-section-head">
+            <span className="sf-kicker">07 · Club</span>
+            <h2 id="club-title">Join the AI Money Club</h2>
+          </div>
+          <div className="sf-audit-band">
+            <div>
+              <h3>One idea. One tool. One honest note. Every week.</h3>
+              <p>{CLUB_BAND_COPY}</p>
+              <p>{CLUB_BAND_EXTRAS}</p>
+            </div>
+            <div className="sf-cta-row">
+              <Link className="sf-btn sf-btn-primary" href="/club">
+                Join the AI Money Club →
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer className="sf-footer">
@@ -361,6 +381,7 @@ export default function HomePage() {
           <span className="sf-footer-brand">AI Solutions</span>
           <Link href="/lobby">AI Solutions lobby</Link>
           <Link href="/guide">Guides</Link>
+          <Link href="/club">AI Money Club</Link>
           <Link href="/try">Try Bow Bot</Link>
           <Link href="/academy">Academy</Link>
           <Link href="/sales">Sales</Link>
