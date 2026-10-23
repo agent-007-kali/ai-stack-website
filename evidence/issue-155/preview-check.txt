@@ -1,0 +1,23 @@
+Preview deployment check - PR #64, commit b1292fd
+
+Vercel deployment status (GitHub commit status API):
+  state: success
+  description: Deployment has completed
+  target: https://vercel.com/neos-projects-63c1f9f5/ai-stack-website/4u9vmJNhZUSHBpDpJyz1UJpbqvuU
+  build: green
+
+Preview URL:
+  https://ai-stack-website-git-feature-club-6440e9-neos-projects-63c1f9f5.vercel.app
+
+GET /club/set-passcode on that preview (unauthenticated):
+  HTTP/2 302
+  location: https://vercel.com/sso-api?url=...&nonce=...
+  x-robots-tag: noindex
+
+The preview is behind project-wide Vercel SSO/deployment protection, so an
+unauthenticated runner cannot render or screenshot the page there (same as the
+earlier previews recorded on issue #133). No Vercel credentials are used.
+The page (form + invalid-link state) was verified against the identical
+production build served locally; screenshots are committed in this directory.
+No test members were created and no setup tokens were issued against the
+deployed preview/production environment.

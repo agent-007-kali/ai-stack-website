@@ -15,15 +15,21 @@ import {
   clearLoginFails,
   createSessionToken,
   hashPasscode,
+  isValidChosenPasscode,
   loginLockout,
   newPasscode,
+  newSetupToken,
   normalizeUsername,
   recordLoginFail,
+  readMember,
   resetLoginStateForTests,
   sessionCookieHeader,
   sessionFromCookieHeader,
   verifyPasscode,
+  verifySetupToken,
   verifySessionToken,
+  writeMember,
+  hashSetupToken,
 } from './club-members.ts';
 import { CLUB_ROOMS, isClubRoom } from './club-rooms.ts';
 import { orientationText, roomWelcomeText, RULES_LINE, screenClubMessage, addressedToJarvis } from './club-host.ts';
@@ -191,4 +197,108 @@ test('jarvis addressing + orientation copy', () => {
   assert.ok(text.includes('Sam'));
   assert.ok(text.includes('AI, not a human'));
   assert.ok(text.includes('#ask-jarvis'));
+});
+
+import { mkdtemp, rm } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+
+test('setup token utilities', () => {
+  const t = newSetupToken();
+  assert.equal(t.length >= 32, true);
+  assert.match(t, /^[A-Za-z0-9_-]+$/);
+});
+
+test('isValidChosenPasscode', () => {
+  assert.equal(isValidChosenPasscode('1234567890'), true);
+  assert.equal(isValidChosenPasscode('AbCd1234-_'), true);
+  assert.equal(isValidChosenPasscode('short'), false);
+  assert.equal(isValidChosenPasscode('a'.repeat(65)), false);
+  assert.equal(isValidChosenPasscode('bad pass'), false);
+  assert.equal(isValidChosenPasscode('bad!pass'), false);
+});
+
+test('setup-link flow with file store', async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'club-'));
+  const prev = process.env.CLUB_STORE_DIR;
+  process.env.CLUB_STORE_DIR = dir;
+  try {
+    // create member
+    const salt = 'a'.repeat(32);
+    await writeMember({ username: 'neo', salt, passcodeHash: hashPasscode('OLDCODE1234', salt), tier: 'founder', createdAt: 1 });
+    const record = await readMember('neo');
+    assert.ok(record);
+
+    // simulate setup-link
+    const token = newSetupToken();
+    const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+    await writeMember({ ...(await readMember('neo'))!, setupTokenHash: hashSetupToken(token, (await readMember('neo'))!.salt), setupTokenExpiresAt: expiresAt });
+    // after setup-link, old-passcode login still works
+    const res = await checkLogin('neo', 'OLDCODE1234');
+    assert.equal(res.ok, true);
+
+    // set passcode happy path
+    const r2 = await readMember('neo');
+    assert.ok(verifySetupToken(token, r2!));
+    const newSalt = 'b'.repeat(32);
+    await writeMember({ ...(r2)!, salt: newSalt, passcodeHash: hashPasscode('NEWPASSCODE1', newSalt), setupTokenHash: undefined, setupTokenExpiresAt: undefined });
+    // replay fails
+    assert.equal(verifySetupToken(token, (await readMember('neo'))!), false);
+    // old passcode no longer works
+    assert.equal((await checkLogin('neo', 'OLDCODE1234')).ok, false);
+    // new passcode works through the real login path
+    assert.equal((await checkLogin('neo', 'NEWPASSCODE1')).ok, true);
+  } finally {
+    if (prev === undefined) delete process.env.CLUB_STORE_DIR;
+    else process.env.CLUB_STORE_DIR = prev;
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('reissue setup link invalidates first', async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'club-'));
+  const prev = process.env.CLUB_STORE_DIR;
+  process.env.CLUB_STORE_DIR = dir;
+  try {
+    const salt = 'c'.repeat(32);
+    await writeMember({ username: 'alice', salt, passcodeHash: hashPasscode('CODE1234567', salt), tier: 'paid', createdAt: 1 });
+    const tokenA = newSetupToken();
+    const tokenB = newSetupToken();
+    await writeMember({ ...(await readMember('alice'))!, setupTokenHash: hashSetupToken(tokenA, (await readMember('alice'))!.salt), setupTokenExpiresAt: Date.now()+3600000 });
+    await writeMember({ ...(await readMember('alice'))!, setupTokenHash: hashSetupToken(tokenB, (await readMember('alice'))!.salt), setupTokenExpiresAt: Date.now()+3600000 });
+    assert.equal(verifySetupToken(tokenA, (await readMember('alice'))!), false);
+    assert.equal(verifySetupToken(tokenB, (await readMember('alice'))!), true);
+  } finally {
+    if (prev === undefined) delete process.env.CLUB_STORE_DIR;
+    else process.env.CLUB_STORE_DIR = prev;
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('expired or wrong setup token leaves the active passcode intact', async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'club-'));
+  const prev = process.env.CLUB_STORE_DIR;
+  process.env.CLUB_STORE_DIR = dir;
+  try {
+    const salt = 'd'.repeat(32);
+    await writeMember({ username: 'dana', salt, passcodeHash: hashPasscode('KEEPTHIS123', salt), tier: 'paid', createdAt: 1 });
+    const token = newSetupToken();
+    const record = (await readMember('dana'))!;
+    await writeMember({ ...record, setupTokenHash: hashSetupToken(token, record.salt), setupTokenExpiresAt: Date.now() - 1000 });
+
+    // expired token is rejected and does not touch the passcode/salt
+    assert.equal(verifySetupToken(token, (await readMember('dana'))!), false);
+    assert.equal((await checkLogin('dana', 'KEEPTHIS123')).ok, true);
+    const after = (await readMember('dana'))!;
+    assert.equal(after.salt, salt);
+    assert.equal(after.passcodeHash, hashPasscode('KEEPTHIS123', salt));
+
+    // a wrong token is rejected too, same result
+    assert.equal(verifySetupToken('not-the-token', after), false);
+    assert.equal((await checkLogin('dana', 'KEEPTHIS123')).ok, true);
+  } finally {
+    if (prev === undefined) delete process.env.CLUB_STORE_DIR;
+    else process.env.CLUB_STORE_DIR = prev;
+    await rm(dir, { recursive: true, force: true });
+  }
 });

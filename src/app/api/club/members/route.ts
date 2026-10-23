@@ -16,11 +16,19 @@ import {
   hashPasscode,
   readMember,
   writeMember,
+  newSetupToken,
+  hashSetupToken,
+  SETUP_TOKEN_TTL_MS,
   type MemberTier,
 } from '@/lib/club-members';
 import { randomBytes } from 'node:crypto';
 
 export const dynamic = 'force-dynamic';
+
+// The member-facing setup link must always use the club's own domain, never a
+// Vercel preview host or a third-party URL. Deliberately NOT an env var so a
+// preview deployment cannot accidentally hand out preview links.
+const CLUB_SITE_URL = 'https://ai-solutions.company';
 
 const json = (data: unknown, status = 200) =>
   NextResponse.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
@@ -87,14 +95,46 @@ export async function POST(req: NextRequest) {
     if (!record) return json({ error: 'No such member' }, 404);
 
     if (body.action === 'revoke') {
-      await writeMember({ ...record, revokedAt: Date.now() });
+      await writeMember({
+        ...record,
+        revokedAt: Date.now(),
+        setupTokenHash: undefined,
+        setupTokenExpiresAt: undefined,
+      });
       return json({ ok: true, username, revoked: true });
     }
 
     const salt = randomBytes(16).toString('hex');
     const passcode = newPasscode();
-    await writeMember({ ...record, salt, passcodeHash: hashPasscode(passcode, salt) });
+    await writeMember({
+      ...record,
+      salt,
+      passcodeHash: hashPasscode(passcode, salt),
+      // A passcode rotation also invalidates any outstanding setup link.
+      setupTokenHash: undefined,
+      setupTokenExpiresAt: undefined,
+    });
     return json({ ok: true, username, passcode });
+  }
+
+  if (body.action === 'setup-link') {
+    const username = normalizeUsername(body.username);
+    if (!username) return json({ error: 'Unknown username' }, 400);
+    const record = await readMember(username);
+    if (!record) return json({ error: 'No such member' }, 404);
+    if (record.revokedAt) return json({ error: 'Member revoked' }, 400);
+
+    const token = newSetupToken();
+    const expiresAt = Date.now() + SETUP_TOKEN_TTL_MS;
+    const setupTokenHash = hashSetupToken(token, record.salt);
+    await writeMember({
+      ...record,
+      setupTokenHash,
+      setupTokenExpiresAt: expiresAt,
+    });
+
+    const setupUrl = `${CLUB_SITE_URL}/club/set-passcode?u=${encodeURIComponent(username)}&t=${encodeURIComponent(token)}`;
+    return json({ ok: true, username, setupUrl, expiresAt });
   }
 
   return json({ error: 'Unknown action' }, 400);
