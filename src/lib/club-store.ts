@@ -27,7 +27,10 @@ async function walk(dir: string, base = ''): Promise<string[]> {
 }
 
 /** Read one record as text; null when missing (either backend). */
-export async function clubStoreGet(key: string): Promise<string | null> {
+export async function clubStoreGet(
+  key: string,
+  opts: { noCache?: boolean } = {},
+): Promise<string | null> {
   const dir = storeDir();
   if (dir) {
     try {
@@ -37,7 +40,10 @@ export async function clubStoreGet(key: string): Promise<string | null> {
     }
   }
   try {
-    const blob = await get(key, { access: 'private' });
+    const blob = await get(
+      key,
+      opts.noCache ? { access: 'private', useCache: false } : { access: 'private' },
+    );
     if (!blob || blob.statusCode !== 200 || !blob.stream) return null;
     return await new Response(blob.stream).text();
   } catch {
