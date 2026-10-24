@@ -582,3 +582,39 @@
     font-size: 12px;
   }
 }
+
+/* issue #163: Hear it button */
+.clubchat__voice {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.clubchat__hear {
+  font-family: var(--cc-font);
+  font-size: 11px;
+  background: linear-gradient(#1b2a1b, #101a10);
+  color: #b9ffb9;
+  border: 1px solid #2f4f2f;
+  border-top-color: #4a6b4a;
+  border-left-color: #4a6b4a;
+  padding: 3px 8px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.clubchat__hear:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.clubchat__voiceerr {
+  font-size: 10px;
+  color: var(--cc-danger);
+}
+
+.clubchat__voice audio {
+  width: 220px;
+  height: 28px;
+}

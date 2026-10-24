@@ -21,6 +21,7 @@ type ChatState = {
 const POLL_MS = 2500;
 const SEND_COOLDOWN_S = 3;
 const MAX_TEXT = 1000;
+const CLUB_HOLDING_LINE = "That's one for Neo - he will answer here or by email. Prices, payments and refunds are not confirmed in chat.";
 
 function iso(ts: number): string {
   return new Date(ts).toISOString();
@@ -37,6 +38,7 @@ export default function ClubChat() {
   const [cooldown, setCooldown] = useState(0);
   const [soundOn, setSoundOn] = useState(false);
   const [buddiesOpen, setBuddiesOpen] = useState(false);
+  const [audioState, setAudioState] = useState<Record<number, { loading: boolean; error: string | null; played: boolean }>>({});
   const [nameDraft, setNameDraft] = useState('');
   const [nameError, setNameError] = useState('');
   const [settingName, setSettingName] = useState(false);
@@ -357,29 +359,74 @@ export default function ClubChat() {
               Nothing here yet. Say something - or wait for Jarvis&apos;s daily prompt.
             </div>
           ) : (
-            state.messages.map((m) => (
-              <div
-                key={m.id}
-                className={`clubchat__msg${state.me.name && m.name === state.me.name && m.kind !== 'ai' ? ' is-mine' : ''}`}
-              >
-                {state.me.founder && m.kind !== 'ai' ? (
-                  <button
-                    type="button"
-                    className="clubchat__del"
-                    onClick={() => void removeMessage(m.id)}
-                    aria-label="Delete message"
-                  >
-                    x
-                  </button>
-                ) : null}
-                <span className={`clubchat__who clubchat__who--${m.kind}`}>
-                  {m.name}
-                  {m.kind === 'founder' ? <i className="clubchat__badge">Founder</i> : null}
-                  {m.kind === 'ai' ? <i className="clubchat__badge clubchat__badge--ai">AI - not a human</i> : null}
-                </span>
-                <span className="clubchat__text">{m.text}</span>
-              </div>
-            ))
+            state.messages.map((m) => {
+              // Spec: "For messages with m.kind === 'ai' whose text is NOT the club holding line and is not a host room-intro post (the lane's answers start with "Jarvis:" after the [ai] marker; room intros and welcomes are posted by the site itself and have no audio)"
+              const isJarvisAnswer = m.kind === 'ai' && m.text !== CLUB_HOLDING_LINE && !m.text.includes('First time here') && !m.text.startsWith('Welcome to');
+              const canHear = isJarvisAnswer;
+              const aState = audioState[m.id] || { loading: false, error: null, played: false };
+              return (
+                <div
+                  key={m.id}
+                  className={`clubchat__msg${state.me.name && m.name === state.me.name && m.kind !== 'ai' ? ' is-mine' : ''}`}
+                >
+                  {state.me.founder && m.kind !== 'ai' ? (
+                    <button
+                      type="button"
+                      className="clubchat__del"
+                      onClick={() => void removeMessage(m.id)}
+                      aria-label="Delete message"
+                    >
+                      x
+                    </button>
+                  ) : null}
+                  <span className={`clubchat__who clubchat__who--${m.kind}`}>
+                    {m.name}
+                    {m.kind === 'founder' ? <i className="clubchat__badge">Founder</i> : null}
+                    {m.kind === 'ai' ? <i className="clubchat__badge clubchat__badge--ai">AI - not a human</i> : null}
+                  </span>
+                  <span className="clubchat__text">{m.text}</span>
+                  {canHear ? (
+                    <div className="clubchat__voice">
+                      {!aState.played ? (
+                        <button
+                          type="button"
+                          className="clubchat__hear"
+                          onClick={() => {
+                            setAudioState((s) => ({ ...s, [m.id]: { loading: true, error: null, played: true } }));
+                          }}
+                        >
+                          Hear it
+                        </button>
+                      ) : null}
+                      {aState.played ? (
+                        <audio
+                          controls
+                          preload="none"
+                          src={`/api/club/voice/${m.id}.mp3`}
+                          autoPlay
+                          onPlay={() => {
+                            setAudioState((s) => ({ ...s, [m.id]: { loading: false, error: null, played: true } }));
+                          }}
+                          onError={() => {
+                            setAudioState((s) => ({
+                              ...s,
+                              [m.id]: {
+                                loading: false,
+                                error: 'Voice is still being prepared - try again in a moment',
+                                played: false,
+                              },
+                            }));
+                          }}
+                        />
+                      ) : null}
+                      {aState.error ? (
+                        <div className="clubchat__voiceerr">{aState.error}</div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })
           )}
         </div>
 
