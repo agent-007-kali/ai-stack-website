@@ -360,13 +360,6 @@ export default function ClubChat() {
             </div>
           ) : (
             state.messages.map((m) => {
-              const isAiAnswer =
-                m.kind === 'ai' &&
-                m.text !== CLUB_HOLDING_LINE &&
-                !(m.text.startsWith('Welcome to #') || m.text.startsWith('First time here')) &&
-                !m.text.startsWith('Hi ') &&
-                m.text.includes('Jarvis') === false ? // room intros/welcomes posted by site have no audio - but spec says "lane's answers start with "Jarvis:" after the [ai] marker"
-                false : false;
               // Spec: "For messages with m.kind === 'ai' whose text is NOT the club holding line and is not a host room-intro post (the lane's answers start with "Jarvis:" after the [ai] marker; room intros and welcomes are posted by the site itself and have no audio)"
               const isJarvisAnswer = m.kind === 'ai' && m.text !== CLUB_HOLDING_LINE && !m.text.includes('First time here') && !m.text.startsWith('Welcome to');
               const canHear = isJarvisAnswer;
@@ -398,33 +391,33 @@ export default function ClubChat() {
                         <button
                           type="button"
                           className="clubchat__hear"
-                          disabled={aState.loading}
-                          onClick={async () => {
-                            setAudioState((s) => ({ ...s, [m.id]: { loading: true, error: null, played: false } }));
-                            try {
-                              const audio = new Audio(`/api/club/voice/${m.id}.mp3`);
-                              audio.preload = 'none';
-                              audio.oncanplaythrough = () => {
-                                void audio.play().catch(() => {});
-                              };
-                              audio.onerror = () => {
-                                setAudioState((s) => ({ ...s, [m.id]: { loading: false, error: "Voice is still being prepared - try again in a moment", played: false } }));
-                              };
-                              audio.onplay = () => {
-                                setAudioState((s) => ({ ...s, [m.id]: { loading: false, error: null, played: true } }));
-                              };
-                              // trigger load
-                              audio.load();
-                            } catch {
-                              setAudioState((s) => ({ ...s, [m.id]: { loading: false, error: "Voice is still being prepared - try again in a moment", played: false } }));
-                            }
+                          onClick={() => {
+                            setAudioState((s) => ({ ...s, [m.id]: { loading: true, error: null, played: true } }));
                           }}
                         >
-                          {aState.loading ? 'Loading…' : 'Hear it'}
+                          Hear it
                         </button>
                       ) : null}
                       {aState.played ? (
-                        <audio controls preload="none" src={`/api/club/voice/${m.id}.mp3`} autoPlay />
+                        <audio
+                          controls
+                          preload="none"
+                          src={`/api/club/voice/${m.id}.mp3`}
+                          autoPlay
+                          onPlay={() => {
+                            setAudioState((s) => ({ ...s, [m.id]: { loading: false, error: null, played: true } }));
+                          }}
+                          onError={() => {
+                            setAudioState((s) => ({
+                              ...s,
+                              [m.id]: {
+                                loading: false,
+                                error: 'Voice is still being prepared - try again in a moment',
+                                played: false,
+                              },
+                            }));
+                          }}
+                        />
                       ) : null}
                       {aState.error ? (
                         <div className="clubchat__voiceerr">{aState.error}</div>

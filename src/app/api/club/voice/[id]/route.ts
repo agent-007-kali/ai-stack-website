@@ -3,7 +3,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { sessionFromCookieHeader } from '@/lib/club-members';
-import { clubStoreGet } from '@/lib/club-store';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,14 +24,6 @@ export async function GET(
   }
 
   const key = `club-voice/${id}`;
-  try {
-    // clubStoreGet returns text for file backend; for Blob backend we need to stream differently.
-    // Try to get via head/get through club-store's Blob path? club-storeGet reads as text via get() stream->text.
-    // For audio/mpeg this would corrupt - but the issue says "reads club-voice/<id>.mp3 from the EXISTING private Blob store with get() server-side and streams it"
-    // We need to use @vercel/blob get directly for streaming.
-  } catch {
-    // fall through
-  }
 
   // Use direct Blob get for streaming
   try {
