@@ -41,10 +41,6 @@ const MAX_TEXT = 1000;
 const json = (data: unknown, status = 200) =>
   NextResponse.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
 
-function clientIp(req: NextRequest): string {
-  return (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
-}
-
 function mapChatError(e: unknown): NextResponse {
   if (e instanceof ClubChatConfigError) {
     console.error('[club-chat] NOT CONFIGURED - set JARVIS_GITHUB_TOKEN before launch.');
@@ -179,11 +175,13 @@ export async function POST(req: NextRequest) {
     // Jarvis answers in #ask-jarvis (or when addressed by name anywhere).
     let replyMessage: unknown = null;
     if (room === 'ask-jarvis' || addressedToJarvis(text)) {
-      const reply = await answerAskJarvis(text, clientIp(req));
-      try {
-        replyMessage = await postMessage(room, 'ai', 'Jarvis', reply);
-      } catch {
-        replyMessage = null;
+      const reply = await answerAskJarvis(text);
+      if (reply) {
+        try {
+          replyMessage = await postMessage(room, 'ai', 'Jarvis', reply);
+        } catch {
+          replyMessage = null;
+        }
       }
     }
 
