@@ -8,7 +8,7 @@
 
 import { readFile, readdir, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { get, list, put } from '@vercel/blob';
+import { get, head, list, put, BlobPreconditionFailedError } from '@vercel/blob';
 
 function storeDir(): string | null {
   const dir = (process.env.CLUB_STORE_DIR ?? '').trim();
@@ -26,15 +26,20 @@ async function walk(dir: string, base = ''): Promise<string[]> {
   return out;
 }
 
-/** Read one record as text; null when missing (either backend). */
-export async function clubStoreGet(
+export type ClubStoreGetResult = { text: string; etag: string } | null;
+
+/** Read one record with metadata for conditional writes. */
+export async function clubStoreGetWithMeta(
   key: string,
   opts: { noCache?: boolean } = {},
-): Promise<string | null> {
+): Promise<ClubStoreGetResult> {
   const dir = storeDir();
   if (dir) {
     try {
-      return await readFile(path.join(dir, key), 'utf8');
+      const full = path.join(dir, key);
+      const text = await readFile(full, 'utf8');
+      const stat = await import('node:fs/promises').then((m) => m.stat(full));
+      return { text, etag: String(stat.mtimeMs) };
     } catch {
       return null;
     }
@@ -45,27 +50,86 @@ export async function clubStoreGet(
       opts.noCache ? { access: 'private', useCache: false } : { access: 'private' },
     );
     if (!blob || blob.statusCode !== 200 || !blob.stream) return null;
-    return await new Response(blob.stream).text();
+    const text = await new Response(blob.stream).text();
+    let etag = (blob as any).etag;
+    if (!etag && (blob as any).headers) {
+      const h = (blob as any).headers;
+      etag = typeof h.get === 'function' ? h.get('etag') || h.get('ETag') : h.etag || h['etag'];
+    }
+    if (!etag) {
+      try {
+        const h = await head(key);
+        etag = (h as any).etag || (h as any).headers?.get?.('etag');
+      } catch {
+        // ignore
+      }
+    }
+    return { text, etag: etag || '' };
   } catch {
     return null;
   }
 }
 
-/** Write one record (overwrites). Throws on failure - callers map errors. */
-export async function clubStorePut(key: string, text: string): Promise<void> {
+/** Read one record as text; null when missing (either backend). */
+export async function clubStoreGet(
+  key: string,
+  opts: { noCache?: boolean } = {},
+): Promise<string | null> {
+  const res = await clubStoreGetWithMeta(key, opts);
+  return res ? res.text : null;
+}
+
+/** Write one record with optional conditional write (ifMatch). Throws on failure. */
+export async function clubStorePut(
+  key: string,
+  text: string,
+  opts: { ifMatch?: string } = {},
+): Promise<void> {
   const dir = storeDir();
   if (dir) {
     const full = path.join(dir, key);
     await mkdir(path.dirname(full), { recursive: true });
+    if (opts.ifMatch) {
+      try {
+        const stat = await import('node:fs/promises').then((m) => m.stat(full));
+        const current = String(stat.mtimeMs);
+        if (current !== opts.ifMatch) {
+          throw new BlobPreconditionFailedError();
+        }
+      } catch (e: any) {
+        if (e instanceof BlobPreconditionFailedError) throw e;
+        // if missing and we expect match? treat as precondition failed for safety
+        throw new BlobPreconditionFailedError();
+      }
+    }
     await writeFile(full, text, 'utf8');
     return;
   }
-  await put(key, text, {
-    access: 'private',
-    allowOverwrite: true,
-    contentType: 'application/json',
-  });
+  try {
+    if (opts.ifMatch) {
+      await put(key, text, {
+        access: 'private',
+        allowOverwrite: true,
+        contentType: 'application/json',
+        ifMatch: opts.ifMatch,
+      } as any);
+    } else {
+      await put(key, text, {
+        access: 'private',
+        allowOverwrite: true,
+        contentType: 'application/json',
+      });
+    }
+  } catch (e: any) {
+    if (e?.name === 'BlobPreconditionFailedError' || e instanceof BlobPreconditionFailedError) {
+      throw e;
+    }
+    // Some SDKs might not surface class in same way, rethrow
+    throw e;
+  }
 }
+
+export { BlobPreconditionFailedError };
 
 /** All keys under a prefix (member listing). */
 export async function clubStoreList(prefix: string): Promise<string[]> {

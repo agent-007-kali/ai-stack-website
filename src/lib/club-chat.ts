@@ -258,15 +258,51 @@ export async function claimRoomVisit(
   username: string,
   room: ClubRoomId,
 ): Promise<{ orientation: boolean; roomWelcome: boolean }> {
-  const doc = await getRoster();
-  const entry = doc.users[username];
-  if (!entry) return { orientation: false, roomWelcome: false }; // presence not written yet - caller touches first
-  const firstEver = !entry.oriented;
-  const firstRoom = !entry.rooms.includes(room);
-  if (firstEver) entry.oriented = true;
-  if (firstRoom) entry.rooms.push(room);
-  if (firstEver || firstRoom) await saveRoster(doc);
-  return { orientation: firstEver, roomWelcome: !firstEver && firstRoom };
+  const { clubStoreGetWithMeta, clubStorePut, BlobPreconditionFailedError } = await import('./club-store.ts');
+  const ROSTER_PATH = 'club-chat/roster.json';
+  const maxAttempts = 5;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const meta = await clubStoreGetWithMeta(ROSTER_PATH, { noCache: true });
+    let doc: RosterDoc = { users: {} };
+    if (meta && meta.text) {
+      try {
+        const parsed = JSON.parse(meta.text) as RosterDoc;
+        if (parsed && typeof parsed.users === 'object' && parsed.users) {
+          doc = parsed;
+        }
+      } catch {
+        doc = { users: {} };
+      }
+    }
+    const entry = doc.users[username];
+    if (!entry) return { orientation: false, roomWelcome: false }; // presence not written yet - caller touches first
+    const firstEver = !entry.oriented;
+    const firstRoom = !entry.rooms.includes(room);
+    if (!firstEver && !firstRoom) {
+      return { orientation: false, roomWelcome: false };
+    }
+    const next: RosterDoc = JSON.parse(JSON.stringify(doc)) as RosterDoc;
+    const nextEntry = next.users[username];
+    if (!nextEntry) return { orientation: false, roomWelcome: false };
+    if (firstEver) nextEntry.oriented = true;
+    if (firstRoom && !nextEntry.rooms.includes(room)) nextEntry.rooms.push(room);
+    try {
+      await clubStorePut(ROSTER_PATH, JSON.stringify(next), meta && meta.etag ? { ifMatch: meta.etag } : {});
+      return { orientation: firstEver, roomWelcome: !firstEver && firstRoom };
+    } catch (e: any) {
+      if (e instanceof BlobPreconditionFailedError || e?.name === 'BlobPreconditionFailedError') {
+        continue; // retry on race
+      }
+      // Fallback to last-write-wins if conditional write not supported
+      try {
+        await clubStorePut(ROSTER_PATH, JSON.stringify(next));
+        return { orientation: firstEver, roomWelcome: !firstEver && firstRoom };
+      } catch {
+        return { orientation: false, roomWelcome: false };
+      }
+    }
+  }
+  return { orientation: false, roomWelcome: false };
 }
 
 /** Safe sidebar projection: display names only, Jarvis pinned on top. */
