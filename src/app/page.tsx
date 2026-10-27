@@ -83,7 +83,7 @@ export default function HomePage() {
 
   return (
     <div className="sf">
-      <ReadOnlyWebMCP />
+      <ReadOnlyWebMCP previewEnabled={process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_GIT_COMMIT_REF === 'pilot/webmcp-readonly'} />
       <div className="sf-ticker" aria-hidden="true">
         <div className="sf-ticker-track">
           {[0, 1].map((copy) => (
