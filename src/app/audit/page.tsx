@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { withUsd } from '@/lib/usd';
 import CryptoPay from '@/components/CryptoPay';
 
@@ -9,7 +9,11 @@ import CryptoPay from '@/components/CryptoPay';
 export default function AuditPage() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
-  const canceled = typeof window !== 'undefined' && window.location.search.includes('canceled=1');
+  const [canceled, setCanceled] = useState(false);
+
+  useEffect(() => {
+    setCanceled(window.location.search.includes('canceled=1'));
+  }, []);
 
   async function buy() {
     setBusy(true); setErr('');
