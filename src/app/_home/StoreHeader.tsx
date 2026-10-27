@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { BUNDLE, GUIDES, priceLabel } from '@/lib/guides';
+import { searchProducts } from '@/lib/store-catalog';
 import { withUsd } from '@/lib/usd';
 
 type Hit = {
@@ -10,6 +10,7 @@ type Hit = {
   label: string;
   hint: string;
   terms: string;
+  href?: string;
 };
 
 const SECTION_HITS: Hit[] = [
@@ -45,22 +46,12 @@ const SECTION_HITS: Hit[] = [
   },
 ];
 
-function guideHits(): Hit[] {
-  const rows = [...GUIDES, BUNDLE];
-  return rows.map((g) => ({
-    id: 'guides',
-    label: g.title,
-    hint: priceLabel(g) ? `Guides · ${withUsd(priceLabel(g))}` : 'Guides',
-    terms: `${g.slug} ${g.description} ${g.bullets.join(' ')} pdf guide bundle`,
-  }));
-}
-
 export default function StoreHeader() {
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const hits = useMemo(() => {
-    const all = [...guideHits(), ...SECTION_HITS];
+    const all: Hit[] = [...searchProducts(query).map(g => ({id: g.id, label: g.title, hint: g.price ? `Guides · ${withUsd(g.price)}` : 'Price not listed', terms: g.description, href: g.href})), ...SECTION_HITS];
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return all
@@ -80,7 +71,8 @@ export default function StoreHeader() {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (hits[0]) goTo(hits[0].id);
+    if (hits[0]?.href) window.location.assign(hits[0].href);
+    else if (hits[0]) goTo(hits[0].id);
   }
 
   return (
@@ -100,6 +92,9 @@ export default function StoreHeader() {
         <form className="sf-search" role="search" onSubmit={onSubmit}>
           <input
             ref={inputRef}
+            id="store-query"
+            name="query"
+            aria-describedby="store-search-status"
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -107,19 +102,16 @@ export default function StoreHeader() {
             aria-label="Search products on this page"
             autoComplete="off"
           />
+          <button className="sf-search-submit" type="submit">Search</button>
+          <span className="sr-only" id="store-search-status" role="status">{query.trim() ? `${hits.length} results${hits.length ? '' : '. Try guide, Bow Bot or Boxes.'}` : 'Search guides and page sections'}</span>
+          {query.trim() && hits.length === 0 && <p className="sf-hits">No results. Try guide, Bow Bot or Boxes.</p>}
           {hits.length > 0 && (
             <ul className="sf-hits">
               {hits.map((h, i) => (
                 <li key={`${h.id}-${i}`}>
-                  <button
-                    type="button"
-                    className="sf-hit"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => goTo(h.id)}
-                  >
-                    {h.label}
-                    <small>{h.hint}</small>
-                  </button>
+                  <a className="sf-hit" href={h.href || `#${h.id}`} onClick={() => setQuery('')}>
+                    {h.label}<small>{h.hint}</small>
+                  </a>
                 </li>
               ))}
             </ul>

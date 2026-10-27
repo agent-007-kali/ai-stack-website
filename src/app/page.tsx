@@ -5,6 +5,7 @@ import { withUsd } from '@/lib/usd';
 import { CLUB_BAND_COPY, CLUB_BAND_EXTRAS } from '@/lib/club';
 import StoreHeader from './_home/StoreHeader';
 import './_home/home.css';
+import ReadOnlyWebMCP from '@/components/ReadOnlyWebMCP';
 
 export const metadata: Metadata = {
   title: 'AI Solutions | AI agents, guides and Boxes',
@@ -82,6 +83,7 @@ export default function HomePage() {
 
   return (
     <div className="sf">
+      <ReadOnlyWebMCP previewEnabled={process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_GIT_COMMIT_REF === 'pilot/webmcp-readonly'} />
       <div className="sf-ticker" aria-hidden="true">
         <div className="sf-ticker-track">
           {[0, 1].map((copy) => (
@@ -197,7 +199,7 @@ export default function HomePage() {
                   <div className="sf-card-price">
                     {label || 'Buy now'} {label && <span>one-off</span>}
                   </div>
-                  <Link className="sf-card-buy" href="/guide">
+                  <Link className="sf-card-buy" href={`/guide#${g.slug}`} aria-label={`View ${g.title}${label ? ` - ${label}` : ''}`}>
                     {label ? `Buy now — ${label}` : 'Buy now'}
                   </Link>
                 </article>

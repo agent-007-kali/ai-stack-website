@@ -115,7 +115,7 @@ export function BowChat() {
   const blocked = verdict?.blocked ? verdict.reason : null;
 
   const start = () => {
-    if (!name.trim() || !email.trim()) return;
+    if (!name.trim() || !/^\S+@\S+\.\S+$/.test(email.trim())) return;
     const existing = loadTrial();
     const state = existing ?? { startedAt: Date.now(), day: localDayKey(), used: 0 };
     if (!existing) saveTrial(state);
@@ -270,35 +270,35 @@ export function BowChat() {
         </>
       )}
       {!started ? (
-        <div className="gate">
+        <form className="gate" onSubmit={(e) => { e.preventDefault(); start(); }}>
           <h3>Bow Chat - 3-day free trial</h3>
           <p>Before we start, tell Bow Bot who you are. No card needed.</p>
-          <input
+          <label htmlFor="trial-name">Your name</label>
+          <input id="trial-name" name="name" required
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
             autoComplete="name"
             enterKeyHint="go"
           />
-          <input
+          <label htmlFor="trial-email">Email</label>
+          <input id="trial-email" name="email" type="email" required pattern={"[^\\s@]+@[^\\s@]+\\.[^\\s@]+"} aria-describedby="trial-email-help"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@company.com"
             inputMode="email"
             autoComplete="email"
             enterKeyHint="go"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') start();
-            }}
           />
-          <button className="cta full" disabled={!name.trim() || !emailOk} onClick={start}>
+          <p id="trial-email-help" role="status">{email && !emailOk ? 'Enter a valid email address, for example name@company.com.' : 'Your name and email are required to start this trial.'}</p>
+          <button type="submit" className="cta full" disabled={!name.trim() || !emailOk}>
             Start chat
           </button>
           <p className="trial-terms">
             Free trial: {BOW_TRIAL_LIMITS.trialDays} days,{' '}
             {BOW_TRIAL_LIMITS.dailyMessageLimit} messages a day. No card needed.
           </p>
-        </div>
+        </form>
       ) : (
         <>
           <div className="chat-body">
