@@ -12,6 +12,7 @@ function WhopCard({ g }: { g: GuideProduct }) {
   return (
     <section
       key={g.slug}
+      id={g.slug}
       style={{ border: '1px solid #1d3a4d', borderRadius: 12, padding: '24px 24px 28px', background: '#0c1722' }}
     >
       <div className="guide-card-row">
@@ -92,6 +93,7 @@ export default function GuidePage() {
           return (
             <section
               key={g.slug}
+      id={g.slug}
               style={{ border: '1px solid #1d3a4d', borderRadius: 12, padding: '24px 24px 28px', background: '#0c1722' }}
             >
               <div className="guide-card-row">
