@@ -9,11 +9,11 @@ type PublicTool = {
 };
 type ModelContext = { registerTool: (tool: PublicTool, options: { signal: AbortSignal }) => Promise<void> };
 
-export default function ReadOnlyWebMCP() {
+export default function ReadOnlyWebMCP({ previewEnabled = false }: { previewEnabled?: boolean }) {
   useEffect(() => {
     // Pilot is opt-in, client-only, and harmless on browsers without WebMCP.
     const context = (document as Document & { modelContext?: ModelContext }).modelContext;
-    if (!context || process.env.NEXT_PUBLIC_WEBMCP_PILOT !== 'true') return;
+    if (!context || !previewEnabled && process.env.NEXT_PUBLIC_WEBMCP_PILOT !== 'true') return;
     const controller = new AbortController();
     const annotations = { readOnlyHint: true, consequentialHint: false, untrustedContentHint: false };
     const tools: PublicTool[] = [
@@ -32,6 +32,6 @@ export default function ReadOnlyWebMCP() {
       }
     })().catch(() => { controller.abort(); });
     return () => controller.abort();
-  }, []);
+  }, [previewEnabled]);
   return null;
 }
