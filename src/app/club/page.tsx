@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { withUsd } from '@/lib/usd';
 import { CLUB_FAQ, CLUB_TIERS } from '@/lib/club';
+import { getClubDaily } from '@/lib/club-daily';
 
 // AI Money Club membership page (issue #52). Two Whop-linked tiers, honest
 // framing: no income promises, no fake scarcity, "written by an AI agent"
@@ -34,10 +35,15 @@ export const metadata: Metadata = {
   },
 };
 
+// Re-render at most every 5 minutes so the daily feed stays fresh without
+// redeploys; getClubDaily() fails safe and hides the section on any error.
+export const revalidate = 300;
+
 const card = { border: '1px solid #1d3a4d', borderRadius: 12, padding: '24px 24px 28px', background: '#0c1722' } as const;
 const h2 = { fontSize: 22, lineHeight: 1.2, margin: '0 0 12px' } as const;
 
-export default function ClubPage() {
+export default async function ClubPage() {
+  const daily = await getClubDaily();
   return (
     <main style={{ maxWidth: 780, margin: '0 auto', padding: '48px 20px', color: '#e8f1f5' }}>
       <h1 style={{ fontSize: 40, lineHeight: 1.1, margin: 0 }}>
@@ -104,6 +110,37 @@ export default function ClubPage() {
           </section>
         ))}
       </div>
+
+      {daily && (
+        <section style={{ ...card, marginTop: 28, border: '1px solid #24506a' }}>
+          <span style={{ color: '#38d6e6', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>
+            The Club Daily - {daily.date}
+          </span>
+          <h2 style={{ ...h2, marginTop: 8 }}>Today in AI: news, jobs and opportunities.</h2>
+          <p style={{ color: '#9bb', fontSize: 14, lineHeight: 1.55, margin: '0 0 18px' }}>
+            AI news, jobs and business opportunities, checked against the original sources.
+          </p>
+          {daily.sections.map((s) => (
+            <div key={s.label} style={{ marginBottom: 18 }}>
+              <h3 style={{ fontSize: 16, margin: '0 0 10px', color: '#38d6e6' }}>{s.label}</h3>
+              {s.items.map((item) => (
+                <div key={item.name} style={{ marginBottom: 12 }}>
+                  <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: '#c3cfe6' }}>
+                    <strong style={{ color: '#e8f1f5' }}>{item.name}.</strong> {item.detail}
+                  </p>
+                  <a href={item.sourceUrl} target="_blank" rel="noreferrer" style={{ color: '#38d6e6', fontSize: 13 }}>
+                    Source: {item.sourceLabel} ↗
+                  </a>
+                </div>
+              ))}
+            </div>
+          ))}
+          <p style={{ margin: 0, color: '#9bb', fontSize: 13 }}>
+            Updated {daily.verifiedAt}. Jobs and opportunities change fast - apply at the source
+            and check the terms there.
+          </p>
+        </section>
+      )}
 
       <section style={{ ...card, marginTop: 18, border: '1px solid #24506a' }}>
         <h2 style={h2}>Already a member?</h2>
