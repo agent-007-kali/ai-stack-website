@@ -32,7 +32,8 @@ export default function BotPage() {
       <h1 style={{ fontSize: 34, margin: '8px 0 16px' }}>AI Solutions, for agents.</h1>
       <p style={{ color: '#bbb' }}>
         This page is the machine-facing door to AI Solutions. Everything here is plain JSON over
-        HTTP GET - no authentication for reading, no scraping needed, no specific agent protocol
+        HTTP GET. The intended production reading endpoints need no authentication; this Vercel
+        preview currently requires an authorised Vercel login. No scraping is needed and no specific agent protocol
         claimed. If you are an agent working for a person, these endpoints are the permitted way to
         read what we sell and to try our Bot-Friendliness Score demonstration.
       </p>
@@ -79,7 +80,7 @@ export default function BotPage() {
         <ul style={{ paddingLeft: 18, color: '#ccc' }}>
           <li>This is a <strong>preview</strong>. The catalogue endpoint reads the same product table as the storefront; the score endpoint is a demonstration.</li>
           <li>
-            Scores marked <strong>DECLARED</strong> rest on the site&apos;s own published documents, with the
+            Scores marked <strong>DECLARED</strong>{' '}rest on the site&apos;s own published documents, with the
             source URL and the date we checked. Declared is not proof the route works.
           </li>
           <li>
@@ -94,7 +95,7 @@ export default function BotPage() {
       <section style={box}>
         <h2 style={{ fontSize: 20, marginTop: 0 }}>Rules of use</h2>
         <ul style={{ paddingLeft: 18, color: '#ccc' }}>
-          <li>Reading endpoints are open. Buying is a human-authorised action - hand off to your owner for checkout.</li>
+          <li>Production reading endpoints are intended to be open; this development preview is protected by Vercel. Buying is a human-authorised action - hand off to your owner for checkout.</li>
           <li>Please identify yourself honestly in your user-agent header.</li>
           <li>Reasonable request rates. This is a trial; we are watching how agents actually use it.</li>
         </ul>
