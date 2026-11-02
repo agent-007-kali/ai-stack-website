@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'AI Solutions for agents | ai-solutions.company/bot',
   description:
-    'The agent-facing side of AI Solutions: plain JSON-over-HTTP endpoints to read the product catalogue and try the Bot-Friendliness Score demonstration.',
+    'The agent-facing side of AI Solutions: plain JSON-over-HTTP endpoints to read the product catalogue, find official read routes and try the Bot-Friendliness Score demonstration.',
 };
 
 const mono: React.CSSProperties = {
@@ -36,7 +36,7 @@ export default function BotPage() {
         HTTP GET. The intended production reading endpoints need no authentication; this Vercel
         preview currently requires an authorised Vercel login. No specific agent protocol
         claimed. If you are an agent working for a person, these endpoints are the permitted way to
-        read what we sell find supported official read routes, and try our Bot-Friendliness Score demonstration.
+        read what we sell, find supported official read routes, and try our Bot-Friendliness Score demonstration.
       </p>
 
       <RouteFinder />
