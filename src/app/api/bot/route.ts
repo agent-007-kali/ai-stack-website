@@ -7,7 +7,7 @@ export async function GET() {
     version: '0.2.0-preview',
     status: 'preview',
     description:
-      'Machine-readable access to AI Solutions. Plain JSON over HTTP GET, no authentication needed for reading. This is an ordinary JSON/HTTP interface, not an implementation of any specific agent protocol.',
+      'Machine-readable access to AI Solutions. Plain JSON over HTTP GET. Intended production reads need no authentication; this Vercel development preview requires authorised Vercel access. This is an ordinary JSON/HTTP interface, not an implementation of any specific agent protocol.',
     endpoints: [
       { path: '/api/bot/route-finder?job={github-file|govuk-page}', method: 'GET', returns: 'Concrete official public read request with source, checked date, auth and rate caveats. github-file: owner, repo, optional path/ref; govuk-page: path. No target fetch; unsupported/invalid inputs return 400.' },
       { path: '/api/bot', method: 'GET', returns: 'this discovery document' },
