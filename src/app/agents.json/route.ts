@@ -5,11 +5,12 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   return NextResponse.json({
     name: 'ai-solutions.company',
-    version: '0.1.0-preview',
+    version: '0.2.0-preview',
     status: 'preview',
     description: 'Agent-facing JSON interface for AI Solutions (guides, Bow Bot, Boxes).',
     interface: { type: 'http-json', auth: 'none-for-reading' },
     endpoints: [
+      { path: '/api/bot/route-finder', method: 'GET', purpose: 'Build an official public read request, without fetching the target', parameters: { job: 'github-file|govuk-page', path: 'repository file path or GOV.UK page path', owner: 'GitHub only', repo: 'GitHub only', ref: 'optional GitHub branch/commit' } },
       { path: '/api/bot', method: 'GET', purpose: 'discovery' },
       { path: '/api/bot/catalogue', method: 'GET', purpose: 'PDF guide range catalogue' },
       {
