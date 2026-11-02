@@ -1,3 +1,4 @@
+import RouteFinder from './RouteFinder';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -31,15 +32,18 @@ export default function BotPage() {
       </p>
       <h1 style={{ fontSize: 34, margin: '8px 0 16px' }}>AI Solutions, for agents.</h1>
       <p style={{ color: '#bbb' }}>
-        This page is the machine-facing door to AI Solutions. Everything here is plain JSON over
+        This page is the machine-facing door to AI Solutions. Reading endpoints use plain JSON over
         HTTP GET. The intended production reading endpoints need no authentication; this Vercel
-        preview currently requires an authorised Vercel login. No scraping is needed and no specific agent protocol
+        preview currently requires an authorised Vercel login. No specific agent protocol
         claimed. If you are an agent working for a person, these endpoints are the permitted way to
-        read what we sell and to try our Bot-Friendliness Score demonstration.
+        read what we sell find supported official read routes, and try our Bot-Friendliness Score demonstration.
       </p>
+
+      <RouteFinder />
 
       <section style={box}>
         <h2 style={{ fontSize: 20, marginTop: 0 }}>Endpoints</h2>
+        <p>GET /api/bot/route-finder builds official public GitHub contents and GOV.UK page requests. It does not fetch or rate your target.</p>
         <ul style={{ paddingLeft: 18, color: '#ccc' }}>
           <li><span style={mono}>GET /api/bot</span> - discovery document (JSON).</li>
           <li><span style={mono}>GET /api/bot/catalogue</span> - the PDF guide range as JSON (Boxes and Bow Bot not yet included).</li>
